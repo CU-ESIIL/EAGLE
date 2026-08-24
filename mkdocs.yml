@@ -1,0 +1,84 @@
+site_name: 'ESIIL Postdoctoral Researcher OASIS'
+site_description: 'Repository and website template for ESIIL postdoctoral researchers'
+site_author: Ty Tuff
+site_url: https://cu-esiil.github.io/Postdoc_OASIS
+
+# Repository
+repo_name: Postdoc_OASIS
+repo_url: https://github.com/CU-ESIIL/Postdoc_OASIS
+# The edit URI points MkDocs Material at the docs/ source so page edit links open in GitHub edit mode.
+edit_uri: edit/main/docs/
+# Copyright
+copyright: 'Copyright &copy; 2026 University of Colorado Boulder'
+
+# Page tree
+nav:
+  - Home: index.md
+  - Work Plan: work-plan.md
+  - How This Postdoc Project Works: how-this-postdoc-project-works.md
+  - ESIIL and Postdoc Resources:
+      - Team Trainings: esiil-resources/team-trainings.md
+      - ESIIL Code of Conduct: esiil-resources/code-of-conduct.md
+      - Community Care: community-care.md
+      - Postdoc Resources:
+          - R and Python bilingualism: resources/bilingualism_md.md
+          - STAC: resources/stac_mount_save.md
+          - Sentinel 2 STAC example: resources/Pull_Sentinal2_l2_data.md
+          - Markdown: resources/markdown_basics.md
+          - CyVerse basics: resources/cyverse_basics.md
+          - GitHub basics: resources/github_basics.md
+          - CyVerse hacks: resources/cyverse_hacks.md
+          - Docker basics: resources/docker_basics.md
+          - Working groups and postdocs: resources/working_groups_and_postdocs.md
+
+# Configuration
+theme:
+  highlightjs: true
+  name: material
+  font: false
+  logo: 'assets/esiil_content/ESIIL_logo.png'
+  favicon: 'assets/esiil_content/favicon.ico'
+  features:
+    - navigation.sections
+    - navigation.instant
+    - navigation.tracking
+    - navigation.indexes
+    - navigation.top
+    - toc.integrate
+    - toc.follow
+    - content.action.edit
+    - content.code.copy
+  language: en
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      primary: 'white'
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to system preference
+
+# Options
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/cu-esiil/
+
+extra_css:
+  - stylesheets/tokens.css
+  - stylesheets/extra.css
+
+markdown_extensions:
+  - attr_list
+  - pymdownx.snippets:
+      base_path:
+        - docs
+
+validation:
+  omitted_files: ignore
+
+plugins:
+    - search
