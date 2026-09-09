@@ -39,8 +39,6 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 
-
-
 # translation temp files
 po/*~
 
@@ -55,3 +53,16 @@ rsconnect/
 node_modules/
 site/
 test-results/
+datasets/
+
+# pixi environments
+.pixi/*
+!.pixi/config.toml
+
+# compiled python files
+__pycache__/
+*.pyc
+src/streaming/3dep/mpc_copc.ipynb
+
+
+scripts/3dep/*.laz

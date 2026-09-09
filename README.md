@@ -1,12 +1,4 @@
-# Postdoc OASIS Template
-
-This repository is a template for ESIIL postdoctoral researchers.
-
-The template is designed as one connected system:
-
-- The repository is where the research happens.
-- The website is where the research is shared.
-- GitHub connects them through commits, version history, and publishing.
+# EAGLE: Extracting Airborne Gestalts from Lidar for Ecology
 
 ## How this repository is organized
 
@@ -19,30 +11,11 @@ The repository has two connected layers. Top-level files configure the project a
 ├── PROMPT_ACTION_LOG.md   # Record of template-level prompt-driven changes
 ├── mkdocs.yml             # Website navigation, theme, plugins, and edit links
 ├── docs/                  # Markdown source for the public website
-├── scripts/               # Build helpers and site health checks
-├── templates/             # Reusable meeting-note templates
-├── containers/            # Optional runtime and environment setup
-└── other working folders  # Add data, notebooks, scripts, workflows, outputs, or figures as the postdoc project grows
+├── scripts/               # Data processing, ingestion, and analysis scripts
+├── src/                   # Re-usable code for analyses
+└── datasets/              # Curated and cleaned datasets for LiDAR
 ```
 
-Use these rules of thumb when deciding where to put something:
-
-- Top-level files and folders are for project configuration, automation, contribution guidance, licensing, environment setup, and repo-wide metadata.
-- `docs/` is for public website pages and assets. Markdown files here become website pages through MkDocs.
-- `mkdocs.yml` controls how the website is rendered, including navigation, theme settings, plugins, and GitHub edit links.
-- Scientific working materials belong in working folders such as data, notebooks, scripts, workflows, outputs, and figure directories.
-
-## Common places to edit
-
-- `docs/index.md` is the homepage for the public site.
-- `docs/work-plan.md` tracks milestones, meetings, outputs, and handoff plans for the postdoc project.
-- `docs/how-this-postdoc-project-works.md` holds collaboration norms, project guides, data links, methods links, and process galleries.
-- `docs/esiil-resources/team-trainings.md` and `docs/esiil-resources/code-of-conduct.md` are under ESIIL and Postdoc Resources.
-- `docs/community-care.md` is nested under ESIIL and Postdoc Resources and links to ESIIL community care and team science resources.
-- `docs/instructions/` contains practical instructions for GitHub, persistent storage, project lifecycle phases, and landmarks.
-- `docs/resources/` contains reusable resource guides such as the Cloud Triangle, Cite and Reuse guidance, and existing postdoc resource pages.
-- `docs/assets/images/slots/` contains named image slots for the homepage and other shared visuals.
-- `docs/assets/images/process/` contains folder-driven process galleries that render automatically on the site.
 
 ## Preview locally
 
@@ -107,7 +80,3 @@ The site generates a non-blocking health report during the build.
 The report flags common issues such as missing files, placeholder links, outdated navigation, or incomplete template fields.
 
 Warnings do not prevent the site from publishing. They are intended to help postdocs and maintainers improve the site.
-
-## GitHub Pages
-
-This site is automatically built and deployed using GitHub Actions.

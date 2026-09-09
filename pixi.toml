@@ -1,0 +1,37 @@
+[workspace]
+authors = ["sammlapp <sammlapp@gmail.com>"]
+channels = ["conda-forge"]
+name = "EAGLE"
+platforms = ["osx-arm64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+pandas = ">=3.0.5,<4"
+polars = ">=1.44.1,<2"
+matplotlib = ">=3.11.1,<4"
+seaborn = ">=0.13.2,<0.14"
+ipykernel = ">=7.3.0,<8"
+fastexcel = ">=0.21.0,<0.22"
+pyarrow = ">=25.0.0,<26"
+geopandas = ">=1.1.4,<2"
+contextily = ">=1.7.1,<2"
+python = ">=3.13.15,<3.14"
+gdal = ">=3.13.3,<4"
+rasterio = ">=1.5.1,<2"
+rioxarray = ">=0.23.0,<0.24"
+odc-stac = ">=0.5.3,<0.6"
+pystac-client = ">=0.9.0,<0.10"
+planetary-computer = ">=1.0.0,<2"
+dask = ">=2026.8.0,<2027"
+stackstac = ">=0.5.0,<0.6"
+ipyleaflet = ">=0.20.0,<0.21"
+python-pdal = ">=3.5.5,<4"
+
+[pypi-dependencies]
+waxwing = ">=0.1.1, <0.2"
+
+[environments.goldendoodle.dependencies]
+pystac-client = ">=0.9.0,<0.10"
+planetary-computer = ">=1.0.0,<2"
