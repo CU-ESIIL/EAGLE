@@ -28,6 +28,7 @@ dask = ">=2026.8.0,<2027"
 stackstac = ">=0.5.0,<0.6"
 ipyleaflet = ">=0.20.0,<0.21"
 python-pdal = ">=3.5.5,<4"
+openpyxl = ">=3.1.5,<4"
 
 [pypi-dependencies]
 waxwing = ">=0.1.1, <0.2"
