@@ -53,7 +53,8 @@ rsconnect/
 node_modules/
 site/
 test-results/
-datasets/
+datasets/raw/
+datasets/USGS_3dep/usgs_3dep_resources_ALL.geojson
 
 # pixi environments
 .pixi/*
