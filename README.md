@@ -1,6 +1,11 @@
 # EAGLE: Extracting Airborne Gestalts from Lidar for Ecology
 
-## How this repository is organized
+
+## Project description
+
+
+
+## Details on the website organization
 
 The repository has two connected layers. Top-level files configure the project and its automation. The `docs/` folder contains the website content. `mkdocs.yml` tells MkDocs how to turn that content into the public site. Analysis folders hold the working scientific materials that generate the results shown on the website.
 

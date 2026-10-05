@@ -2,7 +2,7 @@
 authors = ["sammlapp <sammlapp@gmail.com>"]
 channels = ["conda-forge"]
 name = "EAGLE"
-platforms = ["osx-arm64"]
+platforms = ["osx-arm64", "linux-64"]
 version = "0.1.0"
 
 [tasks]
@@ -30,6 +30,9 @@ ipyleaflet = ">=0.20.0,<0.21"
 python-pdal = ">=3.5.5,<4"
 openpyxl = ">=3.1.5,<4"
 tqdm = ">=4.70.1,<5"
+plotly = ">=7.0.0,<8"
+nbformat = ">=5.11.1,<6"
+pytorch = ">=2.13.0,<3"
 
 [pypi-dependencies]
 waxwing = ">=0.1.1, <0.2"

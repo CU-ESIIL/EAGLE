@@ -1,0 +1,2 @@
+# keep the (large, ~14 GB) GPU environment off of the small $HOME quota
+detached-environments = "/ocean/projects/bio260075p/sammlapp/pixi_envs"

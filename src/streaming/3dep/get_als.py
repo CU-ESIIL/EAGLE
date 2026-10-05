@@ -5,7 +5,7 @@ from pathlib import Path
 
 data_root = Path(__file__).parent.parent.parent.parent / "datasets/USGS_3dep"
 resources_aws = gpd.read_file(data_root / "usgs_3dep_resources_AWS.geojson")
-resources_usgs = gpd.read_file(data_root / "usgs_3dep_resources_ALL.geojson")
+# resources_usgs = gpd.read_file(data_root / "usgs_3dep_resources_ALL.geojson")
 
 def lookup_3dep_by_latlon(lat, lon, earliest_year=None, latest_year=None, source="AWS"):
     """
