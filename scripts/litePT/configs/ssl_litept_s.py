@@ -22,6 +22,9 @@ out_dir = f"{scratch}/runs/{run_name}"  # resolved again after --opts (see train
 cache_dirs = [f"{scratch}/cache/pretrain_v1"]
 min_points = 2000          # skip near-empty cookies (water, data gaps)
 refresh_pool = True        # re-scan the cache every epoch, so a concurrent cache job grows the pool
+data_mode = "cache"        # "cache": cookies from cache_dirs; "stream": cookies cut from a producer's
+stream_dir = None          #   shard buffer in stream_dir (eagle_als.stream, slurm/pretrain_stream.sbatch)
+stream_usage_dir = None    # optional: workers log the shard of every sample here
 batch_size = 128           # ForPT: total over all GPUs (samples; each = 2 global + 4 local views)
 grad_accum = 1             # micro-batches per optimizer step (per-GPU batch = batch_size / world / grad_accum)
 num_workers = 5            # per GPU (Bridges-2: 5 CPUs per V100)

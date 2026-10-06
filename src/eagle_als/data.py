@@ -1,5 +1,6 @@
 """Datasets and collate functions for cached ALS cookies (see eagle_als.cache)."""
 
+import os
 from pathlib import Path
 
 import numpy as np
@@ -59,6 +60,90 @@ class CookiePoolDataset(Dataset):
             print(f"[data] failed to read {self.paths[idx]}: {e}", flush=True)
             return self[np.random.randint(len(self))]
         return self.transform(cookie)
+
+
+class StreamingChunkDataset(Dataset):
+    """Unlabeled cookies cut at random from the shard buffer of a running producer (eagle_als.stream).
+
+    Read-only. Each item ignores its index: it picks a random shard, a random center in the square's
+    inner part (so the whole `radius` cookie lies inside the square) and cuts the cookie from the
+    blocks it overlaps. The shard list is re-read every `relist_every` s. Cookies with fewer than
+    `min_points` points (water, data gaps, square partly outside the tile) are redrawn. With
+    `log_dir`, each worker appends the shard of every sample to usage-<pid>.txt.
+    """
+
+    def __init__(self, buffer_dir, transform, radius=100.0, min_points=2000, relist_every=5.0,
+                 virtual_len=10**9, log_dir=None, wait_timeout=1800):
+        self.buffer_dir = Path(buffer_dir)
+        self.transform = Compose(transform)
+        self.radius = radius
+        self.min_points = min_points
+        self.relist_every = relist_every
+        self.virtual_len = virtual_len
+        self.log_dir = log_dir
+        self.wait_timeout = wait_timeout
+        self._shards, self._listed, self._usage = [], 0.0, []
+
+    def __len__(self):
+        return self.virtual_len
+
+    def _shard_list(self):
+        import time
+
+        from .stream import list_shards
+
+        t0 = time.time()
+        while time.time() - self._listed > self.relist_every or not self._shards:
+            self._shards, self._listed = list_shards(self.buffer_dir), time.time()
+            if self._shards:
+                break
+            if time.time() - t0 > self.wait_timeout:
+                raise RuntimeError(f"no shards in {self.buffer_dir} after {self.wait_timeout}s")
+            time.sleep(2.0)
+        return self._shards
+
+    def sample_cookie(self, max_tries=20):
+        from .stream import cut_cookie, read_shard_meta
+
+        for _ in range(max_tries):
+            shards = self._shard_list()
+            name = shards[np.random.randint(len(shards))]
+            try:
+                meta = read_shard_meta(self.buffer_dir / name)
+                inner = meta["half_size"] - self.radius
+                cx, cy = np.random.uniform(-inner, inner, 2)
+                cookie = cut_cookie(self.buffer_dir / name, cx, cy, self.radius, meta)
+            except FileNotFoundError:  # evicted between listing and opening
+                self._listed = 0.0
+                continue
+            if len(cookie["xyz"]) >= self.min_points:
+                return cookie, name
+        raise RuntimeError(f"no cookie with >= {self.min_points} points after {max_tries} tries")
+
+    def _log_usage(self, name):
+        if self.log_dir is None:
+            return
+        self._usage.append(name)
+        if len(self._usage) >= 50:
+            Path(self.log_dir).mkdir(parents=True, exist_ok=True)
+            with open(Path(self.log_dir) / f"usage-{os.getpid()}.txt", "a") as f:
+                f.write("\n".join(self._usage) + "\n")
+            self._usage = []
+
+    def __getitem__(self, idx):
+        cookie, name = self.sample_cookie()
+        self._log_usage(name)
+        return self.transform(cookie)
+
+
+def build_ssl_dataset(cfg):
+    """Pre-training dataset from a config: cached cookie pool (default) or streamed shards
+    (data_mode="stream", stream_dir=<producer buffer>)."""
+    if cfg.get("data_mode", "cache") == "stream":
+        return StreamingChunkDataset(cfg["stream_dir"], cfg["train_transform"], min_points=cfg["min_points"],
+                                     log_dir=cfg.get("stream_usage_dir"))
+    return CookiePoolDataset(cfg["cache_dirs"], cfg["train_transform"], min_points=cfg["min_points"],
+                             max_samples=cfg.get("max_samples"))
 
 
 class LabeledCookieDataset(Dataset):

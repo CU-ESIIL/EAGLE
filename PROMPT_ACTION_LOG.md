@@ -83,3 +83,44 @@ Design single-node streaming of 3DEP data (500 m squares, rolling buffer on node
 
 - No-ground-class fallback (0.1% of cookies) differs from IDW by up to ~1 m at the 99th percentile; acceptable for now.
 - Build the producer and `StreamingChunkDataset` per the design.
+
+## 2026-10-06 (streaming implementation plan)
+
+### Prompt
+
+Read the working notes and `src/eagle_als/`, and prepare to implement the single-node streaming design.
+
+### Actions taken
+
+- Reviewed `fetch.py`, `cache.py`, `data.py`, `transforms.py`, `train_ssl.py` and the SSL config against the design.
+- Added an Implementation plan to the working-notes doc (files to add/change, shard format, five steps with tests). No code changed yet.
+
+### Verification
+
+- `sinfo`/`scontrol`: H100 nodes w001-w010 have 104 cores and 2 TB RAM; `/local` on the interactive node is 6.1 TB.
+
+### Open questions and follow-up
+
+- Check `$LOCAL` size on an H100 node in the first job; measure S3 concurrency limits with the producer.
+
+## 2026-10-06 (streaming plan A vs B)
+
+### Prompt
+
+Document plan A (fetch inside DataLoader workers) as the chosen streaming plan with plan B (separate producer, being built by another agent) as the alternative; implement A in separate modules and profile A against B.
+
+### Actions taken
+
+- Working-notes doc: added "Streaming plan A (chosen)" and relabelled B's sections as the alternative.
+- Added `src/eagle_als/stream_pool.py` (SquarePoolDataset, FetchHelper subprocess, RoundRobinBatches, build_pool_loader), reusing B's sampler, square fetch and cookie cutting from `eagle_als.stream`.
+- Added `scripts/litePT/profile_stream_compare.py` and `scripts/litePT/slurm/stream_compare.sbatch`.
+
+### Verification
+
+- Job 47472580 (64 cores): A 86 samples/s and B 103 samples/s uncapped; both sustain 40 samples/s capped; distinct squares per batch 1.00 (A) vs 0.99 (B).
+- Start-up (5.5-44 min) was dominated by cold imports and SquareSampler init on /ocean, before any fetch.
+
+### Open questions and follow-up
+
+- Job 47476010: capped reruns with a warm environment, window-only CPU, and A at 12 uses per square.
+- The trainer is not switched to plan A yet (train_ssl.py belongs to the other agent's work).

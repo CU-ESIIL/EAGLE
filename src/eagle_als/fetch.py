@@ -49,6 +49,18 @@ def fetch_cookie(tile_name, lat, lon, radius=100.0, timeout=None):
 
     Returns a dict of numpy arrays (see module docstring); raises on PDAL/network errors.
     """
+    return _fetch_region(tile_name, lat, lon, radius, "circle", timeout)
+
+
+def fetch_square(tile_name, lat, lon, half_size=250.0, timeout=None):
+    """Stream a UTM-aligned square of side 2 * `half_size` m centered on lat/lon (see eagle_als.stream).
+
+    Same outputs as fetch_cookie; HAG is computed over the whole square. meta["half_size"] is set.
+    """
+    return _fetch_region(tile_name, lat, lon, half_size, "square", timeout)
+
+
+def _fetch_region(tile_name, lat, lon, size, shape, timeout=None):
     import pdal
     from pyproj import Transformer
     from shapely.geometry import Point
@@ -61,15 +73,20 @@ def fetch_cookie(tile_name, lat, lon, radius=100.0, timeout=None):
     # coarse prefilter in the EPT storage CRS (distorted distances -> pad the radius)
     sx, sy = Transformer.from_crs("EPSG:4326", EPT_STORAGE_CRS, always_xy=True).transform(lon, lat)
     # Web Mercator scale factor is 1/cos(lat); pad generously so the exact UTM crop is covered
-    pad = radius * 1.2 / np.cos(np.radians(lat))
+    # (a square's corners also need the sqrt(2) half-diagonal, as UTM and Web Mercator axes are rotated)
+    pad = size * (1.2 if shape == "circle" else 1.5) / np.cos(np.radians(lat))
     bounds = f"([{sx - pad}, {sx + pad}], [{sy - pad}, {sy + pad}])"
     ux, uy = Transformer.from_crs("EPSG:4326", f"EPSG:{epsg}", always_xy=True).transform(lon, lat)
+    if shape == "circle":
+        crop = {"type": "filters.crop", "point": f"POINT({ux} {uy})", "distance": size}
+    else:
+        crop = {"type": "filters.crop", "bounds": f"([{ux - size}, {ux + size}], [{uy - size}, {uy + size}])"}
 
     stages = [
         {"type": "readers.ept", "filename": tile.url, "bounds": bounds},
         {"type": "filters.range", "limits": ",".join(f"Classification![{c}:{c}]" for c in DROP_CLASSES)},
         {"type": "filters.reprojection", "in_srs": EPT_STORAGE_CRS, "out_srs": f"EPSG:{epsg}"},
-        {"type": "filters.crop", "point": f"POINT({ux} {uy})", "distance": radius},
+        crop,
     ]
     if timeout is not None:
         stages[0]["timeout"] = int(timeout)
@@ -96,7 +113,7 @@ def fetch_cookie(tile_name, lat, lon, radius=100.0, timeout=None):
         lat=float(lat),
         lon=float(lon),
         epsg=epsg,
-        radius=float(radius),
+        **({"radius": float(size)} if shape == "circle" else {"half_size": float(size), "utm_x": ux, "utm_y": uy}),
         n_points=int(len(xyz)),
         has_ground=bool(has_ground),
         collection_year=None if np.isnan(tile.collection_year) else int(tile.collection_year),

@@ -42,14 +42,60 @@ def hash_str(s):
     return zlib.crc32(s.encode())
 
 
-def _isolated(ctx, args):
-    """Run one fetch in its own process; a crash is recorded as an error instead of killing the pool."""
+def _isolated(ctx, fn, args):
+    """Run one call in its own process; returns (result, crashed)."""
     try:
         with ProcessPoolExecutor(max_workers=1, mp_context=ctx) as pool:
-            return pool.submit(fetch_and_save, *args).result()
+            return pool.submit(fn, *args).result(), False
     except BrokenProcessPool:
-        return dict(path=str(args[0]), tile=args[1], lat=args[2], lon=args[3], status="error",
-                    n_points=0, error="worker process crashed (PDAL abort)", seconds=0.0)
+        return None, True
+
+
+def imap_isolated(fn, jobs, workers, max_tasks_per_child=200):
+    """Run fn(*args) for (key, args) in `jobs` (any iterable, may be endless) in a spawn process pool.
+
+    Yields (key, result, crashed) in completion order. A sliding window of 2 * workers in-flight
+    jobs keeps memory bounded; when a worker crashes (e.g. an uncaught PDAL C++ exception aborts the
+    process) the in-flight jobs are re-run one per process, so only the culprit yields crashed=True
+    (result None). Breaking out of the loop cancels queued jobs and waits for running ones.
+    """
+    # 'spawn' avoids PDAL/GDAL state and temp-dir conflicts seen with fork
+    ctx = mp.get_context("spawn")
+    jobs = iter(jobs)
+    exhausted = False
+    while not exhausted:
+        window = {}
+        broken = False
+        pool = ProcessPoolExecutor(max_workers=workers, mp_context=ctx, max_tasks_per_child=max_tasks_per_child)
+        try:
+            while not broken:
+                while not exhausted and len(window) < 2 * workers:
+                    try:
+                        key, args = next(jobs)
+                    except StopIteration:
+                        exhausted = True
+                        break
+                    window[pool.submit(fn, *args)] = (key, args)
+                if not window:
+                    break
+                done, _ = wait(window, return_when=FIRST_COMPLETED)
+                for fut in done:
+                    key, args = window.pop(fut)
+                    try:
+                        result = fut.result()
+                    except BrokenProcessPool:
+                        window[fut] = (key, args)
+                        broken = True
+                        continue
+                    yield key, result, False
+        finally:
+            pool.shutdown(wait=True, cancel_futures=True)
+        if broken:
+            suspects = list(window.values())
+            print(f"[pool] worker crashed; re-running {len(suspects)} in-flight jobs in isolation", flush=True)
+            with ThreadPoolExecutor(max_workers=workers) as tp:
+                for (key, _), (result, crashed) in zip(suspects, tp.map(lambda j: _isolated(ctx, fn, j[1]), suspects)):
+                    yield key, result, crashed
 
 
 def read_manifest(out):
@@ -124,17 +170,18 @@ def build_cache(
         if records:
             pd.DataFrame(records).to_parquet(part, index=False)
 
-    # 'spawn' avoids PDAL/GDAL state and temp-dir conflicts seen with fork
-    ctx = mp.get_context("spawn")
     jobs = [
         (str(getattr(r, id_col)), (cookie_path(out, getattr(r, id_col)), getattr(r, tile_col),
                                    float(getattr(r, lat_col)), float(getattr(r, lon_col)), radius, min_points, max_points))
         for r in todo
     ]
+    args_by_id = dict(jobs)
     n_done = 0
-
-    def record(sid, rec):
-        nonlocal n_done
+    for sid, rec, crashed in imap_isolated(fetch_and_save, jobs, workers):
+        if crashed:
+            path, tile, lat, lon = args_by_id[sid][:4]
+            rec = dict(path=str(path), tile=tile, lat=lat, lon=lon, status="error",
+                       n_points=0, error="worker process crashed (PDAL abort)", seconds=0.0)
         rec["site_id"] = sid
         rec["timestamp"] = time.time()
         records.append(rec)
@@ -144,40 +191,9 @@ def build_cache(
             n_ok = sum(r["status"] == "ok" for r in records)
             rate = n_done / (time.time() - t_start)
             print(f"[cache] {n_done}/{len(todo)} done, {n_ok} ok, {rate:.2f} sites/s", flush=True)
-
-    queue = list(jobs)
-    stopped = False
-    while queue and not stopped:
-        # sliding window of in-flight jobs, so a worker crash (e.g. an uncaught PDAL C++ exception
-        # aborting the process) only leaves a small set of suspects to re-run in isolation
-        window = {}
-        broken = False
-        with ProcessPoolExecutor(max_workers=workers, mp_context=ctx, max_tasks_per_child=200) as pool:
-            while (queue or window) and not broken:
-                while queue and len(window) < 2 * workers:
-                    sid, args = queue.pop(0)
-                    window[pool.submit(fetch_and_save, *args)] = (sid, args)
-                done, _ = wait(window, return_when=FIRST_COMPLETED)
-                for fut in done:
-                    sid, args = window.pop(fut)
-                    try:
-                        record(sid, fut.result())
-                    except BrokenProcessPool:
-                        window[fut] = (sid, args)
-                        broken = True
-                if deadline is not None and time.time() > deadline:
-                    print("[cache] reached --max-hours, stopping early (resubmit to continue)", flush=True)
-                    stopped = True
-                    break
-            if broken or stopped:
-                for f in window:
-                    f.cancel()
-        if broken:
-            suspects = list(window.values())
-            print(f"[cache] worker crashed; re-running {len(suspects)} in-flight sites in isolation", flush=True)
-            with ThreadPoolExecutor(max_workers=workers) as tp:
-                for (sid, _), rec in zip(suspects, tp.map(lambda j: _isolated(ctx, j[1]), suspects)):
-                    record(sid, rec)
+        if deadline is not None and time.time() > deadline:
+            print("[cache] reached --max-hours, stopping early (resubmit to continue)", flush=True)
+            break
     flush()
     summary = pd.DataFrame(records).status.value_counts().to_dict()
     print(f"[cache] finished: {summary}", flush=True)

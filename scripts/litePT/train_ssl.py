@@ -20,7 +20,7 @@ import torch
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.utils.data import DataLoader
 
-from eagle_als.data import CookiePoolDataset, collate_points
+from eagle_als.data import build_ssl_dataset, collate_points
 from eagle_als.ssl import SonataLitePT
 from eagle_als.train_utils import (
     InfiniteRandomSampler, StopFlag, all_reduce_mean, amp_dtype, is_main, latest_checkpoint, layerwise_param_groups,
@@ -29,8 +29,7 @@ from eagle_als.train_utils import (
 
 
 def build_loader(cfg, rank, world, epoch=0):
-    ds = CookiePoolDataset(cfg["cache_dirs"], cfg["train_transform"], min_points=cfg["min_points"],
-                           max_samples=cfg.get("max_samples"))
+    ds = build_ssl_dataset(cfg)
     sampler = InfiniteRandomSampler(ds, seed=cfg["seed"] + epoch, rank=rank, world=world)
     per_gpu = cfg["batch_size"] // world // cfg.get("grad_accum", 1)
     assert per_gpu * world * cfg.get("grad_accum", 1) == cfg["batch_size"], "batch_size must divide evenly" 
@@ -96,7 +95,8 @@ def main():
     while step < total:
         ds, loader = build_loader(cfg, rank, world, epoch)
         if is_main():
-            print(f"[ssl] epoch {epoch}: pool of {len(ds)} cookies", flush=True)
+            pool = f"streamed from {cfg['stream_dir']}" if cfg.get("data_mode") == "stream" else f"pool of {len(ds)} cookies"
+            print(f"[ssl] epoch {epoch}: {pool}", flush=True)
         t_data, t_last = 0.0, time.time()
         it = iter(loader)
         for i in range(steps_per_epoch):
