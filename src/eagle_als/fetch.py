@@ -109,14 +109,16 @@ class EmptyCookieError(RuntimeError):
     pass
 
 
-def height_above_ground(xyz, classification, k=8, cell=2.0):
-    """Height above ground by inverse-distance interpolation of ground (class 2) points.
+def height_above_ground(xyz, classification, method="raster", k=8, cell=2.0, raster_cell=1.0):
+    """Height above ground from ground (class 2) points. Returns (hag float32 [N], has_ground bool).
 
-    Falls back to a coarse "lowest point per cell" ground surface when the tile has no
-    ground classification. Returns (hag float32 [N], has_ground bool).
+    method="raster" (default): mean ground elevation per `raster_cell` m cell, empty cells filled
+        from the nearest filled cell, bilinear interpolation at each point. O(N); ~10x cheaper than idw.
+    method="idw": inverse-distance weighting of the k nearest ground points (KD-tree).
+
+    Falls back to a coarse "lowest point per `cell` m column" ground surface when the tile has no
+    ground classification.
     """
-    from scipy.spatial import cKDTree
-
     ground = classification == GROUND_CLASS
     has_ground = ground.sum() >= 10
     if has_ground:
@@ -129,6 +131,10 @@ def height_above_ground(xyz, classification, k=8, cell=2.0):
         first = np.ones(len(order), dtype=bool)
         first[1:] = key[order][1:] != key[order][:-1]
         gxyz = xyz[order[first]]
+    if method == "raster":
+        return (xyz[:, 2] - ground_raster_z(gxyz, xyz[:, :2], raster_cell)).astype(np.float32), has_ground
+    from scipy.spatial import cKDTree
+
     tree = cKDTree(gxyz[:, :2])
     k = min(k, len(gxyz))
     dist, idx = tree.query(xyz[:, :2], k=k)
@@ -138,6 +144,29 @@ def height_above_ground(xyz, classification, k=8, cell=2.0):
     ground_z = (gxyz[idx, 2] * w).sum(1) / w.sum(1)
     hag = (xyz[:, 2] - ground_z).astype(np.float32)
     return hag, has_ground
+
+
+def ground_raster_z(gxyz, query_xy, cell=1.0):
+    """Ground elevation at `query_xy` from a gridded ground surface built from `gxyz` points."""
+    from scipy import ndimage
+
+    origin = query_xy.min(0)
+    shape = tuple(np.floor((query_xy.max(0) - origin) / cell).astype(np.int64) + 1)
+    ij = np.floor((gxyz[:, :2] - origin) / cell).astype(np.int64)
+    inside = (ij >= 0).all(1) & (ij[:, 0] < shape[0]) & (ij[:, 1] < shape[1])
+    flat = np.ravel_multi_index((ij[inside, 0], ij[inside, 1]), shape)
+    n = shape[0] * shape[1]
+    count = np.bincount(flat, minlength=n)
+    grid = (np.bincount(flat, weights=gxyz[inside, 2], minlength=n) / np.maximum(count, 1)).reshape(shape)
+    empty = (count == 0).reshape(shape)
+    if empty.all():  # no ground point inside the query extent
+        return np.full(len(query_xy), np.mean(gxyz[:, 2]))
+    if empty.any():  # fill gaps (buildings, water, dense canopy) from the nearest filled cell
+        idx = ndimage.distance_transform_edt(empty, return_distances=False, return_indices=True)
+        grid = grid[tuple(idx)]
+    # cell centres sit at (i + 0.5) * cell, so subtract 0.5 to get fractional grid indices
+    uv = ((query_xy - origin) / cell - 0.5).T
+    return ndimage.map_coordinates(grid, uv, order=1, mode="nearest")
 
 
 def save_cookie(path, cookie, meta):

@@ -16,12 +16,14 @@ hits its time limit can simply be resubmitted. Use --retry-errors to re-attempt 
 """
 
 import argparse
+import json
 import multiprocessing as mp
 import time
 from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, ThreadPoolExecutor, wait
 from concurrent.futures.process import BrokenProcessPool
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 from .fetch import fetch_and_save
@@ -89,6 +91,24 @@ def build_cache(
         skip_status.add("error")
     done_ids = set(done.loc[done.status.isin(skip_status), "site_id"].astype(str))
     todo = [r for r in sites.itertuples(index=False) if str(getattr(r, id_col)) not in done_ids]
+    # cookies saved by a run that died before flushing its manifest: record them instead of refetching
+    orphans = [r for r in todo if cookie_path(out, getattr(r, id_col)).exists()]
+    if orphans:
+        recs = []
+        for r in orphans:
+            path = cookie_path(out, getattr(r, id_col))
+            try:
+                with np.load(path) as f:
+                    meta = json.loads(str(f["meta"]))
+                recs.append(dict(path=str(path), tile=meta["tile"], lat=meta["lat"], lon=meta["lon"], status="ok",
+                                 n_points=meta["n_points"], error="", has_ground=meta["has_ground"], seconds=0.0,
+                                 site_id=str(getattr(r, id_col)), timestamp=time.time()))
+            except Exception as e:  # unreadable partial file: refetch
+                print(f"[cache] removing unreadable cookie {path}: {e}", flush=True)
+                path.unlink(missing_ok=True)
+        if recs:
+            pd.DataFrame(recs).to_parquet(out / "manifest" / f"part-orphans-{int(time.time())}.parquet", index=False)
+            print(f"[cache] recorded {len(recs)} cookies that were missing from the manifest", flush=True)
     todo = [r for r in todo if not cookie_path(out, getattr(r, id_col)).exists()]
     if limit is not None:
         todo = todo[:limit]

@@ -12,9 +12,9 @@ set -euo pipefail
 cd "${SLURM_SUBMIT_DIR:-$PWD}"
 source scripts/litePT/env.sh
 if [[ "${1:-}" == --* ]]; then
-  python scripts/litePT/check_lidar_sources.py --workers 48 "$@"
+  python scripts/litePT/check_lidar_sources.py --workers ${EAGLE_WORKERS:-48} "$@"
 else
   for ds in "$@"; do
-    python scripts/litePT/check_lidar_sources.py --dataset "$ds" --workers 48
+    python scripts/litePT/check_lidar_sources.py --dataset "$ds" --workers ${EAGLE_WORKERS:-48}
   done
 fi

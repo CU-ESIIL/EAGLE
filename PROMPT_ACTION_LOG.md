@@ -42,3 +42,44 @@ User asked: "This repo is behind on some of the standard updates we've been maki
 ### Open questions and follow-up
 
 - Confirm whether this template should keep the older resource guides in the main navigation or leave them available under the broader resources folder only.
+
+## 2026-10-05
+
+### Prompt
+
+Investigate why SSL data loading looked slow on the GPU node (12 s/sample/worker in benchmark job 47443176), how throughput scales with workers, and how to make cookie fetching and sampling faster.
+
+### Actions taken
+
+- Added `scripts/litePT/profile_dataloader.py`: per-transform CPU cost and DataLoader throughput vs. worker count.
+- Profiled the pipeline and grouped-vs-single EPT fetches; no pipeline code was changed.
+
+### Verification
+
+- The 12 s figure was worker start-up (spawn + imports) amortized over only 16 samples. Steady state is ~0.33 s/sample/worker and scales linearly (7 workers: 18-21 samples/s on RM-shared).
+- One PDAL pipeline per tile (multiple polygons) fetched the same points 1.4-2.7x faster than one pipeline per cookie.
+
+### Open questions and follow-up
+
+- Decide whether to adopt the loader optimizations (pre-thinned cookies with cached intensity rank, no deepcopy in the view generator, faster elastic distortion) and per-tile grouped fetching in `eagle_als.cache`.
+
+## 2026-10-05 (streaming design, raster HAG)
+
+### Prompt
+
+Design single-node streaming of 3DEP data (500 m squares, rolling buffer on node-local NVMe) and implement a cheaper height-above-ground calculation.
+
+### Actions taken
+
+- Measured PDAL fetch cost vs. read size, scattered vs. contiguous reads, concurrent decode throughput, and /ocean write/read throughput; wrote the single-node streaming design into the working-notes doc (Preprocessing efficiency section).
+- `src/eagle_als/fetch.py`: `height_above_ground` now defaults to `method="raster"` (1 m mean-ground grid, nearest-cell gap fill, bilinear lookup; new helper `ground_raster_z`). The previous IDW k-NN method stays available as `method="idw"`.
+
+### Verification
+
+- 60 cached cookies (24.7 M points): raster 0.19 vs IDW 2.08 core-s per M points; median |difference| 1 cm, 99th percentile 13 cm per cookie.
+- Live fetch of 3 random pre-training locations: ground-point HAG median 1-2 cm.
+
+### Open questions and follow-up
+
+- No-ground-class fallback (0.1% of cookies) differs from IDW by up to ~1 m at the 99th percentile; acceptable for now.
+- Build the producer and `StreamingChunkDataset` per the design.

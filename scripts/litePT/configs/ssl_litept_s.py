@@ -1,8 +1,14 @@
-"""Self-supervised pre-training of LitePT-S on 3DEP cookies (SonataLite, see src/eagle_als/ssl.py).
+"""Self-supervised pre-training of LitePT-S on 3DEP cookies, mirroring ForPT / Sonata.
+
+Architecture and loss follow ForPT (arXiv:2609.24787) and Sonata's reference code
+(Pointcept sonata_v1m1_base.py), see src/eagle_als/ssl.py. Kept ALS-specific on purpose:
+0.4 m grid, larger (column) masks, extra lidar channels, density thinning, area-based views.
+Sonata's metric settings (jitter, elastic distortion, match radius) are scaled by our grid
+ratio 0.4 / 0.02 = 20 so they are the same in voxel units.
 
 Override any top-level value from the command line, e.g.
-    torchrun --nproc-per-node 4 scripts/litePT/train_ssl.py --config scripts/litePT/configs/ssl_litept_s.py \
-        --opts batch_size=32 total_steps=100000 run_name=ssl_s_v1
+    torchrun --nproc-per-node 8 scripts/litePT/train_ssl.py --config scripts/litePT/configs/ssl_litept_s.py \
+        --opts batch_size=128 total_steps=50000 run_name=ssl_s_v1
 """
 
 import os
@@ -16,28 +22,30 @@ out_dir = f"{scratch}/runs/{run_name}"  # resolved again after --opts (see train
 cache_dirs = [f"{scratch}/cache/pretrain_v1"]
 min_points = 2000          # skip near-empty cookies (water, data gaps)
 refresh_pool = True        # re-scan the cache every epoch, so a concurrent cache job grows the pool
-batch_size = 16            # total over all GPUs (samples; each sample = 2 global + 4 local views)
+batch_size = 128           # ForPT: total over all GPUs (samples; each = 2 global + 4 local views)
+grad_accum = 1             # micro-batches per optimizer step (per-GPU batch = batch_size / world / grad_accum)
 num_workers = 5            # per GPU (Bridges-2: 5 CPUs per V100)
 prefetch_factor = 4
 
-grid_size = 0.4            # voxel size (m) for the network input
+grid_size = 0.4            # voxel size (m) for the network input (ForPT: 0.05 m on dense forest scans)
 view_radius = 50.0         # global view of scale 1.0 covers a disc of this radius (m)
 feat_keys = ("coord", "hag", "intensity", "returns")
 
+# Sonata view augmentations (probabilities as in Sonata, metric values x20) + ALS-specific ones
 view_aug = [
-    dict(type="RandomRotate", angle=[-1, 1], axis="z", center=[0, 0, 0], p=1.0),
-    dict(type="RandomRotate", angle=[-1 / 64, 1 / 64], axis="x", p=0.5),
-    dict(type="RandomRotate", angle=[-1 / 64, 1 / 64], axis="y", p=0.5),
     dict(type="RandomScale", scale=[0.9, 1.1]),
+    dict(type="RandomRotate", angle=[-1, 1], axis="z", center=[0, 0, 0], p=0.8),
+    dict(type="RandomRotate", angle=[-1 / 64, 1 / 64], axis="x", p=0.8),
+    dict(type="RandomRotate", angle=[-1 / 64, 1 / 64], axis="y", p=0.8),
     dict(type="RandomFlip", p=0.5),
-    dict(type="RandomJitter", sigma=0.02, clip=0.1),
+    dict(type="RandomJitter", sigma=0.1, clip=0.4),
+    dict(type="ElasticDistortion", distortion_params=[[4.0, 8.0], [16.0, 32.0]]),
     dict(type="IntensityJitter", p=0.8),
     dict(type="HAGJitter", p=0.5),
-    dict(type="RandomDropout", dropout_ratio=0.2, dropout_application_ratio=0.2),
 ]
 view_post = [
-    dict(type="CenterShift", apply_z=False),
-    dict(type="GridSample", grid_size=grid_size, hash_type="fnv", mode="train", return_grid_coord=True),
+    dict(type="CenterShift", apply_z=False),  # keep z = height above median ground (Sonata: apply_z=True)
+    dict(type="GridSample", grid_size=grid_size, hash_type="fnv", mode="train"),
     dict(type="PackFeat", keys=feat_keys),
 ]
 train_transform = [
@@ -50,11 +58,12 @@ train_transform = [
         global_view_num=2,
         global_view_scale=(0.4, 1.0),
         local_view_num=4,
-        local_view_scale=(0.05, 0.2),
+        local_view_scale=(0.1, 0.4),   # Sonata's local scale (here: fraction of area, not of points)
         max_radius=view_radius,
         max_size=65536,
         global_transform=view_aug + view_post,
         local_transform=view_aug + view_post,
+        keep_keys=("coord", "origin_coord", "feat"),
     ),
 ]
 
@@ -76,28 +85,50 @@ backbone = dict(
     drop_path=0.3,
     shuffle_orders=True,
     pre_norm=True,
+    enc_mode=True,            # ForPT: pre-train the encoder only
+    norm="ln",                # ForPT / Sonata: LayerNorm instead of BatchNorm
+    embedding="linear",       # ForPT / Sonata: linear embedding instead of sparse conv stem
+    mask_token=True,
 )
 ssl = dict(
-    upcast_levels=2,          # point features = concat(stage4, stage3, stage2) at stage-2 resolution
-    num_prototypes=4096,
-    scene_prototypes=4096,
-    mask_grid=6.0,            # masked columns of 6 m x 6 m on student global views
-    mask_ratio=(0.4, 0.7),    # linearly increased over the first half of training
-    match_grid=2.0,           # student/teacher points matched within 2 m cells (origin coords)
-    teacher_temp=(0.04, 0.07),
-    student_temp=0.1,
-    momentum=(0.994, 1.0),
-    scene_weight=0.5,
+    teacher_custom=dict(attn_drop=0.0, proj_drop=0.0, drop_path=0.0),
+    head_in_channels=144 + 252 + 504,   # up-cast stage 2 + 3 + 4 features
+    head_hidden_channels=4096,
+    head_embed_channels=256,
+    head_num_prototypes=4096,
+    num_global_view=2,
+    num_local_view=4,
+    mask_dims=2,              # ALS: mask xy columns (Sonata: 3D cubes)
+    mask_size_start=2.0,      # m; larger masks than ForPT's 5 cm (sparse ALS)
+    mask_size_base=6.0,
+    mask_size_warmup_ratio=0.05,
+    mask_ratio_start=0.3,
+    mask_ratio_base=0.7,      # ForPT: 0.7
+    mask_ratio_warmup_ratio=0.05,
+    mask_jitter=0.2,          # Sonata 0.01 m x20
+    teacher_temp_start=0.04,
+    teacher_temp_base=0.07,   # ForPT: 0.07
+    teacher_temp_warmup_ratio=0.05,
+    student_temp=0.1,         # ForPT: 0.1
+    mask_loss_weight=2 / 8,   # ForPT L = L_l2g + L_m2g with Sonata's weights
+    roll_mask_loss_weight=2 / 8,
+    unmask_loss_weight=4 / 8,
+    momentum_base=0.994,      # ForPT: fixed 0.994 (Sonata: cosine 0.994 -> 1)
+    momentum_final=0.994,
+    match_max_r=6.4,          # Sonata 0.32 m x20
+    up_cast_level=2,
+    grid_size=grid_size,
 )
 
-# ---------------- optimization ----------------
-total_steps = 100_000
-warmup_steps = 2_000
-lr = 0.002                 # for batch_size 16, scaled linearly with batch size (lr * batch_size / 16)
-block_lr_scale = 0.1       # LitePT/PTv3 recipe: lower lr for transformer/conv "block" params
-weight_decay = 0.04
-clip_grad = 3.0
-amp_dtype = "auto"         # bf16 on Ampere/Hopper, fp16 + GradScaler on V100
+# ---------------- optimization (ForPT) ----------------
+total_steps = 50_000
+lr = 0.001                 # constant (ForPT); no batch-size scaling
+lr_schedule = "constant"   # "constant" (ForPT) or "onecycle" (Sonata: pct_start 0.05, cosine)
+warmup_steps = 0
+layer_decay = 0.9          # layer-wise lr decay over encoder blocks (enc{e}.block{b})
+weight_decay = 1e-4        # ForPT (Sonata: 0.04 -> 0.2 cosine)
+clip_grad = 3.0            # Sonata
+amp_dtype = "auto"         # bf16 on Ampere/Hopper (Sonata), fp16 + GradScaler on V100
 empty_cache = False
 
 # ---------------- logging / checkpoints ----------------

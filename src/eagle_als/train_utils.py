@@ -111,6 +111,42 @@ def param_groups(model, lr, weight_decay, block_lr_scale=1.0, keyword="block"):
     return list(groups.values())
 
 
+def layerwise_param_groups(model, lr, weight_decay, enc_depths, layer_decay=0.9):
+    """Pointcept/Sonata layer-wise lr decay: parameters of encoder block `enc{e}.block{b}.` get
+    lr * layer_decay ** (blocks after it); everything else (embedding, pooling, heads) gets lr.
+    Weight decay applies to all parameters, as in Pointcept."""
+    n_blocks = sum(enc_depths)
+    keywords = {}
+    for e in range(len(enc_depths)):
+        for b in range(enc_depths[e]):
+            keywords[f"enc{e}.block{b}."] = lr * layer_decay ** (n_blocks - sum(enc_depths[:e]) - b - 1)
+    groups = {}
+    for name, p in model.named_parameters():
+        if not p.requires_grad:
+            continue
+        group_lr = next((v for k, v in keywords.items() if k in name), lr)
+        g = groups.setdefault(group_lr, dict(params=[], lr=group_lr, base_lr=group_lr, weight_decay=weight_decay))
+        g["params"].append(p)
+    return list(groups.values())
+
+
+def lr_factor(step, total, warmup=0, schedule="constant"):
+    """Multiplier on each group's base lr. 'onecycle' mimics Sonata's OneCycleLR
+    (pct_start=0.05, cosine, div_factor=10, final_div_factor=1000)."""
+    if schedule == "constant":
+        return min(1.0, (step + 1) / warmup) if warmup else 1.0
+    if schedule == "onecycle":
+        up = max(1, int(0.05 * total))
+        if step < up:
+            return 0.1 + 0.9 * 0.5 * (1 - math.cos(math.pi * step / up))
+        final = 0.1 / 1000
+        prog = min(1.0, (step - up) / max(1, total - up))
+        return final + (1 - final) * 0.5 * (1 + math.cos(math.pi * prog))
+    if schedule == "cosine":
+        return cosine_lr(step, total, warmup)
+    raise ValueError(schedule)
+
+
 def cosine_lr(step, total, warmup, final_ratio=1e-3):
     if step < warmup:
         return (step + 1) / warmup

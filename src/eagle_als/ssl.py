@@ -1,297 +1,361 @@
-"""Sonata-style self-distillation for LitePT on ALS cookies ("SonataLite").
+"""Self-supervised pre-training of LitePT on ALS cookies, mirroring ForPT / Sonata.
 
-Reference: Wu et al. 2025, "Sonata: Self-Supervised Learning of Reliable Point Representations"
-(Pointcept). The recipe is simplified for single-cookie aerial lidar:
+ForPT (Yue et al. 2026, "Toward a foundation model for forest point clouds", arXiv:2609.24787)
+pre-trains LitePT-S with the Sonata self-distillation recipe (Wu et al. 2025). Their code is not
+public, so this is a close port of Sonata's reference implementation
+(Pointcept `pointcept/models/sonata/sonata_v1m1_base.py`, commit 1342eda), with the settings
+ForPT states explicitly. Both losses are point-level:
 
-* student and EMA teacher share the LitePT encoder architecture (enc_mode=True, no decoder; the
-  decoder-free design avoids Sonata's "geometric shortcut").
-* teacher encodes the 2 unmasked global views; student encodes the 2 global views with grid masking
-  plus the local views.
-* point-level loss: encoder features are "up-cast" (concatenated back through `upcast_levels` pooling
-  stages); student points are matched to teacher points of the same sample via their pre-augmentation
-  coordinates (`origin_coord`, hashed at `match_grid` meters); prototype-head distributions are
-  distilled with Sinkhorn-Knopp-normalized teacher targets.
-* scene-level loss (DINO): mean-pooled deepest-stage features of every student view predict the
-  teacher's pooled global-view distribution of the other global views. This gives the per-cookie
-  embedding that the downstream classification task needs.
+* masked-to-global (ForPT L_m2g = Sonata `mask_loss` + `roll_mask_loss`): the student encodes the
+  two masked global views; each student point is matched (1-NN on pre-augmentation coordinates,
+  within `match_max_r`) to the teacher's unmasked encoding of the same view and of the other view.
+* local-to-global (ForPT L_l2g = Sonata `unmask_loss`): student local-view points are matched to
+  the teacher's principal global view.
+* teacher targets are Sinkhorn-Knopp normalized prototype scores; features are up-cast through
+  `up_cast_level` pooling stages before the heads (OnlineCluster).
+
+ALS-specific choices kept on purpose (see scripts/litePT/README.md): 0.4 m grid, larger masks
+(xy columns of `mask_size` m instead of 3D cubes when `mask_dims=2`), extra lidar input channels,
+and density thinning (data pipeline).
 """
 
-import copy
-import math
+from itertools import chain
 
+import numpy as np
 import torch
 import torch.distributed as dist
 import torch.nn as nn
 import torch.nn.functional as F
+import torch_scatter
+from timm.layers import trunc_normal_
 
 from litept.model import LitePT, Point, offset2batch
 
 
-class DINOHead(nn.Module):
-    """MLP -> L2-normalized bottleneck -> weight-normalized prototypes (as in DINO / Sonata)."""
+def batch2offset(batch):
+    return torch.cumsum(torch.bincount(batch), dim=0).long()
 
-    def __init__(self, in_dim, num_prototypes=4096, hidden_dim=2048, bottleneck_dim=256, nlayers=3):
+
+def offset2bincount(offset):
+    return torch.diff(offset, prepend=offset.new_zeros(1))
+
+
+def world_size():
+    return dist.get_world_size() if dist.is_available() and dist.is_initialized() else 1
+
+
+def cosine_schedule(step, total, base, final, start=None, warmup=0):
+    """Value of Pointcept's CosineScheduler at `step` (linear warmup start->base, cosine base->final)."""
+    if step >= total:
+        return final
+    if step < warmup:
+        return start + (base - start) * step / max(warmup - 1, 1)
+    n = total - warmup
+    return final + 0.5 * (base - final) * (1 + np.cos(np.pi * (step - warmup) / n))
+
+
+class OnlineCluster(nn.Module):
+    """Sonata projection head: MLP -> l2 normalize -> weight-normalized prototypes."""
+
+    def __init__(self, in_channels, hidden_channels=4096, embed_channels=256, num_prototypes=4096):
         super().__init__()
-        layers = [nn.Linear(in_dim, hidden_dim), nn.GELU()]
-        for _ in range(nlayers - 2):
-            layers += [nn.Linear(hidden_dim, hidden_dim), nn.GELU()]
-        layers += [nn.Linear(hidden_dim, bottleneck_dim)]
-        self.mlp = nn.Sequential(*layers)
-        self.prototypes = nn.utils.parametrizations.weight_norm(nn.Linear(bottleneck_dim, num_prototypes, bias=False))
-        self.prototypes.parametrizations.weight.original0.data.fill_(1)
-        self.prototypes.parametrizations.weight.original0.requires_grad = False
+        self.mlp = nn.Sequential(
+            nn.Linear(in_channels, hidden_channels),
+            nn.GELU(),
+            nn.Linear(hidden_channels, embed_channels),
+        )
+        self.apply(self._init_weights)
+        self.prototype = torch.nn.utils.parametrizations.weight_norm(
+            nn.Linear(embed_channels, num_prototypes, bias=False)
+        )
+        self.prototype.parametrizations.weight.original0.data.fill_(1)
+        self.prototype.parametrizations.weight.original0.requires_grad = False
 
-    def forward(self, x):
-        x = F.normalize(self.mlp(x), dim=-1, p=2)
-        return self.prototypes(x)
+    @staticmethod
+    def _init_weights(m):
+        if isinstance(m, nn.Linear):
+            trunc_normal_(m.weight, std=0.02)
+            if m.bias is not None:
+                nn.init.constant_(m.bias, 0)
 
-
-@torch.no_grad()
-def sinkhorn_knopp(logits, temp, n_iters=3):
-    """Sinkhorn-Knopp centering of teacher logits [N, K] -> soft targets [N, K] (DDP-aware)."""
-    q = torch.exp((logits.float() - logits.float().max()) / temp).t()  # [K, N]
-    world = dist.get_world_size() if dist.is_available() and dist.is_initialized() else 1
-    n = torch.tensor([q.shape[1]], device=q.device, dtype=torch.float)
-    if world > 1:
-        dist.all_reduce(n)
-    k = q.shape[0]
-    s = q.sum()
-    if world > 1:
-        dist.all_reduce(s)
-    q /= s
-    for _ in range(n_iters):
-        r = q.sum(dim=1, keepdim=True)
-        if world > 1:
-            dist.all_reduce(r)
-        q /= r.clamp_min(1e-12)
-        q /= k
-        q /= q.sum(dim=0, keepdim=True).clamp_min(1e-12)
-        q /= n
-    q *= n
-    return q.t()
+    def forward(self, feat):
+        feat = self.mlp(feat)
+        eps = 1e-6 if feat.dtype == torch.float16 else 1e-12
+        feat = F.normalize(feat, dim=-1, p=2, eps=eps)
+        return self.prototype(feat)
 
 
-def upcast(point, levels):
-    """Concatenate deeper features back onto `levels` finer pooling stages (Sonata feature up-casting)."""
-    for _ in range(levels):
-        if "pooling_parent" not in point.keys():
-            break
-        parent = point.pop("pooling_parent")
-        inverse = point.pop("pooling_inverse")
-        parent.feat = torch.cat([parent.feat, point.feat[inverse]], dim=-1)
-        point = parent
-    return point
+def build_backbone(cfg, **overrides):
+    cfg = dict(cfg)
+    cfg.pop("type", None)
+    cfg.update(overrides)
+    return LitePT(**cfg)
 
 
-def segment_mean(feat, offset):
-    """Mean of features per batch element given LitePT offsets."""
-    batch = offset2batch(offset)
-    out = torch.zeros(len(offset), feat.shape[1], device=feat.device, dtype=feat.dtype)
-    out.index_add_(0, batch, feat)
-    counts = torch.diff(offset, prepend=offset.new_zeros(1)).clamp_min(1).to(feat.dtype)
-    return out / counts[:, None]
-
-
-class ALSEncoder(nn.Module):
-    """LitePT encoder with an optional learnable mask token (used by the SSL student)."""
-
-    def __init__(self, backbone_cfg, mask_token=True):
-        super().__init__()
-        cfg = dict(backbone_cfg)
-        cfg.pop("type", None)
-        cfg["enc_mode"] = True
-        self.backbone = LitePT(**cfg)
-        self.out_channels = cfg["enc_channels"]
-        self.mask_token = nn.Parameter(torch.zeros(1, cfg["enc_channels"][0])) if mask_token else None
-        if self.mask_token is not None:
-            nn.init.trunc_normal_(self.mask_token, std=0.02)
-
-    def forward(self, data, mask=None):
-        """data: dict with coord, grid_coord, feat, offset (+ origin_coord). Returns deepest-stage Point."""
-        bb = self.backbone
-        if mask is not None:
-            data = dict(data)
-            data["feat"] = data["feat"] * (~mask).unsqueeze(-1).to(data["feat"].dtype)
-        point = Point(data)
-        if bb.enc_attn[0]:
-            point.serialization(order=bb.order, shuffle_orders=bb.shuffle_orders)
-        point.sparsify()
-        point = bb.embedding(point)
-        if mask is not None and self.mask_token is not None:
-            point.feat = torch.where(mask.unsqueeze(-1), self.mask_token.to(point.feat.dtype), point.feat)
-            point.sparse_conv_feat = point.sparse_conv_feat.replace_feature(point.feat)
-        point = bb.enc(point)
-        return point
-
-
-class SonataLite(nn.Module):
+class SonataLitePT(nn.Module):
     def __init__(
         self,
         backbone,
-        upcast_levels=2,
-        num_prototypes=4096,
-        scene_prototypes=4096,
-        head_hidden=2048,
-        head_bottleneck=256,
-        mask_grid=6.0,
-        mask_ratio=(0.4, 0.7),
-        match_grid=2.0,
-        teacher_temp=(0.04, 0.07),
-        teacher_temp_warmup=0.1,
+        head_in_channels,
+        head_hidden_channels=4096,
+        head_embed_channels=256,
+        head_num_prototypes=4096,
+        teacher_custom=None,
+        num_global_view=2,
+        num_local_view=4,
+        mask_dims=2,
+        mask_size_start=2.0,
+        mask_size_base=6.0,
+        mask_size_warmup_ratio=0.05,
+        mask_ratio_start=0.3,
+        mask_ratio_base=0.7,
+        mask_ratio_warmup_ratio=0.05,
+        mask_jitter=None,
+        teacher_temp_start=0.04,
+        teacher_temp_base=0.07,
+        teacher_temp_warmup_ratio=0.05,
         student_temp=0.1,
-        momentum=(0.994, 1.0),
-        scene_weight=0.5,
-        point_weight=1.0,
-        center_momentum=0.9,
+        mask_loss_weight=2 / 8,
+        roll_mask_loss_weight=2 / 8,
+        unmask_loss_weight=4 / 8,
+        momentum_base=0.994,
+        momentum_final=0.994,
+        match_max_r=6.4,
+        up_cast_level=2,
+        grid_size=0.4,
     ):
         super().__init__()
-        self.student = ALSEncoder(backbone, mask_token=True)
-        ch = self.student.out_channels
-        point_dim = sum(ch[len(ch) - 1 - upcast_levels:])
-        self.student_point_head = DINOHead(point_dim, num_prototypes, head_hidden, head_bottleneck)
-        self.student_scene_head = DINOHead(ch[-1], scene_prototypes, head_hidden, head_bottleneck)
-        self.teacher = copy.deepcopy(self.student)
-        self.teacher_point_head = copy.deepcopy(self.student_point_head)
-        self.teacher_scene_head = copy.deepcopy(self.student_scene_head)
-        for m in (self.teacher, self.teacher_point_head, self.teacher_scene_head):
-            for p in m.parameters():
-                p.requires_grad = False
-        self.upcast_levels = upcast_levels
-        self.mask_grid, self.mask_ratio, self.match_grid = mask_grid, mask_ratio, match_grid
-        self.teacher_temp, self.teacher_temp_warmup = teacher_temp, teacher_temp_warmup
+        assert num_global_view == 2, "roll mask loss (ForPT cross-view pairs) needs exactly two global views"
+        assert mask_dims in (2, 3)
+        self.num_global_view, self.num_local_view = num_global_view, num_local_view
+        self.mask_dims = mask_dims
+        self.mask_size_cfg = (mask_size_start, mask_size_base, mask_size_warmup_ratio)
+        self.mask_ratio_cfg = (mask_ratio_start, mask_ratio_base, mask_ratio_warmup_ratio)
+        self.teacher_temp_cfg = (teacher_temp_start, teacher_temp_base, teacher_temp_warmup_ratio)
+        self.momentum_cfg = (momentum_base, momentum_final)
+        self.mask_jitter = mask_jitter
         self.student_temp = student_temp
-        self.momentum = momentum
-        self.scene_weight, self.point_weight = scene_weight, point_weight
-        # scene-level targets use DINO centering (few views per batch -> Sinkhorn would be degenerate)
-        self.center_momentum = center_momentum
-        self.register_buffer("scene_center", torch.zeros(1, scene_prototypes))
+        self.mask_loss_weight = mask_loss_weight
+        self.roll_mask_loss_weight = roll_mask_loss_weight
+        self.unmask_loss_weight = unmask_loss_weight
+        self.match_max_r = match_max_r
+        self.up_cast_level = up_cast_level
+        self.grid_size = grid_size
+        self.set_step(0, 1)
 
-    # ---------- helpers ----------
-    def backbone_state_dict(self, which="teacher"):
-        """LitePT weights for downstream use (teacher = EMA weights, usually the better encoder)."""
-        enc = self.teacher if which == "teacher" else self.student
-        return enc.backbone.state_dict()
+        head = lambda: OnlineCluster(head_in_channels, head_hidden_channels, head_embed_channels, head_num_prototypes)
+        self.student = nn.ModuleDict(dict(backbone=build_backbone(backbone), mask_head=head(), unmask_head=head()))
+        # teacher: same architecture, drop path etc. turned off
+        self.teacher = nn.ModuleDict(
+            dict(backbone=build_backbone(backbone, **(teacher_custom or {})), mask_head=head(), unmask_head=head())
+        )
+        for k in self.student:
+            self.teacher[k].load_state_dict(self.student[k].state_dict())
+        for p in self.teacher.parameters():
+            p.requires_grad = False
 
-    def student_modules(self):
-        return [self.student, self.student_point_head, self.student_scene_head]
+    # ---------------- schedules (Sonata before_step) ----------------
+    def set_step(self, step, total):
+        s0, s1, sw = self.mask_size_cfg
+        r0, r1, rw = self.mask_ratio_cfg
+        t0, t1, tw = self.teacher_temp_cfg
+        self.mask_size = cosine_schedule(step, total, s1, s1, s0, int(total * sw))
+        self.mask_ratio = cosine_schedule(step, total, r1, r1, r0, int(total * rw))
+        self.teacher_temp = cosine_schedule(step, total, t1, t1, t0, int(total * tw))
+        self.momentum = cosine_schedule(step, total, *self.momentum_cfg)
 
     @torch.no_grad()
-    def update_teacher(self, progress):
-        m = self.momentum[1] - (self.momentum[1] - self.momentum[0]) * (math.cos(math.pi * progress) + 1) / 2
-        for s, t in zip(self.student_modules(), (self.teacher, self.teacher_point_head, self.teacher_scene_head)):
-            for ps, pt in zip(s.parameters(), t.parameters()):
-                pt.data.mul_(m).add_(ps.detach().data, alpha=1 - m)
+    def update_teacher(self):
+        """EMA update (Sonata after_step)."""
+        m = self.momentum
+        s = list(self.student.parameters())
+        t = list(self.teacher.parameters())
+        torch._foreach_mul_(t, m)
+        torch._foreach_add_(t, s, alpha=1 - m)
         return m
 
-    @torch.no_grad()
-    def _update_center(self, logits):
-        mean = logits.mean(0, keepdim=True)
-        if dist.is_available() and dist.is_initialized():
-            dist.all_reduce(mean)
-            mean /= dist.get_world_size()
-        self.scene_center.mul_(self.center_momentum).add_(mean, alpha=1 - self.center_momentum)
+    def backbone_state_dict(self, which="teacher"):
+        return (self.teacher if which == "teacher" else self.student)["backbone"].state_dict()
 
-    def _teacher_temp(self, progress):
-        t0, t1 = self.teacher_temp
-        if progress >= self.teacher_temp_warmup:
-            return t1
-        return t0 + (t1 - t0) * progress / self.teacher_temp_warmup
-
+    # ---------------- Sonata components ----------------
     @staticmethod
-    def _view(batch, prefix):
-        return dict(
-            coord=batch[f"{prefix}_coord"],
-            grid_coord=batch[f"{prefix}_grid_coord"],
-            feat=batch[f"{prefix}_feat"],
-            offset=batch[f"{prefix}_offset"],
-            origin_coord=batch[f"{prefix}_origin_coord"],
-        )
+    @torch.no_grad()
+    def sinkhorn_knopp(feat, temp, num_iter=3):
+        feat = feat.float()
+        q = torch.exp(feat / temp).t()
+        n = torch.tensor([q.shape[1]], device=q.device, dtype=torch.float)
+        if world_size() > 1:
+            dist.all_reduce(n)
+        k = q.shape[0]
+        sum_q = q.sum()
+        if world_size() > 1:
+            dist.all_reduce(sum_q)
+        q = q / sum_q
+        for _ in range(num_iter):
+            q_row_sum = q.sum(dim=1, keepdim=True)
+            if world_size() > 1:
+                dist.all_reduce(q_row_sum)
+            q = q / q_row_sum / k
+            q = q / q.sum(dim=0, keepdim=True) / n
+        q *= n
+        return q.t()
 
-    def _grid_mask(self, view, ratio):
-        """Mask whole mask_grid x mask_grid (xy) columns of each view with probability `ratio`."""
-        oc = view["origin_coord"]
-        batch = offset2batch(view["offset"])
-        cell = torch.floor(oc[:, :2] / self.mask_grid).long()
-        key = (batch * 1_000_003 + cell[:, 0]) * 1_000_003 + cell[:, 1]
-        _, inv = torch.unique(key, return_inverse=True)
-        masked_cells = torch.rand(int(inv.max()) + 1, device=oc.device) < ratio
-        return masked_cells[inv]
+    @torch.no_grad()
+    def generate_mask(self, coord, offset):
+        """Mask a `mask_ratio` fraction of grid patches (xy columns if mask_dims=2, else 3D cubes)."""
+        batch = offset2batch(offset)
+        coord = coord[:, : self.mask_dims]
+        min_coord = torch_scatter.segment_coo(coord, batch, reduce="min")
+        grid_coord = ((coord - min_coord[batch]) // self.mask_size).int()
+        grid_coord = torch.cat([batch.unsqueeze(-1).int(), grid_coord], dim=-1)
+        unique, point_cluster = torch.unique(grid_coord, dim=0, sorted=True, return_inverse=True)
+        patch_num = unique.shape[0]
+        mask_patch_index = torch.randperm(patch_num, device=coord.device)[: int(patch_num * self.mask_ratio)]
+        return torch.isin(point_cluster, mask_patch_index)
 
-    def _match_keys(self, origin_coord, sample_id):
-        cell = torch.floor(origin_coord / self.match_grid).long() + 1_000
-        return ((sample_id * 4096 + cell[:, 0]) * 4096 + cell[:, 1]) * 4096 + cell[:, 2]
+    @torch.no_grad()
+    def match_neighbour(self, view1_coord, view1_offset, view2_coord, view2_offset):
+        """For each view1 point, its nearest view2 point of the same batch element within match_max_r.
 
-    def _encode(self, encoder, view, mask=None):
-        point = encoder(view, mask=mask)
-        scene_feat = segment_mean(point.feat, point.offset)  # per view
-        point_up = upcast(point, self.upcast_levels)
-        return point_up, scene_feat
+        Equivalent of Sonata's pointops.knn_query(1, ...) matching (KD-tree on CPU; pointops is a
+        Pointcept CUDA extension we do not build). Returns [M, 2] (view1 index, view2 index).
+        """
+        from scipy.spatial import cKDTree
 
-    # ---------- forward ----------
-    def forward(self, batch, progress=0.0):
-        n_global = batch["global_offset"].shape[0]
-        n_local = batch["local_offset"].shape[0] if "local_offset" in batch else 0
-        bsz = batch["num_samples"]
-        g_per, l_per = n_global // bsz, n_local // bsz
-        gview, lview = self._view(batch, "global"), (self._view(batch, "local") if n_local else None)
-        t_temp = self._teacher_temp(progress)
+        c1 = view1_coord.float().cpu().numpy()
+        c2 = view2_coord.float().cpu().numpy()
+        o1 = [0] + view1_offset.tolist()
+        o2 = [0] + view2_offset.tolist()
+        pairs = []
+        for b in range(len(o1) - 1):
+            a1, e1, a2, e2 = o1[b], o1[b + 1], o2[b], o2[b + 1]
+            if e1 == a1 or e2 == a2:
+                continue
+            dist_, idx = cKDTree(c2[a2:e2]).query(c1[a1:e1], k=1, distance_upper_bound=self.match_max_r, workers=-1)
+            keep = np.isfinite(dist_)
+            pairs.append(np.stack([np.arange(a1, e1)[keep], idx[keep] + a2], axis=1))
+        index = np.concatenate(pairs) if pairs else np.zeros((0, 2), dtype=np.int64)
+        return torch.from_numpy(index).long().to(view1_coord.device)
 
-        # teacher: unmasked global views
+    @torch.no_grad()
+    def roll_point(self, point):
+        """[pc1, pc2] -> [pc2, pc1] within every sample (two global views)."""
+        n = self.num_global_view
+        counts = offset2bincount(point.offset).tolist()
+        bs = len(counts) // n
+        data = {}
+        for key in ("feat", "coord", "origin_coord", "batch"):
+            value = point[key].split(counts)
+            value = list(chain(*[value[n * b : n * (b + 1)][::-1] for b in range(bs)]))
+            if key == "batch":
+                value = [torch.ones_like(v) * i for i, v in enumerate(value)]
+            data[key] = torch.cat(value, dim=0)
+        return Point(data)
+
+    def up_cast(self, point):
+        for _ in range(self.up_cast_level):
+            parent = point.pop("pooling_parent")
+            inverse = point.pop("pooling_inverse")
+            parent.feat = torch.cat([parent.feat, point.feat[inverse]], dim=-1)
+            point = parent
+        return point
+
+    def distill_loss(self, target_sim, pred_sim, batch):
+        loss = -torch.sum(target_sim * F.log_softmax(pred_sim / self.student_temp, dim=-1), dim=-1)
+        return torch_scatter.segment_coo(loss, index=batch, reduce="mean").mean()
+
+    @torch.no_grad()
+    def diagnostics(self, target, pred_sim):
+        """Collapse / learning checks: cross-entropy = target entropy + KL(target || student).
+        KL should fall during training; target entropy and the number of prototypes the teacher
+        uses should stay well above 0 (Sinkhorn keeps targets spread over prototypes)."""
+        target = target.float()
+        logp = F.log_softmax(pred_sim.float() / self.student_temp, dim=-1)
+        t_ent = -(target * torch.log(target.clamp_min(1e-12))).sum(-1).mean()
+        p_ent = -(logp.exp() * logp).sum(-1).mean()
+        kl = (target * (torch.log(target.clamp_min(1e-12)) - logp)).sum(-1).mean()
+        used = torch.unique(target.argmax(-1)).numel()
+        agree = (target.argmax(-1) == logp.argmax(-1)).float().mean()
+        return dict(target_entropy=t_ent, pred_entropy=p_ent, mask_kl=kl,
+                    protos_used=torch.tensor(float(used)), argmax_agree=agree)
+
+    # ---------------- forward ----------------
+    def forward(self, data_dict):
+        grid_size = self.grid_size
         with torch.no_grad():
-            t_point, t_scene = self._encode(self.teacher, gview)
-            t_logits = self.teacher_point_head(t_point.feat)
-            t_probs = sinkhorn_knopp(t_logits, t_temp)
-            t_scene_logits = self.teacher_scene_head(t_scene).float()
-            t_scene_probs = F.softmax((t_scene_logits - self.scene_center) / t_temp, dim=-1)
-            self._update_center(t_scene_logits)
-            # aggregate teacher point targets per (sample, match cell)
-            t_sample = offset2batch(t_point.offset) // g_per
-            t_keys = self._match_keys(t_point.origin_coord, t_sample)
-            uniq, inv = torch.unique(t_keys, return_inverse=True)
-            targets = torch.zeros(len(uniq), t_probs.shape[1], device=t_probs.device)
-            targets.index_add_(0, inv, t_probs.float())
-            targets /= torch.bincount(inv, minlength=len(uniq)).clamp_min(1)[:, None]
+            global_point = Point(
+                feat=data_dict["global_feat"], coord=data_dict["global_coord"],
+                origin_coord=data_dict["global_origin_coord"], offset=data_dict["global_offset"],
+                grid_size=grid_size,
+            )
+            global_mask = self.generate_mask(global_point.coord, global_point.offset)
+            mask_global_coord = global_point.coord.clone().detach()
+            if self.mask_jitter is not None:
+                mask_global_coord[global_mask] += torch.clip(
+                    torch.randn_like(mask_global_coord[global_mask]).mul(self.mask_jitter),
+                    max=self.mask_jitter * 2,
+                )
+            mask_global_point = Point(
+                feat=data_dict["global_feat"], coord=mask_global_coord,
+                origin_coord=data_dict["global_origin_coord"], mask=global_mask,
+                offset=data_dict["global_offset"], grid_size=grid_size,
+            )
+            local_point = Point(
+                feat=data_dict["local_feat"], coord=data_dict["local_coord"],
+                origin_coord=data_dict["local_origin_coord"], offset=data_dict["local_offset"],
+                grid_size=grid_size,
+            )
+            result = dict(loss=[])
+            global_point_ = self.up_cast(self.teacher.backbone(global_point))
+            global_feat = global_point_.feat
 
-        ratio = self.mask_ratio[0] + (self.mask_ratio[1] - self.mask_ratio[0]) * min(progress / 0.5, 1.0)
-        gmask = self._grid_mask(gview, ratio)
-        s_views = [("global", gview, gmask, g_per)]
-        if lview is not None:
-            s_views.append(("local", lview, None, l_per))
+        # masked-to-global (aligned + rolled pairs)
+        with torch.no_grad():
+            global_point_.feat = self.teacher.mask_head(global_feat)
+        mask_global_point_ = self.up_cast(self.student.backbone(mask_global_point))
+        mask_pred_sim = self.student.mask_head(mask_global_point_.feat)
+        if self.mask_loss_weight > 0:
+            idx = self.match_neighbour(mask_global_point_.origin_coord, mask_global_point_.offset,
+                                       global_point_.origin_coord, global_point_.offset)
+            target = self.sinkhorn_knopp(global_point_.feat[idx[:, 1]], self.teacher_temp)
+            loss = self.distill_loss(target, mask_pred_sim[idx[:, 0]], mask_global_point_.batch[idx[:, 0]])
+            result.update(self.diagnostics(target, mask_pred_sim[idx[:, 0]]))
+            result["mask_loss"] = loss
+            result["mask_match"] = torch.tensor(len(idx) / len(mask_global_point_.batch))
+            result["loss"].append(loss * self.mask_loss_weight)
+        if self.roll_mask_loss_weight > 0:
+            roll_global_point_ = self.roll_point(global_point_)
+            idx = self.match_neighbour(mask_global_point_.origin_coord, mask_global_point_.offset,
+                                       roll_global_point_.origin_coord, roll_global_point_.offset)
+            target = self.sinkhorn_knopp(roll_global_point_.feat[idx[:, 1]], self.teacher_temp)
+            loss = self.distill_loss(target, mask_pred_sim[idx[:, 0]], mask_global_point_.batch[idx[:, 0]])
+            result["roll_mask_loss"] = loss
+            result["roll_match"] = torch.tensor(len(idx) / len(mask_global_point_.batch))
+            result["loss"].append(loss * self.roll_mask_loss_weight)
 
-        losses, point_losses, scene_losses = {}, [], []
-        for name, view, mask, per in s_views:
-            s_point, s_scene = self._encode(self.student, view, mask=mask)
-            # point-level distillation
-            s_sample = offset2batch(s_point.offset) // per
-            s_keys = self._match_keys(s_point.origin_coord, s_sample)
-            pos = torch.searchsorted(uniq, s_keys).clamp_max(len(uniq) - 1)
-            hit = uniq[pos] == s_keys
-            if hit.any():
-                s_logits = self.student_point_head(s_point.feat[hit])
-                loss = -(targets[pos[hit]] * F.log_softmax(s_logits.float() / self.student_temp, -1)).sum(-1).mean()
-                point_losses.append(loss)
-                losses[f"point_{name}"] = loss.detach()
-                losses[f"match_{name}"] = hit.float().mean().detach()
-            # scene-level distillation: every student view vs teacher global views of the same sample
-            s_scene_logp = F.log_softmax(self.student_scene_head(s_scene).float() / self.student_temp, -1)
-            s_scene_logp = s_scene_logp.view(bsz, per, -1)
-            t_sp = t_scene_probs.view(bsz, g_per, -1)
-            terms = []
-            for i in range(per):
-                for j in range(g_per):
-                    if name == "global" and i == j:
-                        continue  # same view
-                    terms.append(-(t_sp[:, j] * s_scene_logp[:, i]).sum(-1).mean())
-            if terms:
-                scene_losses.append(torch.stack(terms).mean())
-                losses[f"scene_{name}"] = scene_losses[-1].detach()
+        # local-to-global (student local views vs teacher principal global view)
+        if self.unmask_loss_weight > 0:
+            with torch.no_grad():
+                global_point_.feat = self.teacher.unmask_head(global_feat)
+            local_point_ = self.up_cast(self.student.backbone(local_point))
+            unmask_pred_sim = self.student.unmask_head(local_point_.feat)
+            with torch.no_grad():
+                principal = global_point_.batch % self.num_global_view == 0
+                principal_batch = global_point_.batch[principal] // self.num_global_view
+                idx = self.match_neighbour(
+                    local_point_.origin_coord,
+                    local_point_.offset[self.num_local_view - 1 :: self.num_local_view],
+                    global_point_.origin_coord[principal],
+                    batch2offset(principal_batch),
+                )
+                target = self.sinkhorn_knopp(global_point_.feat[principal][idx[:, 1]], self.teacher_temp)
+            loss = self.distill_loss(target, unmask_pred_sim[idx[:, 0]], local_point_.batch[idx[:, 0]])
+            result["unmask_loss"] = loss
+            result["unmask_match"] = torch.tensor(len(idx) / len(local_point_.batch))
+            result["loss"].append(loss * self.unmask_loss_weight)
 
-        loss = 0.0
-        if point_losses:
-            loss = loss + self.point_weight * torch.stack(point_losses).mean()
-        if scene_losses:
-            loss = loss + self.scene_weight * torch.stack(scene_losses).mean()
-        losses["loss"] = loss
-        losses["mask_ratio"] = torch.tensor(ratio)
-        losses["teacher_temp"] = torch.tensor(t_temp)
-        return losses
+        result["loss"] = sum(result["loss"])
+        result["mask_ratio"] = torch.tensor(self.mask_ratio)
+        result["mask_size"] = torch.tensor(self.mask_size)
+        result["teacher_temp"] = torch.tensor(self.teacher_temp)
+        return result

@@ -1,4 +1,4 @@
-"""Self-supervised pre-training of LitePT on cached 3DEP cookies (SonataLite).
+"""Self-supervised pre-training of LitePT on cached 3DEP cookies (ForPT / Sonata recipe, src/eagle_als/ssl.py).
 
 Single GPU:
     python scripts/litePT/train_ssl.py --config scripts/litePT/configs/ssl_litept_s.py
@@ -21,10 +21,10 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.utils.data import DataLoader
 
 from eagle_als.data import CookiePoolDataset, collate_points
-from eagle_als.ssl import SonataLite
+from eagle_als.ssl import SonataLitePT
 from eagle_als.train_utils import (
-    InfiniteRandomSampler, StopFlag, all_reduce_mean, amp_dtype, cosine_lr, is_main, latest_checkpoint,
-    load_config, move_to, param_groups, save_checkpoint, seed_everything, setup_distributed, worker_init_fn,
+    InfiniteRandomSampler, StopFlag, all_reduce_mean, amp_dtype, is_main, latest_checkpoint, layerwise_param_groups,
+    load_config, lr_factor, move_to, save_checkpoint, seed_everything, setup_distributed, worker_init_fn,
 )
 
 
@@ -32,7 +32,8 @@ def build_loader(cfg, rank, world, epoch=0):
     ds = CookiePoolDataset(cfg["cache_dirs"], cfg["train_transform"], min_points=cfg["min_points"],
                            max_samples=cfg.get("max_samples"))
     sampler = InfiniteRandomSampler(ds, seed=cfg["seed"] + epoch, rank=rank, world=world)
-    per_gpu = cfg["batch_size"] // world
+    per_gpu = cfg["batch_size"] // world // cfg.get("grad_accum", 1)
+    assert per_gpu * world * cfg.get("grad_accum", 1) == cfg["batch_size"], "batch_size must divide evenly" 
     loader = DataLoader(
         ds, batch_size=per_gpu, sampler=sampler, num_workers=cfg["num_workers"], collate_fn=collate_points,
         pin_memory=True, drop_last=True, worker_init_fn=worker_init_fn,
@@ -56,13 +57,16 @@ def main():
         out_dir.mkdir(parents=True, exist_ok=True)
         (out_dir / "config.json").write_text(json.dumps(cfg, indent=2, default=str))
 
-    model = SonataLite(cfg["backbone"], **cfg["ssl"]).to(device)
-    lr = cfg["lr"] * cfg["batch_size"] / 16
-    student_params = torch.nn.ModuleList(model.student_modules())
-    opt = torch.optim.AdamW(param_groups(student_params, lr, cfg["weight_decay"], cfg["block_lr_scale"]), lr=lr)
+    model = SonataLitePT(cfg["backbone"], **cfg["ssl"]).to(device)
+    lr = cfg["lr"]
+    groups = layerwise_param_groups(model.student, lr, cfg["weight_decay"], cfg["backbone"]["enc_depths"],
+                                    cfg["layer_decay"])
+    opt = torch.optim.AdamW(groups, lr=lr, weight_decay=cfg["weight_decay"])
     dtype = amp_dtype(cfg["amp_dtype"])
     scaler = torch.amp.GradScaler("cuda", enabled=(dtype == torch.float16 and device.type == "cuda"))
-    ddp_model = DDP(model, device_ids=[local_rank], find_unused_parameters=True) if world > 1 else model
+    ddp_model = (DDP(model, device_ids=[local_rank], find_unused_parameters=cfg.get("find_unused_parameters", False))
+                 if world > 1 else model)
+    accum = cfg.get("grad_accum", 1)
 
     step, epoch = 0, 0
     ckpt = latest_checkpoint(out_dir)
@@ -82,51 +86,57 @@ def main():
         writer = SummaryWriter(out_dir / "tb")
         log_file = open(out_dir / "log.txt", "a")
         n_params = sum(p.numel() for p in model.student.backbone.parameters()) / 1e6
-        print(f"[ssl] world={world} amp={dtype} backbone params={n_params:.1f}M lr={lr:.2e} out={out_dir}", flush=True)
+        print(f"[ssl] world={world} amp={dtype} backbone params={n_params:.1f}M lr={lr:.2e} "
+              f"batch={cfg['batch_size']} (accum {accum}) out={out_dir}", flush=True)
 
     stop = StopFlag(cfg.get("max_hours"))
     total = cfg["total_steps"]
-    steps_per_epoch = cfg.get("steps_per_epoch", 2000)  # pool refresh interval
+    steps_per_epoch = cfg.get("steps_per_epoch", 2000)  # optimizer steps between pool refreshes
     model.train()
     while step < total:
         ds, loader = build_loader(cfg, rank, world, epoch)
         if is_main():
             print(f"[ssl] epoch {epoch}: pool of {len(ds)} cookies", flush=True)
         t_data, t_last = 0.0, time.time()
-        for i, batch in enumerate(loader):
-            t_data += time.time() - t_last
-            progress = step / total
+        it = iter(loader)
+        for i in range(steps_per_epoch):
+            model.set_step(step, total)
             for g in opt.param_groups:
-                g["lr"] = g["base_lr"] * cosine_lr(step, total, cfg["warmup_steps"])
-            batch = move_to(batch, device)
-            with torch.autocast(device.type, dtype=dtype, enabled=device.type == "cuda"):
-                losses = ddp_model(batch, progress=progress)
+                g["lr"] = g["base_lr"] * lr_factor(step, total, cfg["warmup_steps"], cfg["lr_schedule"])
             opt.zero_grad(set_to_none=True)
-            scaler.scale(losses["loss"]).backward()
+            for micro in range(accum):
+                t0 = time.time()
+                batch = move_to(next(it), device)
+                t_data += time.time() - t0
+                sync = micro == accum - 1 or world == 1
+                ctx = nullcontext() if sync else ddp_model.no_sync()
+                with ctx:
+                    with torch.autocast(device.type, dtype=dtype, enabled=device.type == "cuda"):
+                        losses = ddp_model(batch)
+                    scaler.scale(losses["loss"] / accum).backward()
             scaler.unscale_(opt)
-            gnorm = torch.nn.utils.clip_grad_norm_(student_params.parameters(), cfg["clip_grad"])
+            gnorm = torch.nn.utils.clip_grad_norm_(model.student.parameters(), cfg["clip_grad"])
             scaler.step(opt)
             scaler.update()
-            momentum = model.update_teacher(progress)
+            momentum = model.update_teacher()
             if cfg.get("empty_cache"):
                 torch.cuda.empty_cache()
             step += 1
 
             if step % cfg["log_every"] == 0:
-                logs = {k: all_reduce_mean(v.float()).item() for k, v in losses.items()}
+                logs = {k: all_reduce_mean(v.detach().float().to(device)).item() for k, v in losses.items()}
                 if is_main():
-                    logs.update(lr=opt.param_groups[0]["lr"], grad_norm=float(gnorm), momentum=momentum,
+                    dt = time.time() - t_last
+                    logs.update(lr=opt.param_groups[-1]["lr"], grad_norm=float(gnorm), momentum=momentum,
                                 n_points=int(batch["global_coord"].shape[0]),
+                                step_s=dt / cfg["log_every"], data_frac=t_data / max(dt, 1e-6),
                                 mem_gb=torch.cuda.max_memory_allocated() / 1e9 if device.type == "cuda" else 0)
                     for k, v in logs.items():
                         writer.add_scalar(f"train/{k}", v, step)
-                    msg = f"[ssl] step {step}/{total} " + " ".join(f"{k}={v:.4g}" for k, v in logs.items())
-                    msg += f" data_wait={t_data:.1f}s"
-                    print(msg, flush=True)
-                    log_file.write(json.dumps(dict(step=step, **logs, data_wait=t_data)) + "\n")
+                    print(f"[ssl] step {step}/{total} " + " ".join(f"{k}={v:.4g}" for k, v in logs.items()), flush=True)
+                    log_file.write(json.dumps(dict(step=step, **logs)) + "\n")
                     log_file.flush()
-                t_data = 0.0
-            done = step >= total or (i + 1) >= steps_per_epoch
+                t_data, t_last = 0.0, time.time()
             stopping = stop.should_stop() if step % 10 == 0 else False
             if is_main() and (step % cfg["ckpt_every"] == 0 or step >= total or stopping):
                 state = dict(model=model.state_dict(), optimizer=opt.state_dict(), scaler=scaler.state_dict(),
@@ -139,9 +149,8 @@ def main():
                 if is_main():
                     print("[ssl] stop requested (time limit / signal); exiting after checkpoint", flush=True)
                 return
-            if done:
+            if step >= total:
                 break
-            t_last = time.time()
         epoch += 1
     if is_main():
         print("[ssl] training complete", flush=True)

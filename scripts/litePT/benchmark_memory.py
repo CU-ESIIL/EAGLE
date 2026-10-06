@@ -23,7 +23,7 @@ import pandas as pd
 import torch
 
 from eagle_als.data import CookiePoolDataset, collate_points
-from eagle_als.train_utils import amp_dtype, load_config, param_groups
+from eagle_als.train_utils import amp_dtype, layerwise_param_groups, load_config
 
 _DS = None
 
@@ -68,11 +68,13 @@ def main():
     print(f"[bench] prepared {len(samples)} samples in {time.time() - t0:.0f}s "
           f"({(time.time() - t0) * a.workers / len(samples):.2f} s/sample/worker)", flush=True)
 
-    from eagle_als.ssl import SonataLite
+    from eagle_als.ssl import SonataLitePT
 
-    model = SonataLite(cfg["backbone"], **cfg["ssl"]).to(device)
-    student = torch.nn.ModuleList(model.student_modules())
-    opt = torch.optim.AdamW(param_groups(student, 1e-4, 0.04, cfg.get("block_lr_scale", 0.1)))
+    model = SonataLitePT(cfg["backbone"], **cfg["ssl"]).to(device)
+    model.set_step(1000, 10000)  # past warm-up: full mask ratio / size
+    student = model.student
+    opt = torch.optim.AdamW(layerwise_param_groups(student, cfg["lr"], cfg["weight_decay"],
+                                                   cfg["backbone"]["enc_depths"], cfg["layer_decay"]))
     scaler = torch.amp.GradScaler("cuda", enabled=dtype == torch.float16)
 
     rows = []
@@ -89,14 +91,14 @@ def main():
                 torch.cuda.synchronize()
                 t = time.time()
                 with torch.autocast("cuda", dtype=dtype):
-                    losses = model(batch, progress=0.5)
+                    losses = model(batch)
                 opt.zero_grad(set_to_none=True)
                 scaler.scale(losses["loss"]).backward()
                 scaler.unscale_(opt)
                 torch.nn.utils.clip_grad_norm_(student.parameters(), 3.0)
                 scaler.step(opt)
                 scaler.update()
-                model.update_teacher(0.5)
+                model.update_teacher()
                 torch.cuda.synchronize()
                 if s >= 2:
                     times.append(time.time() - t)
@@ -111,7 +113,7 @@ def main():
                    step_s=round(float(np.mean(times)), 3) if times else None,
                    samples_per_s=round(bs / float(np.mean(times)), 2) if times else None,
                    mean_points=int(np.mean(npts)) if npts else None,
-                   loss=float(losses["loss"]) if status == "ok" else None)
+                   loss=float(losses["loss"].detach()) if status == "ok" else None)
         rows.append(row)
         print("[bench]", json.dumps(row), flush=True)
         del batch

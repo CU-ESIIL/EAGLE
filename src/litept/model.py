@@ -7,6 +7,8 @@ EAGLE patches (search for "EAGLE patch"):
   - flash_attn is optional; on GPUs without flash-attn support (e.g. V100, sm_70)
     attention falls back to torch scaled_dot_product_attention over padded patches.
     Set EAGLE_ATTN=sdpa to force the fallback.
+  - LitePT(norm="ln", embedding="linear", mask_token=True) gives the ForPT / Sonata
+    pre-training variant (LayerNorm, linear stem, learnable mask token).
   - pointrope is imported from the vendored package (CUDA kernel optional,
     pure PyTorch fallback used otherwise).
 """
@@ -606,29 +608,46 @@ class Embedding(PointModule):
         embed_channels,
         norm_layer=None,
         act_layer=None,
+        mode="conv",
+        mask_token=False,
     ):
         super().__init__()
         self.in_channels = in_channels
         self.embed_channels = embed_channels
 
-        # TODO: check remove spconv
-        self.stem = PointSequential(
-            conv=spconv.SubMConv3d(
-                in_channels,
-                embed_channels,
-                kernel_size=5,
-                padding=1,
-                bias=False,
-                indice_key="stem",
+        if mode == "conv":
+            # TODO: check remove spconv
+            self.stem = PointSequential(
+                conv=spconv.SubMConv3d(
+                    in_channels,
+                    embed_channels,
+                    kernel_size=5,
+                    padding=1,
+                    bias=False,
+                    indice_key="stem",
+                )
             )
-        )
+        elif mode == "linear":  # EAGLE patch: Sonata / ForPT linear embedding
+            self.stem = PointSequential(linear=nn.Linear(in_channels, embed_channels))
+        else:
+            raise ValueError(f"unknown embedding mode {mode}")
         if norm_layer is not None:
             self.stem.add(norm_layer(embed_channels), name="norm")
         if act_layer is not None:
             self.stem.add(act_layer(), name="act")
 
+        # EAGLE patch: learnable mask token (Sonata), replaces embedded features where point.mask
+        self.mask_token = nn.Parameter(torch.zeros(1, embed_channels)) if mask_token else None
+
     def forward(self, point: Point):
         point = self.stem(point)
+        if self.mask_token is not None and "mask" in point.keys():
+            point.feat = torch.where(
+                point.mask.unsqueeze(-1),
+                self.mask_token.to(point.feat.dtype),
+                point.feat,
+            )
+            point.sparse_conv_feat = point.sparse_conv_feat.replace_feature(point.feat)
         return point
     
 class MLP(nn.Module):
@@ -788,7 +807,13 @@ class LitePT(PointModule):
         pre_norm=True,
         shuffle_orders=True,
         enc_mode=False,
+        norm="bn",
+        embedding="conv",
+        mask_token=False,
     ):
+        """EAGLE patch: norm="ln" uses LayerNorm instead of BatchNorm in the embedding and
+        pooling layers, embedding="linear" uses a linear stem instead of a sparse conv, and
+        mask_token=True adds Sonata's learnable mask token (as in ForPT / Sonata pre-training)."""
         super().__init__()
         self.num_stages = len(enc_depths)
         self.order = [order] if isinstance(order, str) else order
@@ -813,6 +838,10 @@ class LitePT(PointModule):
         # norm layers
         bn_layer = partial(nn.BatchNorm1d, eps=1e-3, momentum=0.01)
         ln_layer = nn.LayerNorm
+        if norm == "ln":  # EAGLE patch
+            bn_layer = ln_layer
+        else:
+            assert norm == "bn", f"unknown norm {norm}"
 
         # activation layers
         act_layer = nn.GELU
@@ -822,6 +851,8 @@ class LitePT(PointModule):
             embed_channels=enc_channels[0],
             norm_layer=bn_layer,
             act_layer=act_layer,
+            mode=embedding,
+            mask_token=mask_token,
         )
 
         # encoder
