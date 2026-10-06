@@ -172,3 +172,47 @@ Convert the USNVC catalog so every row includes its higher-level designations (B
 
 - Added `data_cleaning/usnvc_full_taxonomy.py`, which fills down each level and clears deeper levels at each row. It checks the result against `parent elcode`.
 - Output: `datasets/vegbank/USNVC_catalog_full_taxonomy.csv`.
+
+## 2026-10-06 - VegBank class quiz notebook
+
+### Prompt
+
+Design a notebook that shows a few example ALS tiles for a chosen classification level (e.g. Subbiome), then quizzes the user on a fresh tile from one of the shown classes. Level and number of classes configurable (default 5).
+
+### Actions
+
+- Added `scripts/3dep/vegbank_class_quiz.ipynb`. Config cell sets `LEVEL`, `N_CLASSES`, `N_EXAMPLES`, `RADIUS`, etc. It streams tiles with `load_als_cookie` (cached in `~/.cache/eagle_als_quiz`), shows 3D plotly examples per class, then runs an ipywidgets quiz with score and answer reveal. Class names for Division and below come from `USNVC_catalog_full_taxonomy.csv`.
+- Tested the loading and class-selection logic headlessly (plotly stubbed). The plotly and widget quiz cells have not been run.
+
+## 2026-10-06 - Quiz notebook: remove terrain slope
+
+### Prompt
+
+Tiles in `vegbank_class_quiz.ipynb` look very tilted (e.g. 50 m relief on a 50 m radius tile); suspected a processing error.
+
+### Actions
+
+- Checked the point clouds: not a processing error. Class-2 ground points alone span up to ~36 m across a 100 m-wide tile on steep terrain. The notebook was plotting raw elevation.
+- `vegbank_class_quiz.ipynb` now plots height above ground by default (`HEIGHT_MODE = 'above_ground'`), interpolated from ground points. `'elevation'` restores raw Z. Cache key bumped to `_v2` (old cached tiles are ignored).
+
+## 2026-10-06 - Quiz notebook: color by intensity
+
+### Prompt
+
+Add an option to color by intensity.
+
+### Actions
+
+- `vegbank_class_quiz.ipynb`: new config `COLOR_BY = 'height' | 'intensity'`. Intensity is stored in the tile cache (key bumped to `_v3`) and clipped to the 2nd-98th percentile per tile, since scales differ between sensors; no colorbar is shown in that mode.
+
+## 2026-10-06 - False-color blends of HAG, intensity, return type
+
+### Prompt
+
+Develop several false-color options that blend height above ground, return type (only / first / intermediate / last) and intensity, in a separate .py module.
+
+### Actions
+
+- Added `scripts/3dep/false_color.py` with `false_color(hag, intensity, return_type, mode)` and five variants: `hsv_return_hue`, `hsv_height_hue`, `rgb_channels`, `ternary`, `palette_shaded` (`MODES`, `DESCRIPTIONS`).
+- `vegbank_class_quiz.ipynb`: `COLOR_BY` accepts any variant, tiles now cache `ReturnType` (cache key `_v4`), and a new "Color options" cell draws one tile in every option.
+- Checked on real tiles by rendering side views with matplotlib; the plotly figures have not been run.
