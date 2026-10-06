@@ -161,3 +161,14 @@ Write higher-level project documentation in README.md: training design, how to m
 ### Actions taken
 
 - README.md: filled the empty "Project description" and added "Pre-training design", "Running pre-training", "Monitoring training" (run names, TensorBoard, metrics to watch) and "Planned experiments". Website-template sections left unchanged.
+
+## 2026-10-05 - USNVC full taxonomy
+
+### Prompt
+
+Convert the USNVC catalog so every row includes its higher-level designations (Biome through Alliance).
+
+### Actions
+
+- Added `data_cleaning/usnvc_full_taxonomy.py`, which fills down each level and clears deeper levels at each row. It checks the result against `parent elcode`.
+- Output: `datasets/vegbank/USNVC_catalog_full_taxonomy.csv`.
