@@ -3,7 +3,7 @@
     python scripts/litePT/profile_dataloader.py --config scripts/litePT/configs/ssl_litept_s.py \
         --opts "cache_dirs=['$EAGLE_SCRATCH/cache/sites']" --stages 40 --workers 1 2 4 8 --loader-samples 64
 
-Streamed shards instead of cached cookies: --opts data_mode=stream stream_dir=<producer buffer>.
+Streamed squares (data_mode="pool") are profiled with profile_pool.py instead.
 
 stages: one process, `--stages` cookies; time of np.load and of every transform (inside the view
         generator, each view transform is summed over the 6 views), plus point counts.
@@ -35,16 +35,12 @@ class Timed:
 
 
 def profile_stages(cfg, n):
-    from eagle_als.data import build_ssl_dataset
+    from eagle_als.data import CookiePoolDataset
     from eagle_als.fetch import load_cookie
 
-    ds = build_ssl_dataset(cfg)
-    stream = cfg.get("data_mode") == "stream"
-    if stream:  # load = cut a random cookie from a random shard
-        paths = [None] * n
-    else:
-        rng = np.random.default_rng(0)
-        paths = [ds.paths[i] for i in rng.choice(len(ds), min(n, len(ds)), replace=False)]
+    ds = CookiePoolDataset(cfg["cache_dirs"], cfg["train_transform"], min_points=cfg["min_points"])
+    rng = np.random.default_rng(0)
+    paths = [ds.paths[i] for i in rng.choice(len(ds), min(n, len(ds)), replace=False)]
     acc = defaultdict(float)
     tf = ds.transform.transforms
     for i, t in enumerate(tf):
@@ -57,13 +53,12 @@ def profile_stages(cfg, n):
     for k, p in enumerate(paths):
         before = dict(acc)
         t0 = time.perf_counter()
-        cookie = ds.sample_cookie()[0] if stream else load_cookie(p)[0]
+        cookie = load_cookie(p)[0]
         t_load = time.perf_counter() - t0
         n_raw = len(cookie["xyz"])
         out = ds.transform(cookie)
         t_total = time.perf_counter() - t0
-        mb = n_raw * 19 / 1e6 if stream else os.path.getsize(p) / 1e6
-        row = dict(i=k, n_points=n_raw, mb=mb, load_s=t_load, total_s=t_total,
+        row = dict(i=k, n_points=n_raw, mb=os.path.getsize(p) / 1e6, load_s=t_load, total_s=t_total,
                    n_global=int(out["global_offset"][-1]), n_local=int(out["local_offset"][-1]))
         row.update({name: acc[name] - before.get(name, 0.0) for name in acc})
         rows.append(row)
@@ -85,10 +80,10 @@ def profile_loader(cfg, workers, n_samples, batch_size):
     import torch
     from torch.utils.data import DataLoader
 
-    from eagle_als.data import build_ssl_dataset, collate_points
+    from eagle_als.data import CookiePoolDataset, collate_points
     from eagle_als.train_utils import InfiniteRandomSampler, worker_init_fn
 
-    ds = build_ssl_dataset(cfg)
+    ds = CookiePoolDataset(cfg["cache_dirs"], cfg["train_transform"], min_points=cfg["min_points"])
     rows = []
     for w in workers:
         t0 = time.perf_counter()

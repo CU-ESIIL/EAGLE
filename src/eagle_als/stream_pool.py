@@ -1,24 +1,19 @@
-"""Streaming plan A: each DataLoader worker fetches its own 500 m squares and cuts cookies from them.
-
-Alternative to the separate producer + shared buffer of eagle_als.stream (plan B); both share the
-square sampler, fetch / thinning / block sorting (stream.produce_square) and cookie cutting
-(stream.cut_cookie).
+"""Streamed pre-training data: each DataLoader worker fetches its own 500 m squares and cuts cookies.
 
 Per DataLoader worker:
-    - a fetch helper process (`python -m eagle_als.stream_pool serve`, a plain subprocess because
+    - a fetch helper process (`python -m eagle_als.squares serve`, a plain subprocess because
       DataLoader workers are daemonic and cannot start multiprocessing children) draws square i from
       the seeded SquareSampler, fetches and thins it, and writes it as a shard to the worker's
       directory on /dev/shm. A PDAL crash only kills the helper, which is restarted.
     - a pool of `pool_size` squares. Each sample is a random 100 m cookie from a random pool square.
       A square is retired after `uses_per_square` cookies once a replacement has arrived; a late
       fetch never blocks (the worker keeps cutting from its pool and the logs show the real reuse).
-Workers yield single samples (DataLoader batch_size=None, round-robin over workers), and
-RoundRobinBatches collates consecutive samples, so a batch draws from several workers' pools.
+Workers yield single samples (DataLoader batch_size=None), and RoundRobinBatches collates
+consecutive samples, so a batch draws from several workers' pools.
 
-    loader = build_pool_loader(cfg, rank, world)   # iterable of collated batches
+    _, batches = build_pool_loader(cfg, rank, world)   # endless iterable of collated batches
 """
 
-import argparse
 import ctypes
 import json
 import os
@@ -38,31 +33,10 @@ from torch.utils.data import DataLoader, IterableDataset, get_worker_info
 from litept.transform import Compose
 
 from . import transforms  # noqa: F401  (registers ALS transforms)
-from .stream import cut_cookie, produce_square, read_shard_meta
-
-REC_PREFIX = "@@square "  # marks the helper's result lines on stdout (PDAL may print there too)
+from .squares import REC_PREFIX, cut_cookie, read_shard_meta
 
 
 # ---------------- fetch helper (runs in its own process) ----------------
-def serve(out_dir, seed=0, half_size=250.0, block=50.0, max_density=12.0, timeout=None, exclude_eval=True):
-    """Read square indices from stdin, write each square as a shard into out_dir, print its record.
-
-    Exits (removing out_dir) when stdin closes, i.e. when the owning worker exits."""
-    from .stream import SquareSampler
-
-    out_dir = Path(out_dir)
-    out_dir.mkdir(parents=True, exist_ok=True)
-    sampler = SquareSampler(seed=seed, **({} if exclude_eval else dict(eval_sites=None)))
-    print(REC_PREFIX + json.dumps(dict(status="ready")), flush=True)
-    for line in sys.stdin:
-        i = int(line)
-        name = f"{i:09d}"
-        tile, lat, lon = sampler(i)
-        rec = produce_square(out_dir, name, tile, lat, lon, half_size, block, max_density, 1000, timeout, seed)
-        print(REC_PREFIX + json.dumps(rec), flush=True)
-    shutil.rmtree(out_dir, ignore_errors=True)
-
-
 def _die_with_parent():
     """preexec_fn: SIGTERM the helper when the worker that started it dies (Linux prctl)."""
     try:
@@ -82,7 +56,7 @@ class FetchHelper:
     def start(self):
         if self.restarts >= 20:
             raise RuntimeError(f"fetch helper for {self.out_dir} died {self.restarts} times")
-        args = [sys.executable, "-m", "eagle_als.stream_pool", "serve", "--dir", str(self.out_dir)]
+        args = [sys.executable, "-m", "eagle_als.squares", "serve", "--dir", str(self.out_dir)]
         for k, v in self.kw.items():
             if k == "exclude_eval":
                 args += [] if v else ["--no-exclude-eval"]
@@ -151,7 +125,7 @@ class _Square:
 
 
 class SquarePoolDataset(IterableDataset):
-    """Endless stream of transformed cookies cut from a per-worker pool of streamed squares (plan A).
+    """Endless stream of transformed cookies cut from a per-worker pool of streamed squares.
 
     Square indices are split between all workers of all ranks (stream g = rank * W + worker takes
     squares g, g + G, g + 2G, ...), so runs are reproducible in which squares they draw, though not
@@ -251,7 +225,8 @@ def _identity(x):
 class RoundRobinBatches:
     """Collate every `batch_size` consecutive samples of a batch_size=None DataLoader into one batch.
 
-    With in-order delivery the DataLoader takes samples from its workers in turn, so a batch spans
+    The DataLoader hands out samples from its workers in turn (strictly so with in_order=True, and
+    roughly so otherwise, since workers produce at similar rates), so a batch spans up to
     min(batch_size, num_workers) workers' pools."""
 
     def __init__(self, loader, batch_size):
@@ -268,40 +243,26 @@ class RoundRobinBatches:
                 buf = []
 
 
-def build_pool_loader(cfg, rank=0, world=1, tag_square=False):
-    """(dataset, iterable of per-GPU batches) for data_mode="pool" configs."""
+def build_pool_loader(cfg, rank=0, world=1, seed_offset=0, tag_square=False):
+    """(dataset, endless iterable of per-GPU batches) for data_mode="pool" configs.
+
+    `seed_offset` (the trainer passes its start step) gives a resumed run a fresh square sequence.
+    The DataLoader delivers samples as soon as any worker has one (pool_in_order=False), so a worker
+    stuck on a slow start or fetch does not hold up the others."""
     from .train_utils import worker_init_fn
 
     per_gpu = cfg["batch_size"] // world // cfg.get("grad_accum", 1)
+    assert per_gpu * world * cfg.get("grad_accum", 1) == cfg["batch_size"], "batch_size must divide evenly"
     shm_root = Path(cfg.get("pool_shm_dir") or f"/dev/shm/eagle_pool_{os.getpid()}")
     ds = SquarePoolDataset(
         cfg["train_transform"], shm_root, pool_size=cfg.get("pool_size", 8),
         uses_per_square=cfg.get("pool_uses_per_square", 24), min_pool=cfg.get("pool_min", 2),
-        min_points=cfg["min_points"], seed=cfg.get("seed", 0), rank=rank, world=world,
+        min_points=cfg["min_points"], seed=cfg.get("seed", 0) * 1_000_003 + seed_offset, rank=rank, world=world,
         log_dir=cfg.get("pool_log_dir"), tag_square=tag_square,
     )
     nw = cfg["num_workers"]
     loader = DataLoader(ds, batch_size=None, num_workers=nw, collate_fn=_identity, worker_init_fn=worker_init_fn,
                         prefetch_factor=cfg.get("pool_prefetch", 4) if nw else None,
-                        multiprocessing_context="spawn" if nw else None)
+                        multiprocessing_context="spawn" if nw else None,
+                        in_order=cfg.get("pool_in_order", False))
     return ds, RoundRobinBatches(loader, per_gpu)
-
-
-def main():
-    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    sub = p.add_subparsers(dest="cmd", required=True)
-    s = sub.add_parser("serve", help="fetch helper: square indices on stdin -> shards in --dir")
-    s.add_argument("--dir", required=True)
-    s.add_argument("--seed", type=int, default=0)
-    s.add_argument("--half-size", type=float, default=250.0)
-    s.add_argument("--block", type=float, default=50.0)
-    s.add_argument("--max-density", type=float, default=12.0)
-    s.add_argument("--timeout", type=float, default=None)
-    s.add_argument("--exclude-eval", dest="exclude_eval", action="store_true", default=True)
-    s.add_argument("--no-exclude-eval", dest="exclude_eval", action="store_false")
-    a = p.parse_args()
-    serve(a.dir, a.seed, a.half_size, a.block, a.max_density, a.timeout, a.exclude_eval)
-
-
-if __name__ == "__main__":
-    main()

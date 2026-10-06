@@ -1,4 +1,4 @@
-"""Check streamed squares against directly fetched cookies (eagle_als.stream vs eagle_als.fetch).
+"""Check streamed squares against directly fetched cookies (eagle_als.squares vs eagle_als.fetch).
 
 For N pre-training locations: fetch the 500 m square around the location (unthinned) and write it
 as a shard, cut the 100 m cookie at its center from the shard, and fetch the same cookie directly
@@ -25,7 +25,7 @@ def check_one(row, tmp):
     from scipy.spatial import cKDTree
 
     from eagle_als.fetch import fetch_cookie, fetch_square
-    from eagle_als.stream import build_shard, cut_cookie, write_shard
+    from eagle_als.squares import build_shard, cut_cookie, write_shard
 
     rec = dict(tile=row["product_name_AWS"], lat=row["lat"], lon=row["lon"])
     try:

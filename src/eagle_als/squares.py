@@ -1,29 +1,23 @@
-"""Stream 3DEP lidar into a rolling buffer of 500 m squares on node-local disk (single-node pre-training).
+"""500 m squares of 3DEP lidar for streamed pre-training (see eagle_als.stream_pool).
 
-A producer process (this module's CLI) draws squares in a seeded order, reads each with one PDAL
-query, thins it, computes HAG over the whole square and writes it as a shard. DataLoader workers
-(eagle_als.data.StreamingChunkDataset) cut random 100 m cookies from whatever shards are present.
-The producer is the only writer; it evicts the oldest shards beyond --max-shards.
-
-    python -m eagle_als.stream --buffer $LOCAL/buffer --state-dir $RUN/producer --workers 48 --max-shards 2000
+A square is read with one PDAL query (fetch.fetch_square), thinned, and written as a shard that
+DataLoader workers cut random 100 m cookies from. Squares come from a deterministic sampler:
+square i depends only on (seed, i). This module does not import torch, so the fetch helpers
+(`python -m eagle_als.squares serve`) start quickly.
 
 Shard layout (one directory per square, renamed into place when complete):
-    <buffer>/<index:09d>/points.npy   structured array SHARD_DTYPE, sorted into `block` m blocks
-    <buffer>/<index:09d>/meta.json    tile, lat, lon, epsg, half_size, block, block_offsets, timings
+    <dir>/<index:09d>/points.npy   structured array SHARD_DTYPE, sorted into `block` m blocks
+    <dir>/<index:09d>/meta.json    tile, lat, lon, epsg, half_size, block, block_offsets, timings
 x, y are relative to the square center (UTM, m); z is elevation; blocks are numbered row-major
 (by * n_blocks + bx) from the square's lower-left corner.
-
-State in --state-dir: producer_state.json (next square index, so a resubmitted job continues the
-sequence) and producer.jsonl (one record per square: status, timings, arrival and eviction times).
 """
 
 import argparse
 import json
 import os
 import shutil
-import signal
+import sys
 import time
-from collections import deque
 from pathlib import Path
 
 import numpy as np
@@ -135,14 +129,6 @@ def write_shard(buffer, name, pts, meta):
     os.rename(tmp, buffer / name)
 
 
-def list_shards(buffer):
-    """Names of complete shards (sorted = arrival order of square indices)."""
-    try:
-        return sorted(e.name for e in os.scandir(buffer) if e.is_dir() and not e.name.startswith("."))
-    except FileNotFoundError:
-        return []
-
-
 def read_shard_meta(shard_dir):
     return json.loads((Path(shard_dir) / "meta.json").read_text())
 
@@ -173,8 +159,8 @@ def cut_cookie(shard_dir, cx, cy, radius=100.0, meta=None):
     return cookie
 
 
-# ---------------- producer ----------------
-def produce_square(buffer, name, tile, lat, lon, half_size=250.0, block=50.0, max_density=12.0,
+# ---------------- fetch ----------------
+def fetch_square_shard(buffer, name, tile, lat, lon, half_size=250.0, block=50.0, max_density=12.0,
                    min_points=1000, timeout=None, seed=0):
     """Fetch, thin and write one square. Returns a status record (never raises)."""
     t0 = time.time()
@@ -205,97 +191,40 @@ def produce_square(buffer, name, tile, lat, lon, half_size=250.0, block=50.0, ma
     return rec
 
 
-def run_producer(buffer, state_dir, workers=48, max_shards=2000, seed=0, half_size=250.0, block=50.0,
-                 max_density=12.0, max_squares=None, max_hours=None, timeout=None, sampler_kw=None):
-    """Fill `buffer` with squares and keep it at <= max_shards, until stopped (SIGTERM / SIGINT,
-    max_squares, max_hours, or a file named STOP in the buffer directory)."""
-    from .cache import imap_isolated
+# ---------------- fetch helper ----------------
+REC_PREFIX = "@@square "  # marks result lines on stdout (PDAL may print there too)
 
-    buffer, state_dir = Path(buffer), Path(state_dir)
-    buffer.mkdir(parents=True, exist_ok=True)
-    state_dir.mkdir(parents=True, exist_ok=True)
-    for p in buffer.glob(".*"):  # leftovers of a previous producer
-        shutil.rmtree(p, ignore_errors=True)
-    state_file = state_dir / "producer_state.json"
-    start = json.loads(state_file.read_text())["next_index"] if state_file.exists() else 0
-    sampler = SquareSampler(seed=seed, **(sampler_kw or {}))
-    print(f"[producer] {len(sampler.names)} tiles, {sampler.n_eval_sites} evaluation sites excluded, "
-          f"starting at square {start}, {workers} workers, buffer {buffer} (max {max_shards})", flush=True)
 
-    stop = {"flag": False}
-    for s in (signal.SIGTERM, signal.SIGINT, signal.SIGUSR1):
-        signal.signal(s, lambda *_: stop.update(flag=True))
-    deadline = None if max_hours is None else time.time() + max_hours * 3600
-    end = None if max_squares is None else start + max_squares
-    next_index = {"i": start}
-
-    def jobs():
-        i = start
-        while end is None or i < end:
-            name = f"{i:09d}"
-            tile, lat, lon = sampler(i)
-            next_index["i"] = i + 1
-            yield name, (buffer, name, tile, lat, lon, half_size, block, max_density, 1000, timeout, seed)
-            i += 1
-
-    present = deque(list_shards(buffer))  # shards surviving from earlier in this job
-    log = open(state_dir / "producer.jsonl", "a")
-    t0, n_done, n_ok, n_pts = time.time(), 0, 0, 0
-    try:
-        for name, rec, crashed in imap_isolated(produce_square, jobs(), workers):
-            if crashed:
-                rec = dict(name=name, status="error", error="worker process crashed (PDAL abort)")
-            rec["arrival"] = time.time()
-            n_done += 1
-            if rec["status"] == "ok":
-                n_ok += 1
-                n_pts += rec["n_points"]
-                present.append(name)
-            evicted = []
-            while len(present) > max_shards:
-                old = present.popleft()
-                trash = buffer / f".evict-{old}"
-                try:
-                    os.rename(buffer / old, trash)  # readers that already opened it keep their mmap
-                    shutil.rmtree(trash, ignore_errors=True)
-                except FileNotFoundError:
-                    pass
-                evicted.append(old)
-            rec["evicted"] = evicted
-            log.write(json.dumps(rec) + "\n")
-            if n_done % 20 == 0:
-                log.flush()
-                state_file.write_text(json.dumps(dict(next_index=next_index["i"])))
-                dt = time.time() - t0
-                print(f"[producer] {n_done} squares ({n_ok} ok) in {dt:.0f}s: {n_ok / dt:.2f} ok squares/s, "
-                      f"{n_pts / dt / 1e6:.2f} M pts/s, buffer {len(present)}", flush=True)
-            if (stop["flag"] or (deadline and time.time() > deadline) or (buffer / "STOP").exists()):
-                print("[producer] stop requested", flush=True)
-                break
-    finally:
-        log.close()
-        state_file.write_text(json.dumps(dict(next_index=next_index["i"])))
-    dt = time.time() - t0
-    print(f"[producer] finished: {n_done} squares, {n_ok} ok, {n_ok / max(dt, 1e-9):.2f} ok squares/s", flush=True)
+def serve(out_dir, seed=0, half_size=250.0, block=50.0, max_density=12.0, timeout=None, exclude_eval=True):
+    """Fetch helper loop: read square indices from stdin, write each square as a shard into out_dir
+    and print its status record. Exits (removing out_dir) when stdin closes, i.e. when the
+    DataLoader worker that owns it exits."""
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    sampler = SquareSampler(seed=seed, **({} if exclude_eval else dict(eval_sites=None)))
+    print(REC_PREFIX + json.dumps(dict(status="ready")), flush=True)
+    for line in sys.stdin:
+        i = int(line)
+        name = f"{i:09d}"
+        tile, lat, lon = sampler(i)
+        rec = fetch_square_shard(out_dir, name, tile, lat, lon, half_size, block, max_density, 1000, timeout, seed)
+        print(REC_PREFIX + json.dumps(rec), flush=True)
+    shutil.rmtree(out_dir, ignore_errors=True)
 
 
 def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    p.add_argument("--buffer", required=True, help="shard directory (node-local disk)")
-    p.add_argument("--state-dir", required=True, help="producer state and log (persistent storage)")
-    p.add_argument("--workers", type=int, default=48)
-    p.add_argument("--max-shards", type=int, default=2000)
-    p.add_argument("--seed", type=int, default=0)
-    p.add_argument("--half-size", type=float, default=250.0)
-    p.add_argument("--block", type=float, default=50.0)
-    p.add_argument("--max-density", type=float, default=12.0, help="thin squares to this many points/m^2")
-    p.add_argument("--max-squares", type=int, default=None)
-    p.add_argument("--max-hours", type=float, default=None)
-    p.add_argument("--timeout", type=float, default=None, help="PDAL readers.ept timeout (s)")
-    p.add_argument("--no-exclude", action="store_true", help="do not exclude evaluation sites")
+    sub = p.add_subparsers(dest="cmd", required=True)
+    s = sub.add_parser("serve", help="fetch helper: square indices on stdin -> shards in --dir")
+    s.add_argument("--dir", required=True)
+    s.add_argument("--seed", type=int, default=0)
+    s.add_argument("--half-size", type=float, default=250.0)
+    s.add_argument("--block", type=float, default=50.0)
+    s.add_argument("--max-density", type=float, default=12.0, help="thin squares to this many points/m^2")
+    s.add_argument("--timeout", type=float, default=None, help="PDAL readers.ept timeout (s)")
+    s.add_argument("--no-exclude-eval", dest="exclude_eval", action="store_false", help="keep evaluation sites")
     a = p.parse_args()
-    run_producer(a.buffer, a.state_dir, a.workers, a.max_shards, a.seed, a.half_size, a.block, a.max_density,
-                 a.max_squares, a.max_hours, a.timeout, sampler_kw=dict(eval_sites=None) if a.no_exclude else None)
+    serve(a.dir, a.seed, a.half_size, a.block, a.max_density, a.timeout, a.exclude_eval)
 
 
 if __name__ == "__main__":

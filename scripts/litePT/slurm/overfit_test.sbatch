@@ -14,6 +14,6 @@ cd "${SLURM_SUBMIT_DIR:-$PWD}"
 source scripts/litePT/env.sh
 RUN=overfit_test_${SLURM_JOB_ID:-local}
 python scripts/litePT/train_ssl.py --config scripts/litePT/configs/ssl_litept_s.py --opts \
-  "cache_dirs=['$EAGLE_SCRATCH/cache/sites']" max_samples=8 batch_size=4 num_workers=7 \
+  data_mode=cache "cache_dirs=['$EAGLE_SCRATCH/cache/sites']" max_samples=8 batch_size=4 num_workers=7 \
   total_steps=1500 steps_per_epoch=1500 log_every=10 ckpt_every=100000 run_name=$RUN "$@"
 python scripts/litePT/plot_ssl_log.py "$EAGLE_SCRATCH/runs/$RUN"

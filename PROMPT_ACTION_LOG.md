@@ -124,3 +124,40 @@ Document plan A (fetch inside DataLoader workers) as the chosen streaming plan w
 
 - Job 47476010: capped reruns with a warm environment, window-only CPU, and A at 12 uses per square.
 - The trainer is not switched to plan A yet (train_ssl.py belongs to the other agent's work).
+
+## 2026-10-06 (adopt plan A, remove plan B, node-local staging)
+
+### Prompt
+
+Switch the training workflow to streaming plan A, remove the plan B code (it is in git history, commit 895bafe), update the planning document, and get ready for a full training run.
+
+### Actions taken
+
+- `src/eagle_als/stream.py` -> `squares.py` (git mv): kept the square sampler, shard format, cookie cutting and square fetch, plus the fetch-helper `serve` loop; removed the producer, eviction and shard listing. It no longer pulls in torch, so fetch helpers start fast.
+- `src/eagle_als/stream_pool.py`: uses `squares.py`; `build_pool_loader` offsets the square sequence by the start step and uses `in_order=False`.
+- Removed `StreamingChunkDataset` / `build_ssl_dataset` (data.py), `slurm/producer_sweep.sbatch`, `slurm/stream_compare.sbatch`, and the stream mode of `profile_dataloader.py`; `profile_stream_compare.py` -> `profile_pool.py` (pool only).
+- `train_ssl.py` and config: `data_mode="pool"` is the default and builds the loader once per job; `"cache"` stays for the overfit test (overfit_test.sbatch now sets it).
+- `scripts/litePT/env.sh`: `PROJ_NETWORK=OFF`. PROJ's network grid cache is one SQLite file in $HOME; fetch helpers waited on its lock over Lustre, which stalled data loading for up to an hour. Also `EAGLE_ENV_PREFIX` to use a staged environment copy.
+- New `stage_local.sh` / `pack_for_local.sh`: extract the environment (one zstd archive, `pixi_envs/eagle-litept-gpu-env.tar.zst`) and evaluation cookies (`cache/sites.tar`) onto `$LOCAL` at job start.
+- New `slurm/pretrain.sbatch`: full 8-H100 run (batch 128 = 8 GPUs x 8 x accum 2), stops cleanly 30 min before the time limit, resumable.
+- Working-notes doc: plan A marked adopted, plan B sections removed (measurements and the square fetch check kept), node-local staging and the PROJ finding recorded.
+
+### Verification
+
+- Pool loader smoke test on 8 cores: first batch 15.7 s (was 40 s), clean shutdown.
+- Staged environment from a different path: extraction 19 s, imports 7 s (torch, spconv, flash_attn, pdal), live square fetch OK.
+- 1-GPU end-to-end smoke test: job 47479028.
+
+### Open questions and follow-up
+
+- /jet home is 97% full (831 MB free).
+
+## 2026-10-06 (README project documentation)
+
+### Prompt
+
+Write higher-level project documentation in README.md: training design, how to monitor training, planned experiments.
+
+### Actions taken
+
+- README.md: filled the empty "Project description" and added "Pre-training design", "Running pre-training", "Monitoring training" (run names, TensorBoard, metrics to watch) and "Planned experiments". Website-template sections left unchanged.

@@ -1,5 +1,13 @@
 # AGENTS.md
 
+## Project
+
+Keep this working document up to date with progress, planned next steps, completed items, and open questions https://claude.ai/artifact/EFgGjrP8qF2D9DBFKSHvWR#493afc30-cbe3.mbxzwrsrb67.6263 Don't let it get stale! 
+
+
+
+## repository organization
+
 This repository is a template for ESIIL postdoctoral researchers.
 
 Guidelines for agents:

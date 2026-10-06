@@ -1,4 +1,8 @@
-"""Self-supervised pre-training of LitePT on cached 3DEP cookies (ForPT / Sonata recipe, src/eagle_als/ssl.py).
+"""Self-supervised pre-training of LitePT on 3DEP cookies (ForPT / Sonata recipe, src/eagle_als/ssl.py).
+
+Data (config `data_mode`): "pool" streams 500 m squares from 3DEP inside the DataLoader workers
+(eagle_als.stream_pool; the full-node workflow is slurm/pretrain.sbatch); "cache" reads cookies
+cached with eagle_als.cache (used by the overfit test).
 
 Single GPU:
     python scripts/litePT/train_ssl.py --config scripts/litePT/configs/ssl_litept_s.py
@@ -20,7 +24,7 @@ import torch
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.utils.data import DataLoader
 
-from eagle_als.data import build_ssl_dataset, collate_points
+from eagle_als.data import CookiePoolDataset, collate_points
 from eagle_als.ssl import SonataLitePT
 from eagle_als.train_utils import (
     InfiniteRandomSampler, StopFlag, all_reduce_mean, amp_dtype, is_main, latest_checkpoint, layerwise_param_groups,
@@ -28,8 +32,14 @@ from eagle_als.train_utils import (
 )
 
 
-def build_loader(cfg, rank, world, epoch=0):
-    ds = build_ssl_dataset(cfg)
+def build_loader(cfg, rank, world, epoch=0, start_step=0):
+    """(dataset, iterable of per-GPU batches)."""
+    if cfg.get("data_mode", "pool") == "pool":
+        from eagle_als.stream_pool import build_pool_loader
+
+        return build_pool_loader(cfg, rank, world, seed_offset=start_step)
+    ds = CookiePoolDataset(cfg["cache_dirs"], cfg["train_transform"], min_points=cfg["min_points"],
+                           max_samples=cfg.get("max_samples"))
     sampler = InfiniteRandomSampler(ds, seed=cfg["seed"] + epoch, rank=rank, world=world)
     per_gpu = cfg["batch_size"] // world // cfg.get("grad_accum", 1)
     assert per_gpu * world * cfg.get("grad_accum", 1) == cfg["batch_size"], "batch_size must divide evenly" 
@@ -52,6 +62,7 @@ def main():
     device = torch.device("cuda", local_rank) if torch.cuda.is_available() else torch.device("cpu")
     seed_everything(cfg["seed"] + rank)
     out_dir = Path(cfg["out_dir"])
+    cfg["pool_log_dir"] = cfg.get("pool_log_dir") or str(out_dir / "pool")  # per-worker square logs
     if is_main():
         out_dir.mkdir(parents=True, exist_ok=True)
         (out_dir / "config.json").write_text(json.dumps(cfg, indent=2, default=str))
@@ -90,15 +101,18 @@ def main():
 
     stop = StopFlag(cfg.get("max_hours"))
     total = cfg["total_steps"]
-    steps_per_epoch = cfg.get("steps_per_epoch", 2000)  # optimizer steps between pool refreshes
+    steps_per_epoch = cfg.get("steps_per_epoch", 2000)  # optimizer steps between checkpoints of `epoch`
+    streamed = cfg.get("data_mode", "pool") == "pool"
     model.train()
+    it = None
     while step < total:
-        ds, loader = build_loader(cfg, rank, world, epoch)
+        if it is None or not streamed:  # cached mode re-scans the cache each epoch; streaming keeps its workers
+            ds, loader = build_loader(cfg, rank, world, epoch, start_step=step)
+            it = iter(loader)
         if is_main():
-            pool = f"streamed from {cfg['stream_dir']}" if cfg.get("data_mode") == "stream" else f"pool of {len(ds)} cookies"
+            pool = "streaming squares from 3DEP" if streamed else f"pool of {len(ds)} cookies"
             print(f"[ssl] epoch {epoch}: {pool}", flush=True)
         t_data, t_last = 0.0, time.time()
-        it = iter(loader)
         for i in range(steps_per_epoch):
             model.set_step(step, total)
             for g in opt.param_groups:

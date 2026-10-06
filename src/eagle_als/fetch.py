@@ -53,7 +53,7 @@ def fetch_cookie(tile_name, lat, lon, radius=100.0, timeout=None):
 
 
 def fetch_square(tile_name, lat, lon, half_size=250.0, timeout=None):
-    """Stream a UTM-aligned square of side 2 * `half_size` m centered on lat/lon (see eagle_als.stream).
+    """Stream a UTM-aligned square of side 2 * `half_size` m centered on lat/lon (see eagle_als.squares).
 
     Same outputs as fetch_cookie; HAG is computed over the whole square. meta["half_size"] is set.
     """

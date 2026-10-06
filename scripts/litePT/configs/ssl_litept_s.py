@@ -18,17 +18,21 @@ run_name = "ssl_litept_s"
 out_dir = f"{scratch}/runs/{run_name}"  # resolved again after --opts (see train_ssl.py)
 
 # ---------------- data ----------------
-# one or more cookie caches built with eagle_als.cache (see slurm/cache_pretrain.sbatch)
-cache_dirs = [f"{scratch}/cache/pretrain_v1"]
+# "pool": each DataLoader worker streams 500 m squares from 3DEP and cuts cookies from them
+# (eagle_als.stream_pool, slurm/pretrain.sbatch); "cache": cookies cached with eagle_als.cache
+data_mode = "pool"
+cache_dirs = [f"{scratch}/cache/sites"]  # data_mode="cache" only (e.g. the overfit test)
 min_points = 2000          # skip near-empty cookies (water, data gaps)
-refresh_pool = True        # re-scan the cache every epoch, so a concurrent cache job grows the pool
-data_mode = "cache"        # "cache": cookies from cache_dirs; "stream": cookies cut from a producer's
-stream_dir = None          #   shard buffer in stream_dir (eagle_als.stream, slurm/pretrain_stream.sbatch)
-stream_usage_dir = None    # optional: workers log the shard of every sample here
+pool_size = 8              # squares held in RAM per worker (~60 MB each, on /dev/shm)
+pool_uses_per_square = 24  # cookies cut from a square before it is replaced (~3 uses per cookie area)
+pool_min = 2               # squares a worker needs before it starts yielding samples
+pool_shm_dir = None        # default /dev/shm/eagle_pool_<pid>
+pool_log_dir = None        # default <out_dir>/pool: one record per fetched / retired square
 batch_size = 128           # ForPT: total over all GPUs (samples; each = 2 global + 4 local views)
 grad_accum = 1             # micro-batches per optimizer step (per-GPU batch = batch_size / world / grad_accum)
-num_workers = 5            # per GPU (Bridges-2: 5 CPUs per V100)
-prefetch_factor = 4
+num_workers = 6            # per GPU; each pool worker also runs a fetch helper (2 processes)
+prefetch_factor = 4        # batches per worker (cache mode)
+pool_prefetch = 4          # samples per worker (pool mode)
 
 grid_size = 0.4            # voxel size (m) for the network input (ForPT: 0.05 m on dense forest scans)
 view_radius = 50.0         # global view of scale 1.0 covers a disc of this radius (m)
