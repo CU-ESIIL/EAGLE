@@ -1,0 +1,223 @@
+ecosys_code,ecosys,ecosys_lifeform,n_train,n_test,n
+7092,Southern California Coastal Scrub,Shrub,357,8,365
+9321,Southeastern Native Ruderal Forest,Tree,115,203,318
+7135,Inter-Mountain Basins Semi-Desert Grassland,Herb,0,292,292
+7105,Northern and Central California Dry-Mesic Chaparral,Shrub,209,56,265
+9301,"California Ruderal Grassland, Meadow & Scrub",Herb,208,50,258
+7304,Ozark-Ouachita Dry-Mesic Oak Forest,Tree,173,78,251
+7368,Southern Piedmont Dry Oak-(Pine) Forest,Tree,19,228,247
+7114,California Lower Montane Blue Oak-Foothill Pine Woodland and Savanna,Tree,197,4,201
+7043,Mediterranean California Mixed Evergreen Forest,Tree,25,164,189
+9350,"Polynesian Ruderal Lowland Shrubland, Grassland & Savanna",Shrub,0,161,161
+7370,Appalachian (Hemlock)-Northern Hardwood Forest,Tree,21,128,149
+9323,Southeastern Ruderal Grassland & Shrubland,Shrub,89,58,147
+7113,California Coastal Live Oak Woodland and Savanna,Tree,117,24,141
+7369,Central Appalachian Dry Oak-Pine Forest,Tree,23,117,140
+9315,Northern & Central Native Ruderal Forest,Tree,51,85,136
+9004,Inter-Mountain Basins Active and Stabilized Dune,Sparse,0,135,135
+9207,Ozark-Ouachita Riparian,Tree,89,37,126
+7668,Temperate Pacific Tidal Salt and Brackish Marsh,Herb,70,55,125
+7367,Ozark-Ouachita Shortleaf Pine-Oak Forest and Woodland,Tree,81,40,121
+7327,East Gulf Coastal Plain Northern Loess Bluff Forest,Tree,103,0,103
+7015,California Coastal Redwood Forest,Tree,39,53,92
+9272,Temperate Pacific Subalpine-Montane Wet Meadow,Herb,32,60,92
+7081,Inter-Mountain Basins Mixed Salt Desert Scrub,Shrub,4,87,91
+7110,Southern California Dry-Mesic Chaparral,Shrub,86,3,89
+9302,Californian Ruderal Forest,Tree,49,32,81
+7128,Northern California Coastal Scrub,Shrub,30,49,79
+7097,California Mesic Chaparral,Shrub,65,6,71
+7127,Inter-Mountain Basins Semi-Desert Shrub-Steppe,Shrub,0,70,70
+7401,Central Interior Highlands Calcareous Glade and Barrens,Tree,37,32,69
+9059,Central Appalachian River Floodplain,Tree,19,46,65
+0,None,N/A,42,18,60
+9314,Northern & Central Native Ruderal Flooded & Swamp Forest,Tree,51,5,56
+7177,California Coastal Closed-Cone Conifer Forest and Woodland,Tree,53,0,53
+9129,Mediterranean California Foothill and Lower Montane Riparian Woodland and Shrubland,Tree,52,1,53
+7131,California Northern Coastal Grassland,Herb,42,10,52
+9120,Laurentian-Acadian Wet Meadow-Shrub Swamp,Herb,8,41,49
+7126,Inter-Mountain Basins Montane Sagebrush Steppe,Shrub,0,41,41
+7488,Eastern Great Plains Wet Meadow-Prairie-Marsh,Herb,18,21,39
+7121,Apacherian-Chihuahuan Semi-Desert Grassland and Steppe,Shrub,0,37,37
+4466,Western North American Boreal Mesic White Spruce-Hardwood Forest,Tree,36,0,36
+9179,North-Central Interior Floodplain,Tree,7,29,36
+7363,Central Interior Highlands Dry Acidic Glade and Barrens,Tree,8,28,36
+7377,Central Appalachian Pine-Oak Rocky Woodland,Tree,5,28,33
+7019,Great Basin Pinyon-Juniper Woodland,Tree,3,27,30
+7334,Ozark-Ouachita Mesic Hardwood Forest,Tree,19,11,30
+7132,Central Mixedgrass Prairie,Herb,29,1,30
+9173,North-Central Appalachian Acidic Cliff and Talus,Sparse,1,28,29
+9033,Inter-Mountain Basins Volcanic Rock and Cinder Land,Sparse,7,22,29
+7133,Chihuahuan Sandy Plains Semi-Desert Grassland,Herb,0,29,29
+7383,Edwards Plateau Limestone Savanna and Woodland,Tree,29,0,29
+9320,Southeastern Native Ruderal Flooded & Swamp Forest,Tree,27,2,29
+7382,Southern Atlantic Coastal Plain Maritime Forest,Tree,27,0,27
+7129,California Central Valley and Southern Coastal Grassland,Herb,20,7,27
+9312,Northeastern North American Temperate Forest Plantation,Tree,2,25,27
+7468,Atlantic Coastal Plain Streamhead Seepage Swamp-Pocosin-Baygall,Tree,10,17,27
+9092,Edwards Plateau Floodplain Terrace,Tree,26,0,26
+7096,California Maritime Chaparral,Shrub,18,8,26
+7302,Laurentian-Acadian Northern Hardwood Forest,Tree,13,13,26
+9348,Polynesian Ruderal Dry Woodland & Scrub,Tree,1,24,25
+7662,Temperate Pacific Freshwater Emergent Marsh,Herb,24,1,25
+7184,California Annual Grassland,Herb,13,11,24
+9325,Great Plains Comanchian Ruderal Grassland & Shrubland,Shrub,24,0,24
+9317,Northern & Central Ruderal Meadow & Shrubland,Shrub,20,4,24
+7423,Southeastern Great Plains Tallgrass Prairie,Herb,19,4,23
+7321,South-Central Interior Mesophytic Forest,Tree,21,1,22
+7137,Mediterranean California Subalpine Meadow,Herb,13,9,22
+4605,Micronesian Lowland Limestone Forest,Tree,0,22,22
+7308,Crosstimbers Oak Forest and Woodland,Tree,12,8,20
+9001,Colorado Plateau Mixed Bedrock Canyon and Tableland,Sparse,0,20,20
+9213,Sierra Nevada Cliff and Canyon,Sparse,16,4,20
+7053,Northern Rocky Mountain Ponderosa Pine Woodland and Savanna,Tree,0,19,19
+9003,Great Basin Foothill and Lower Montane Riparian Woodland and Shrubland,Tree,0,19,19
+7084,North Pacific Montane Shrubland,Shrub,0,19,19
+9026,Western Great Plains Floodplain,Tree,17,0,17
+7364,Ozark-Ouachita Dry Oak Woodland,Tree,7,10,17
+9231,Southeastern Great Plains Riparian Forest,Tree,5,12,17
+7076,Chihuahuan Stabilized Coppice Dune and Sand Flat Scrub,Shrub,0,16,16
+9199,Northern California Claypan Vernal Pool,Herb,3,12,15
+9259,Southern Piedmont Small Floodplain and Riparian Forest,Tree,14,0,14
+7316,Southern Piedmont Mesic Forest,Tree,5,9,14
+4421,Alaskan Pacific Mountain Hemlock Forest and Subalpine Woodland ,Tree,13,1,14
+9307,Great Basin & Intermountain Introduced Annual and Biennial Forbland,Herb,0,14,14
+7303,Northeastern Interior Dry-Mesic Oak Forest,Tree,1,12,13
+9329,"Western North American Ruderal Wet Shrubland, Meadow & Marsh",Shrub,7,6,13
+9008,Inter-Mountain Basins Playa,Sparse,0,12,12
+7149,Western Great Plains Shortgrass Prairie,Herb,0,12,12
+7178,North Pacific Hypermaritime Western Red-cedar-Western Hemlock Forest,Tree,12,0,12
+7064,Colorado Plateau Mixed Low Sagebrush Shrubland,Shrub,0,11,11
+9177,North-Central Interior and Appalachian Acidic Peatland,Tree,4,7,11
+9130,Mediterranean California Northern Coastal Dune,Sparse,11,0,11
+9060,Central Appalachian Stream and Riparian,Tree,0,10,10
+7118,Southern California Oak Woodland and Savanna,Tree,8,2,10
+9011,North American Arid West Emergent Marsh,Herb,1,9,10
+9322,Southeastern North American Temperate Forest Plantation,Tree,3,7,10
+7045,Northern Rocky Mountain Dry-Mesic Montane Mixed Conifer Forest,Tree,0,10,10
+7062,Inter-Mountain Basins Curl-leaf Mountain-mahogany Woodland and Shrubland,Tree,0,10,10
+7041,North Pacific Mountain Hemlock Forest,Tree,0,9,9
+7124,Columbia Plateau Low Sagebrush Steppe,Shrub,0,9,9
+9133,Mediterranean California Serpentine Foothill and Lower Montane Riparian Woodland and Seep,Tree,4,5,9
+7099,California Xeric Serpentine Chaparral,Shrub,5,4,9
+7450,Southern Atlantic Coastal Plain Wet Pine Savanna and Flatwoods,Tree,9,0,9
+9085,East Gulf Coastal Plain Small Stream and River Floodplain Forest,Tree,9,0,9
+9141,Mississippi River Riparian Forest,Tree,9,0,9
+4425,Alaskan Pacific-Aleutian Alder-Salmonberry-Copperbush Shrubland,Shrub,7,1,8
+7094,Western Great Plains Sandhill Steppe,Shrub,6,2,8
+7112,California Central Valley Mixed Oak Savanna,Tree,8,0,8
+7366,Laurentian-Acadian Pine-Hemlock-Hardwood Forest,Tree,1,6,7
+7374,Acadian-Appalachian Montane Spruce-Fir Forest,Tree,5,2,7
+4464,Western North American Boreal Mesic Bluejoint-Forb Meadow,Herb,6,1,7
+7029,Mediterranean California Mixed Oak Woodland,Tree,2,5,7
+7315,Southern Appalachian Oak Forest,Tree,0,7,7
+7151,California Central Valley Riparian Woodland and Shrubland,Tree,2,5,7
+9126,Mediterranean California Coastal Bluff,Sparse,6,1,7
+7125,Inter-Mountain Basins Big Sagebrush Steppe,Shrub,0,7,7
+7108,Sonora-Mojave Semi-Desert Chaparral,Shrub,5,2,7
+7106,Northern Rocky Mountain Montane-Foothill Deciduous Shrubland,Shrub,0,7,7
+4424,Alaskan Pacific Wet Low Shrubland & Floodplain Wetland,Shrub,7,0,7
+9309,Great Basin & Intermountain Introduced Perennial Grassland and Forbland,Herb,0,7,7
+7079,Great Basin Xeric Mixed Sagebrush Shrubland,Shrub,0,7,7
+9319,Southeastern Exotic Ruderal Forest,Tree,7,0,7
+7030,Mediterranean California Lower Montane Black Oak-Conifer Forest and Woodland,Tree,0,7,7
+9066,Central Interior Highlands and Appalachian Sinkhole and Depression Pond,Tree,2,4,6
+7501,Southern Atlantic Coastal Plain Nonriverine Swamp and Wet Hardwood Forest,Tree,0,6,6
+9308,Great Basin & Intermountain Introduced Annual Grassland,Herb,3,3,6
+9351,Polynesian Ruderal Scrub & Herb Coastal Strand,Shrub,0,6,6
+7016,Colorado Plateau Pinyon-Juniper Woodland,Tree,0,6,6
+7421,Central Tallgrass Prairie,Herb,6,0,6
+4611,Micronesian Swamp Forest,Tree,0,6,6
+7426,Southern Atlantic Coastal Plain Dune and Maritime Grassland,Herb,6,0,6
+7086,Rocky Mountain Lower Montane-Foothill Shrubland,Shrub,0,6,6
+9334,Tropical Open Lawn,Herb,0,5,5
+9145,North American Warm Desert Active and Stabilized Dune,Sparse,0,5,5
+9009,Inter-Mountain Basins Shale Badland,Sparse,0,5,5
+7119,Southern Rocky Mountain Juniper Woodland and Savanna,Tree,0,4,4
+7130,California Mesic Serpentine Grassland,Herb,1,3,4
+9134,Mediterranean California Southern Coastal Dune,Sparse,4,0,4
+7011,Rocky Mountain Aspen Forest and Woodland,Tree,0,4,4
+9022,Rocky Mountain Subalpine-Montane Riparian Woodland,Tree,0,4,4
+7111,Western Great Plains Mesquite Woodland and Shrubland,Shrub,4,0,4
+7352,Southern Appalachian Montane Pine Forest and Woodland,Tree,0,4,4
+9245,Southern Atlantic Coastal Plain Tidal Wooded Swamp,Tree,4,0,4
+4471,Western North American Boreal Shrub Swamp,Shrub,4,0,4
+7034,Mediterranean California Mesic Serpentine Woodland and Chaparral,Tree,4,0,4
+9311,North Pacific Maritime Coastal Sand Dune Ruderal Scrub & Herb Vegetation,Shrub,4,0,4
+7733,North Pacific Montane Massive Bedrock-Cliff and Talus,Sparse,1,3,4
+9316,Northern & Central Plains Ruderal & Planted Grassland & Shrubland,Shrub,4,0,4
+4603,Micronesian Dry Coastal Strand,Sparse,0,3,3
+9336,Great Basin & Intermountain Ruderal Shrubland,Shrub,2,1,3
+4609,Micronesian Ravine and Riparian Forest,Tree,0,3,3
+9318,Northern & Central Ruderal Wet Meadow & Marsh,Herb,0,3,3
+7115,Inter-Mountain Basins Juniper Savanna,Tree,0,3,3
+9178,North-Central Interior and Appalachian Rich Swamp,Tree,2,1,3
+7103,Great Basin Semi-Desert Chaparral,Shrub,0,3,3
+7080,Inter-Mountain Basins Big Sagebrush Shrubland,Shrub,0,3,3
+9239,Southern Atlantic Coastal Plain Depression Pondshore,Herb,3,0,3
+9243,Southern Atlantic Coastal Plain Salt and Brackish Tidal Marsh,Herb,3,0,3
+4423,Alaskan Pacific Sitka Spruce Forest and Beach Ridge,Tree,3,0,3
+7148,Western Great Plains Sand Prairie,Herb,3,0,3
+7449,Central Atlantic Coastal Plain Wet Longleaf Pine Savanna and Flatwoods,Tree,3,0,3
+9041,Atlantic Coastal Plain Blackwater Stream Floodplain Forest,Tree,3,0,3
+7357,Southern Coastal Plain Mesic Slope Forest,Tree,3,0,3
+4407,Alaska Sub-boreal and Maritime Alpine Mesic Herbaceous Meadow,Herb,2,1,3
+4467,Western North American Boreal Mesic-Wet Black Spruce Forest and Woodland,Tree,3,0,3
+9025,Western Great Plains Closed Depression Wetland,Herb,3,0,3
+7014,Central and Southern California Mixed Evergreen Woodland,Tree,2,0,2
+9019,Rocky Mountain Lower Montane-Foothill Riparian Woodland and Shrubland,Tree,0,2,2
+4463,Western North American Boreal Mesic Birch-Aspen Forest,Tree,2,0,2
+9062,Central California Coast Ranges Cliff and Canyon,Sparse,2,0,2
+7831,Hawai'i Dry-Site Lava Flow,Sparse,2,0,2
+9313,Northern & Central Exotic Ruderal Forest,Tree,2,0,2
+7821,Hawai'i Montane-Subalpine Dry Shrubland,Shrub,2,0,2
+7056,Rocky Mountain Subalpine Mesic-Wet Spruce-Fir Forest and Woodland,Tree,0,2,2
+4413,Alaskan Pacific Floodplain Forest and Shrubland,Tree,2,0,2
+9324,Southeastern Ruderal Wet Meadow & Marsh,Herb,2,0,2
+9327,Interior West Ruderal Riparian Forest & Scrub,Tree,0,2,2
+9328,Interior Western North American Temperate Ruderal Grassland & Shrubland,Shrub,1,1,2
+9338,Rocky Mountain Ruderal Forest,Tree,0,2,2
+4412,Alaskan Pacific Alpine-Subalpine Dwarf-shrubland & Heath,Shrub,1,1,2
+9223,South-Central Interior Large Floodplain,Tree,2,0,2
+7460,Southern Coastal Plain Nonriverine Cypress Dome,Tree,2,0,2
+4427,Alaskan Pacific-Aleutian Fen and Wet Meadow,Herb,2,0,2
+7329,East Gulf Coastal Plain Southern Loess Bluff Forest,Tree,2,0,2
+9154,North American Warm Desert Wash,Tree,0,2,2
+4461,Western North American Boreal Freshwater Emergent Marsh,Herb,2,0,2
+7123,Columbia Plateau Steppe and Grassland,Herb,0,2,2
+9139,Mississippi River High Floodplain (Bottomland) Forest,Tree,2,0,2
+7138,North Pacific Montane Grassland,Herb,2,0,2
+7008,North Pacific Oak Woodland,Tree,0,2,2
+7146,Southern Rocky Mountain Montane-Subalpine Grassland,Herb,0,2,2
+7489,Floridian Highlands Freshwater Marsh,Herb,1,0,1
+7373,Acadian Low-Elevation Spruce-Fir-Hardwood Forest,Tree,1,0,1
+7145,Rocky Mountain Subalpine-Montane Mesic Meadow,Herb,0,1,1
+4465,Western North American Boreal Mesic Scrub Birch-Willow Shrubland,Shrub,1,0,1
+7027,Mediterranean California Dry-Mesic Mixed Conifer Forest and Woodland,Tree,0,1,1
+7309,Southern Appalachian Northern Hardwood Forest,Tree,0,1,1
+7031,California Montane Jeffrey Pine-(Ponderosa Pine) Woodland,Tree,0,1,1
+7051,Southern Rocky Mountain Dry-Mesic Montane Mixed Conifer Forest and Woodland,Tree,0,1,1
+4417,Alaskan Pacific Maritime Mesic Herbaceous Meadow,Herb,1,0,1
+7055,Rocky Mountain Subalpine Dry-Mesic Spruce-Fir Forest and Woodland,Tree,0,1,1
+9050,Atlantic Coastal Plain Small Blackwater River Floodplain Forest,Tree,1,0,1
+9110,Klamath-Siskiyou Cliff and Outcrop,Sparse,0,1,1
+7519,East-Central Texas Plains Post Oak Savanna and Woodland,Tree,1,0,1
+7061,Inter-Mountain Basins Aspen-Mixed Conifer Forest and Woodland,Tree,0,1,1
+7020,Inter-Mountain Basins Subalpine Limber-Bristlecone Pine Woodland,Tree,0,1,1
+9047,Atlantic Coastal Plain Indian River Lagoon Tidal Marsh,Herb,1,0,1
+9224,South-Central Interior Small Stream and Riparian,Tree,0,1,1
+9230,Southeastern Great Plains Floodplain Forest,Tree,0,1,1
+9021,Rocky Mountain Subalpine-Montane Riparian Shrubland,Shrub,0,1,1
+9235,Southern Appalachian Montane Cliff and Talus,Sparse,0,1,1
+7347,Atlantic Coastal Plain Upland Longleaf Pine Woodland,Tree,1,0,1
+9180,North-Central Interior Freshwater Marsh,Herb,1,0,1
+9248,Southern Coastal Plain Hydric Hammock,Tree,1,0,1
+9250,Southern Coastal Plain Oak Dome and Hammock,Tree,1,0,1
+9028,Western Great Plains Riparian,Tree,1,0,1
+9288,Northeastern Interior Calcareous Oak Forest,Tree,0,1,1
+4477,Western North American Boreal Wet Meadow,Herb,1,0,1
+7098,California Montane Woodland and Chaparral,Shrub,1,0,1
+7018,East Cascades Mesic Montane Mixed-Conifer Forest and Woodland,Tree,0,1,1
+7825,Hawai'i Dry Cliff,Sparse,1,0,1
+7824,Hawai'i Alpine Dwarf-Shrubland,Shrub,1,0,1
+7082,Mojave Mid-Elevation Mixed Desert Scrub,Shrub,1,0,1
+7190,Cultivated Crops and Irrigated Agriculture,Herb,1,0,1

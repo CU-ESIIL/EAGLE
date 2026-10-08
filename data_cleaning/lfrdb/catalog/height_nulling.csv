@@ -1,0 +1,4 @@
+column,rule,n_values_nulled
+tree_height_m,> 120.0 m set to null,0
+shrub_height_m,> 20.0 m set to null,0
+herb_height_m,> 10.0 m set to null,0

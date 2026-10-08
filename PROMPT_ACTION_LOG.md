@@ -292,3 +292,30 @@ Assess whether raw NPS VMI plot data can give a geo-referenced area per plot (Ge
 
 - Assessed whether raw VMI plot data can give a georeferenced footprint per plot. Result: no (area/shape on ~40% of events; point-vs-center/corner undocumented; rectangle azimuth ~5%), so the unified format stays a parquet with area/shape columns.
 - Documented the existing `plot_shape`, `plot_area_m2`, `plot_equiv_radius_m`, `plot_area_basis`, `plot_dims_flag`, `plot_azimuth_deg`, `gps_error_m` columns in `datasets/NPS_VMI/README.md`, and corrected the plot-size concern in `DATASET_CONCERNS.md` and its generator `06_status_and_concerns.py`.
+
+## 2026-10-08 - LFRDB habitat-type evaluation dataset (GPS plots matched to ALS)
+
+### Prompt
+
+Ingest the public LANDFIRE Reference Database into datasets/raw and document how and when it was obtained; filter for GPS-based coordinates with enough decimals; match to ALS product and year with the helper functions and keep records within +/-3 years; plot summaries of community types and structure variables; drop records missing the primary evaluation column; make a 50% test holdout; export a parquet like the BBS, butterfly and OFO examples; write a dataset README.
+
+### Actions
+
+- Explored the public LFRDB first: coordinates are not rounded in general (about 97% of plots have 5+ decimals), but the 6,266 plots from sources flagged "YES, plot locations excluded" have 3 or fewer decimals while 95% of them are flagged GPS, so `LocMeth = G` alone is not a sufficient filter. The data dictionary's "nearest 100 seconds" wording looks like a typo.
+- Added `data_cleaning/lfrdb/` (`01_download.py` to `05_finalize_eval.py`, README, `catalog/`). Downloaded nine regional `.accdb` files (2.1 GB) to `datasets/raw/LFRDB/` (gitignored) on 2026-10-08, with a provenance log (URL, UTC time, Last-Modified, sha256) in `catalog/download_log.csv`.
+- Filters (539,373 -> 6,742 plots): valid coordinates, GPS, 5+ decimals, `field visit` type (added beyond the request: drops aerial, helicopter, photo-interpreted and remote visits), visit year, 3DEP coverage via `get_nearest_year_product`, collection year within +/-3 years (the big drop, since plots are mostly from about 2003), non-missing and non-`Unclassified` `ecosys` label.
+- Wrote `datasets/LFRDB_eval/lfrdb_eval.parquet` (primary label `ecosys`; cover regression columns; ALS columns; `test_split` by 1-degree blocks, 50.1% test), `ecosys_split_counts.csv`, six figures and `README.md`.
+- Caveats noted in the README: only 18 of 222 classes have 20+ plots in both splits; heights are almost always null; plot size is unknown; no point-cloud streaming check was run; 68% of rows are NPS plots.
+
+## 2026-10-08 - NLCD land-cover evaluation task for lidar representations
+
+### Prompt
+
+Develop a simple evaluation task for lidar representations using NLCD classes as the target, preferably from manually verified points rather than modeled NLCD; table of target, coordinate and matching ALS product, with the label year matching the ALS collection year. Follow-ups: match column names of other datasets, more classes the better plus a coarser level, CONUS, stream 3DEP only to check availability without saving anything, and keep only rows where the label year equals the 3DEP collection year (widen to +/- 1 year only if under 1k rows).
+
+### Actions
+
+- Used the NLCD 2021 accuracy-assessment reference points (3,245 CONUS 30 m pixels, analyst-interpreted, primary + alternate Level II labels for 2016, 2019, 2021 with imagery dates); raw files in `datasets/raw/NLCD_AA2021/` (gitignored).
+- `scripts/nlcd_eval/01_build_table.py` matches each point to the nearest-year 3DEP product (`product_name_AWS`, `collection_year_AWS`, `year_diff_AWS`, `als_site_id`, `test_split` as in other datasets), keeps `year_diff_AWS == 0` (1,089 rows, 16 classes + Level I column), and flags a class-balanced subset (988 rows, max 100 per class, max 10 per product).
+- `scripts/nlcd_eval/02_check_streaming.py` streamed a 50 m crop for 1,006 rows including every balanced row (nothing cached): 956 ok, 49 empty, 1 transient S3 error; resumable, appends results (an uncaught PDAL error killed the first version before it saved).
+- Wrote `datasets/NLCD_eval/` (parquet, status csv, README). Caveats: only 3,245 reference points exist so most classes have under 100; perennial ice/snow has 1 point.
