@@ -27,8 +27,12 @@ Join species to events with `event_key`.
 | `year` | survey year (null if missing or implausible) |
 | `lat_wgs84`, `lon_wgs84` | decimal degrees; reprojected from NAD83/WGS84 UTM or taken from lat/lon fields. Repairs are listed in `qa_flags` |
 | `location_accuracy_flag` | `as_recorded`, `repaired` (zone/axis/sign fixed), `suspect_outside_park` (more than 0.25 deg from the IRMA park box) or `missing` (null coordinates). It does **not** express GPS precision (raw GPS error is in the source tables) |
+| `plot_shape`, `plot_area_m2`, `plot_equiv_radius_m`, `plot_area_basis`, `plot_dims_flag` | harmonized plot shape (`circle`, `square`, `rectangle`, `transect`, `point`, `other`, `unknown`) and area from radius, diameter, side or length x width. `plot_area_m2` is null where dimensions are missing (~60% of events, all v3 AA points); `plot_dims_flag` is `ok`, `no_usable_dimensions` or `implausible_dimension_ignored`. Raw inputs kept as `shape_raw`, `dim_radius`, `dim_len`, `dim_wid`, `dim_diam` |
+| `plot_azimuth_deg`, `gps_error_m` | plot long-axis azimuth (rarely recorded; 0 / placeholders nulled) and the source's GPS error in meters |
 | `nvc_code`, `nvc_code_source` | the assigned code and where it came from: `final_classification`, `aa_field_call` (AA mapper's first call, lower confidence) or `name_match_to_catalog` |
 | `nvc_resolved`, `nvc_level`, `nvc_common_name`, `nvc_macrogroup`, `nvc_group`, `nvc_division` | catalog resolution and roll-up to coarser NVC levels; null when `nvc_resolved` is false (park-local, provisional or retired codes) |
 | `community_name_source` | `nvc_catalog`, `nvc_catalog(aa_field_call)` or `source_classified_name` |
+
+**No plot polygons.** The sources do not say whether the coordinate is the plot center or a corner, and rectangle orientation is almost never recorded, so the unified file is a parquet of points with area/shape columns rather than a GeoPackage of footprints. Circles with `plot_area_m2` could be buffered from `plot_equiv_radius_m` (assuming the point is the center).
 
 Typical filter for labeled, trustworthy points: `community_name.notna() & location_accuracy_flag.isin(['as_recorded','repaired'])`. Add `nvc_code_source != 'aa_field_call'` to drop the lower-confidence AA calls, and use `nvc_macrogroup` / `nvc_group` for coarse classes.

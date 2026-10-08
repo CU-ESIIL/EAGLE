@@ -281,3 +281,14 @@ Ingest community assignments for any datasets where they are provided, and make 
 - Added `community_name`, `freeform_community_name`, `year`, `lat_wgs84`, `lon_wgs84`, `location_accuracy_flag` (first columns); renamed `lon`/`lat`. `coords.py` now treats UTM zones outside 1-60 as missing.
 - Updated both READMEs and `DATASET_CONCERNS.md` (per-park label coverage and sources).
 - Caveats: park-local, provisional (CEPP/CEPS) and retired CEGL codes do not resolve; AA field calls are lower confidence (`nvc_code_source = aa_field_call`).
+
+## 2026-10-08 - NPS VMI plot geometry assessment
+
+### Prompt
+
+Assess whether raw NPS VMI plot data can give a geo-referenced area per plot (GeoPackage), else add area/shape columns to the unified parquet; then update the docs only.
+
+### Actions
+
+- Assessed whether raw VMI plot data can give a georeferenced footprint per plot. Result: no (area/shape on ~40% of events; point-vs-center/corner undocumented; rectangle azimuth ~5%), so the unified format stays a parquet with area/shape columns.
+- Documented the existing `plot_shape`, `plot_area_m2`, `plot_equiv_radius_m`, `plot_area_basis`, `plot_dims_flag`, `plot_azimuth_deg`, `gps_error_m` columns in `datasets/NPS_VMI/README.md`, and corrected the plot-size concern in `DATASET_CONCERNS.md` and its generator `06_status_and_concerns.py`.
