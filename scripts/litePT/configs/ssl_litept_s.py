@@ -29,8 +29,11 @@ pool_min = 2               # squares a worker needs before it starts yielding sa
 pool_shm_dir = None        # default /dev/shm/eagle_pool_<pid>
 pool_log_dir = None        # default <out_dir>/pool: one record per fetched / retired square
 batch_size = 128           # ForPT: total over all GPUs (samples; each = 2 global + 4 local views)
-grad_accum = 1             # micro-batches per optimizer step (per-GPU batch = batch_size / world / grad_accum)
-num_workers = 6            # per GPU; each pool worker also runs a fetch helper (2 processes)
+max_batch_per_gpu = 8      # samples per GPU per micro-batch on an H100 (16 runs out of memory)
+grad_accum = "auto"        # micro-batches per optimizer step; "auto": fewest with <= max_batch_per_gpu per GPU
+                           # (8 GPUs: 2, 2 GPUs: 8, 1 GPU: 16), so batch_size stays the same on any GPU count
+num_workers = "auto"       # per GPU; "auto": from the CPU cores per GPU (pool mode: each worker also runs a
+                           # fetch helper, so (cores - 1) // 2; 6 on a full 104-core 8-GPU node)
 prefetch_factor = 4        # batches per worker (cache mode)
 pool_prefetch = 4          # samples per worker (pool mode)
 
@@ -125,18 +128,42 @@ ssl = dict(
     match_max_r=6.4,          # Sonata 0.32 m x20
     up_cast_level=2,
     grid_size=grid_size,
+    sinkhorn_cookies=128,     # cookies per Sinkhorn normalization over all GPUs (ForPT batch), via a
+                              # Vernata-style memory bank of recent cookies on each GPU; 0 = micro-batch only
+    sinkhorn_points_per_cookie=2048,  # target points queued per cookie (weighted up to its full mass)
 )
 
 # ---------------- optimization (ForPT) ----------------
 total_steps = 50_000
-lr = 0.001                 # constant (ForPT); no batch-size scaling
-lr_schedule = "constant"   # "constant" (ForPT) or "onecycle" (Sonata: pct_start 0.05, cosine)
-warmup_steps = 0
+lr = 0.001                 # ForPT; no batch-size scaling
+lr_schedule = "constant"   # "constant" (ForPT, after warmup), "cosine" (decay after warmup) or "onecycle" (Sonata)
+warmup_steps = 2_500       # linear warmup from 0 over the first 5% of training, like Sonata and the
+                           # teacher-temperature / mask warmups; the overfit tests fitted better with one
 layer_decay = 0.9          # layer-wise lr decay over encoder blocks (enc{e}.block{b})
 weight_decay = 1e-4        # ForPT (Sonata: 0.04 -> 0.2 cosine)
 clip_grad = 3.0            # Sonata
 amp_dtype = "auto"         # bf16 on Ampere/Hopper (Sonata), fp16 + GradScaler on V100
 empty_cache = False
+
+# ---------------- validation tasks on the frozen teacher encoder (eagle_als.evaluation) ----------------
+# run on rank 0 every eval_every steps and at step 0 of a fresh run (random-init baseline); headline
+# metrics in tensorboard eval/<name>/*, per-class scores in eval_<name>/*. Each entry: dict(type=, name=,
+# ...); type "classification" (eagle_als.probe) takes table=, cache_dir=, label_col=, id_col="als_site_id",
+# split_col=None (-> 5-fold CV), query=None, probes=("linear", "knn"). Empty list: no evaluation.
+def _cache_dir(name):
+    """The node-local copy staged by stage_local.sh when the job has one, else the cache on /ocean."""
+    local = os.path.join(os.environ.get("EAGLE_LOCAL_CACHE", ""), name)
+    return local if os.environ.get("EAGLE_LOCAL_CACHE") and os.path.isdir(local) else f"{scratch}/cache/{name}"
+
+
+eval_tasks = [
+    # NLCD 2021 reference land cover (datasets/NLCD_eval/README.md): 16 Level II classes, class-balanced
+    # subset (<= 100 per class), spatial hold-out by 1-degree blocks; perennial ice/snow (1 row) is dropped
+    dict(type="classification", name="nlcd", table="datasets/NLCD_eval/nlcd_lidar_eval.parquet",
+         cache_dir=_cache_dir("nlcd"), label_col="nlcd_class", split_col="test_split", query="balanced_subset"),
+]
+eval_every = 1000
+eval_knn_k = 20
 
 # ---------------- logging / checkpoints ----------------
 log_every = 20

@@ -34,6 +34,7 @@ EVAL_SITES = [
     ("datasets/BBS/BBS_train_test_als_available.parquet", "Latitude", "Longitude"),
     ("datasets/butterflies/species_observations_als_available.parquet", "lat", "lon"),
     ("datasets/OFO_trees/plots_w_als_als_available.parquet", "plot_lat", "plot_lon"),
+    ("datasets/NLCD_eval/nlcd_lidar_eval.parquet", "lat", "lon"),  # in-training validation task (since 2026-10-08)
 ]
 
 

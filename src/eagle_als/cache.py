@@ -1,6 +1,6 @@
 """Build a local cache of ALS cookies for a table of sites (parallel + resumable).
 
-Usage (see scripts/litePT/README.md):
+Usage (see src/eagle_als/README.md):
 
     python -m eagle_als.cache --sites sites.parquet --out $EAGLE_SCRATCH/cache/<name> \
         --id-col site_id --lat-col lat --lon-col lon --tile-col product_name_AWS \

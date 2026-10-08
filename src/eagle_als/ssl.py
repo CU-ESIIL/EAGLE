@@ -13,6 +13,11 @@ ForPT states explicitly. Both losses are point-level:
   the teacher's principal global view.
 * teacher targets are Sinkhorn-Knopp normalized prototype scores; features are up-cast through
   `up_cast_level` pooling stages before the heads (OnlineCluster).
+* Sinkhorn memory bank (Vernata / SwAV queue): each normalization spans `sinkhorn_cookies` cookies
+  over all GPUs, whatever the GPU count and accumulation. Each GPU queues the teacher head embeddings
+  of recent cookies (`sinkhorn_points_per_cookie` sampled target points each, weighted so a queued
+  cookie carries the same Sinkhorn mass as a current one) and re-scores them with the current
+  prototypes. With gradient accumulation the queue is mostly the rest of the same optimizer step.
 
 ALS-specific choices kept on purpose (see scripts/litePT/README.md): 0.4 m grid, larger masks
 (xy columns of `mask_size` m instead of 3D cubes when `mask_dims=2`), extra lidar input channels,
@@ -78,11 +83,13 @@ class OnlineCluster(nn.Module):
             if m.bias is not None:
                 nn.init.constant_(m.bias, 0)
 
-    def forward(self, feat):
+    def embed(self, feat):
         feat = self.mlp(feat)
         eps = 1e-6 if feat.dtype == torch.float16 else 1e-12
-        feat = F.normalize(feat, dim=-1, p=2, eps=eps)
-        return self.prototype(feat)
+        return F.normalize(feat, dim=-1, p=2, eps=eps)
+
+    def forward(self, feat):
+        return self.prototype(self.embed(feat))
 
 
 def build_backbone(cfg, **overrides):
@@ -123,6 +130,8 @@ class SonataLitePT(nn.Module):
         match_max_r=6.4,
         up_cast_level=2,
         grid_size=0.4,
+        sinkhorn_cookies=0,
+        sinkhorn_points_per_cookie=2048,
     ):
         super().__init__()
         assert num_global_view == 2, "roll mask loss (ForPT cross-view pairs) needs exactly two global views"
@@ -141,6 +150,8 @@ class SonataLitePT(nn.Module):
         self.match_max_r = match_max_r
         self.up_cast_level = up_cast_level
         self.grid_size = grid_size
+        self.sk_cookies, self.sk_points = sinkhorn_cookies, sinkhorn_points_per_cookie
+        self.queues = {}  # head -> dict(emb (cookies, points, C), weight (cookies, points), pos, filled); not saved
         self.set_step(0, 1)
 
         head = lambda: OnlineCluster(head_in_channels, head_hidden_channels, head_embed_channels, head_num_prototypes)
@@ -180,25 +191,87 @@ class SonataLitePT(nn.Module):
     # ---------------- Sonata components ----------------
     @staticmethod
     @torch.no_grad()
-    def sinkhorn_knopp(feat, temp, num_iter=3):
-        feat = feat.float()
-        q = torch.exp(feat / temp).t()
-        n = torch.tensor([q.shape[1]], device=q.device, dtype=torch.float)
+    def sinkhorn_knopp(feat, temp, num_iter=3, extra=None):
+        """Sinkhorn targets for `feat` (points x prototypes). `extra` = (scores, weights) of queued points
+        that join the normalization with column mass `weights` (current points: 1); only the targets
+        of `feat` are returned. Without `extra` this is Sonata's Sinkhorn-Knopp."""
+        m = len(feat)
+        if extra is None:
+            q, w = feat.to(torch.float32, copy=True), None
+        else:
+            # one float32 buffer and in-place ops: with a queue this matrix is several GB
+            q = torch.empty(m + len(extra[0]), feat.shape[1], device=feat.device, dtype=torch.float32)
+            q[:m], q[m:] = feat, extra[0]
+            w = torch.cat([torch.ones(m, device=feat.device), extra[1].float()])
+        q = q.div_(temp).exp_().t()
+        if w is not None:
+            q.mul_(w)
+        n = w.sum().reshape(1) if w is not None else torch.tensor([q.shape[1]], device=q.device, dtype=torch.float)
         if world_size() > 1:
             dist.all_reduce(n)
         k = q.shape[0]
         sum_q = q.sum()
         if world_size() > 1:
             dist.all_reduce(sum_q)
-        q = q / sum_q
+        q.div_(sum_q)
         for _ in range(num_iter):
             q_row_sum = q.sum(dim=1, keepdim=True)
             if world_size() > 1:
                 dist.all_reduce(q_row_sum)
-            q = q / q_row_sum / k
-            q = q / q.sum(dim=0, keepdim=True) / n
-        q *= n
-        return q.t()
+            q.div_(q_row_sum).div_(k)
+            q.div_(q.sum(dim=0, keepdim=True))
+            q.div_(n) if w is None else q.mul_(w / n)
+        q.mul_(n)
+        return q.t() if extra is None else q[:, :m].t().clone()  # clone frees the queue columns
+
+    # ---------------- Sinkhorn memory bank ----------------
+    @torch.no_grad()
+    def queue_scores(self, name, head):
+        """(scores, weights) of head `name`'s queued embeddings under the current prototypes, or None."""
+        qu = self.queues.get(name)
+        if qu is None or qu["filled"] == 0:
+            return None
+        w = qu["weight"][: qu["filled"]].flatten()
+        keep = w > 0
+        emb = qu["emb"][: qu["filled"]].flatten(0, 1)[keep]
+        return head.prototype(emb.to(head.prototype.weight.dtype)), w[keep]
+
+    @torch.no_grad()
+    def push_queue(self, name, emb, sample):
+        """Queue up to sk_points random target rows per cookie (`emb`: teacher head embeddings of the
+        rows a loss used, `sample`: their cookie index in this micro-batch), each weighted by
+        rows / sampled so a queued cookie keeps the Sinkhorn mass it had as a current one."""
+        if not (self.training and self.sk_cookies > 0) or len(emb) == 0:
+            return
+        n_cookies, p = int(sample.max()) + 1, self.sk_points
+        if name not in self.queues:  # sized once: per-GPU share of sk_cookies minus the micro-batch
+            size = max(0, -(-self.sk_cookies // world_size()) - n_cookies)
+            self.queues[name] = dict(emb=emb.new_zeros(size, p, emb.shape[1]), weight=emb.new_zeros(size, p, dtype=torch.float32),
+                                     pos=0, filled=0, size=size, batch=n_cookies)
+        qu = self.queues[name]
+        if qu["size"] == 0:
+            return
+        order = torch.randperm(len(emb), device=emb.device)
+        s_sorted, perm = torch.sort(sample[order], stable=True)
+        order = order[perm]
+        counts = torch.bincount(sample, minlength=n_cookies)
+        rank = torch.arange(len(order), device=emb.device) - (torch.cumsum(counts, 0) - counts)[s_sorted]
+        keep = rank < p
+        rows, cookie, slot = order[keep], s_sorted[keep], rank[keep]
+        new_emb = emb.new_zeros(n_cookies, p, emb.shape[1])
+        new_w = torch.zeros(n_cookies, p, device=emb.device)
+        new_emb[cookie, slot] = emb[rows]
+        new_w[cookie, slot] = (counts.float() / counts.clamp(max=p).clamp(min=1).float())[cookie]
+        new_emb, new_w = new_emb[-qu["size"]:], new_w[-qu["size"]:]
+        idx = (qu["pos"] + torch.arange(len(new_emb), device=emb.device)) % qu["size"]
+        qu["emb"][idx], qu["weight"][idx] = new_emb, new_w
+        qu["pos"] = (qu["pos"] + len(new_emb)) % qu["size"]
+        qu["filled"] = min(qu["filled"] + len(new_emb), qu["size"])
+
+    def sinkhorn_cookies_now(self, name="mask"):
+        """Cookies over all GPUs in the latest normalization of head `name` (current + queued)."""
+        qu = self.queues.get(name)
+        return None if qu is None else (qu["filled"] + qu["batch"]) * world_size()
 
     @torch.no_grad()
     def generate_mask(self, coord, offset):
@@ -276,8 +349,13 @@ class SonataLitePT(nn.Module):
         kl = (target * (torch.log(target.clamp_min(1e-12)) - logp)).sum(-1).mean()
         used = torch.unique(target.argmax(-1)).numel()
         agree = (target.argmax(-1) == logp.argmax(-1)).float().mean()
+        # soft usage: perplexity of the batch-mean target (4096 = every prototype gets equal mass)
+        mean_t = target.mean(0)
+        soft_used = torch.exp(-(mean_t * torch.log(mean_t.clamp_min(1e-12))).sum())
         return dict(target_entropy=t_ent, pred_entropy=p_ent, mask_kl=kl,
-                    protos_used=torch.tensor(float(used)), argmax_agree=agree)
+                    protos_used=torch.tensor(float(used)), argmax_agree=agree, protos_soft_used=soft_used,
+                    target_max=target.max(-1).values.mean(),
+                    student_protos_used=torch.tensor(float(torch.unique(logp.argmax(-1)).numel())))
 
     # ---------------- forward ----------------
     def forward(self, data_dict):
@@ -311,13 +389,17 @@ class SonataLitePT(nn.Module):
 
         # masked-to-global (aligned + rolled pairs)
         with torch.no_grad():
-            global_point_.feat = self.teacher.mask_head(global_feat)
+            mask_emb = self.teacher.mask_head.embed(global_feat)
+            global_point_.feat = self.teacher.mask_head.prototype(mask_emb)
+            mask_push = None
+            mask_queue = self.queue_scores("mask", self.teacher.mask_head)
         mask_global_point_ = self.up_cast(self.student.backbone(mask_global_point))
         mask_pred_sim = self.student.mask_head(mask_global_point_.feat)
         if self.mask_loss_weight > 0:
             idx = self.match_neighbour(mask_global_point_.origin_coord, mask_global_point_.offset,
                                        global_point_.origin_coord, global_point_.offset)
-            target = self.sinkhorn_knopp(global_point_.feat[idx[:, 1]], self.teacher_temp)
+            target = self.sinkhorn_knopp(global_point_.feat[idx[:, 1]], self.teacher_temp, extra=mask_queue)
+            mask_push = (mask_emb[idx[:, 1]], mask_global_point_.batch[idx[:, 0]] // self.num_global_view)
             loss = self.distill_loss(target, mask_pred_sim[idx[:, 0]], mask_global_point_.batch[idx[:, 0]])
             result.update(self.diagnostics(target, mask_pred_sim[idx[:, 0]]))
             result["mask_loss"] = loss
@@ -327,7 +409,7 @@ class SonataLitePT(nn.Module):
             roll_global_point_ = self.roll_point(global_point_)
             idx = self.match_neighbour(mask_global_point_.origin_coord, mask_global_point_.offset,
                                        roll_global_point_.origin_coord, roll_global_point_.offset)
-            target = self.sinkhorn_knopp(roll_global_point_.feat[idx[:, 1]], self.teacher_temp)
+            target = self.sinkhorn_knopp(roll_global_point_.feat[idx[:, 1]], self.teacher_temp, extra=mask_queue)
             loss = self.distill_loss(target, mask_pred_sim[idx[:, 0]], mask_global_point_.batch[idx[:, 0]])
             result["roll_mask_loss"] = loss
             result["roll_match"] = torch.tensor(len(idx) / len(mask_global_point_.batch))
@@ -336,7 +418,9 @@ class SonataLitePT(nn.Module):
         # local-to-global (student local views vs teacher principal global view)
         if self.unmask_loss_weight > 0:
             with torch.no_grad():
-                global_point_.feat = self.teacher.unmask_head(global_feat)
+                unmask_emb = self.teacher.unmask_head.embed(global_feat)
+                global_point_.feat = self.teacher.unmask_head.prototype(unmask_emb)
+                unmask_queue = self.queue_scores("unmask", self.teacher.unmask_head)
             local_point_ = self.up_cast(self.student.backbone(local_point))
             unmask_pred_sim = self.student.unmask_head(local_point_.feat)
             with torch.no_grad():
@@ -348,12 +432,19 @@ class SonataLitePT(nn.Module):
                     global_point_.origin_coord[principal],
                     batch2offset(principal_batch),
                 )
-                target = self.sinkhorn_knopp(global_point_.feat[principal][idx[:, 1]], self.teacher_temp)
+                target = self.sinkhorn_knopp(global_point_.feat[principal][idx[:, 1]], self.teacher_temp,
+                                             extra=unmask_queue)
+                self.push_queue("unmask", unmask_emb[principal][idx[:, 1]],
+                                local_point_.batch[idx[:, 0]] // self.num_local_view)
             loss = self.distill_loss(target, unmask_pred_sim[idx[:, 0]], local_point_.batch[idx[:, 0]])
             result["unmask_loss"] = loss
             result["unmask_match"] = torch.tensor(len(idx) / len(local_point_.batch))
             result["loss"].append(loss * self.unmask_loss_weight)
 
+        if mask_push is not None:  # after use, so the current points are not counted twice
+            self.push_queue("mask", *mask_push)
+        if self.sinkhorn_cookies_now() is not None:
+            result["sk_cookies"] = torch.tensor(float(self.sinkhorn_cookies_now()))
         result["loss"] = sum(result["loss"])
         result["mask_ratio"] = torch.tensor(self.mask_ratio)
         result["mask_size"] = torch.tensor(self.mask_size)

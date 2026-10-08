@@ -34,6 +34,28 @@ def load_config(path, opts=()):
     return cfg
 
 
+def resolve_batching(cfg, world):
+    """Fill in grad_accum="auto" and num_workers="auto" for the GPUs and CPUs this job has, so the same
+    config keeps its global batch_size on 1, 2 or 8 GPUs. Returns (per-GPU micro-batch, grad_accum)."""
+    batch = cfg["batch_size"]
+    if batch % world:
+        raise ValueError(f"batch_size {batch} does not split evenly over {world} GPUs")
+    if cfg.get("grad_accum", 1) == "auto":
+        accum = -(-batch // (world * cfg.get("max_batch_per_gpu", 8)))  # ceil
+        while batch % (world * accum):  # ends at batch // world at the latest
+            accum += 1
+        cfg["grad_accum"] = accum
+    accum = cfg["grad_accum"]
+    if batch % (world * accum):
+        raise ValueError(f"batch_size {batch} does not split evenly over {world} GPUs x grad_accum {accum}")
+    if cfg.get("num_workers") == "auto":
+        # cores this process may use (the slurm allocation), shared by the training processes on this node
+        cores = len(os.sched_getaffinity(0)) // int(os.environ.get("LOCAL_WORLD_SIZE", 1))
+        procs_per_worker = 2 if cfg.get("data_mode", "pool") == "pool" else 1  # worker + fetch helper
+        cfg["num_workers"] = max(1, (cores - 1) // procs_per_worker)  # one core for the training process
+    return batch // world // accum, accum
+
+
 # ---------------- distributed ----------------
 def setup_distributed():
     """Init torch.distributed from torchrun env vars. Returns (rank, local_rank, world_size)."""

@@ -18,8 +18,9 @@ of the LitePT-S encoder (`src/eagle_als/ssl.py`). A student network learns to ma
 exponential-moving-average teacher across 2 global and 4 local views of each cookie, with columns of
 the global views masked out. Inputs are 8 channels per point (xyz, height above ground, intensity
 rank, return features) on a 0.4 m grid. Augmentations include thinning to 2–12 points/m², which
-simulates the range of 3DEP quality levels. `scripts/litePT/configs/ssl_litept_s.py` holds every
-setting.
+simulates the range of 3DEP quality levels. The learning rate (1e-3, AdamW with layer-wise decay)
+warms up linearly over the first 2,500 steps (5%) and then stays constant, as in ForPT.
+`scripts/litePT/configs/ssl_litept_s.py` holds every setting.
 
 **Data: streamed, not cached.** Training draws on all of 3DEP rather than a fixed dataset:
 
@@ -56,16 +57,27 @@ All commands run from the repository root on Bridges-2.
 # full run: one 8-H100 node, batch 128 (8 per GPU x 2 accumulation steps), up to 48 h
 sbatch scripts/litePT/slurm/pretrain.sbatch
 
-# choose the run name (default ssl_s_pool_v1); extra arguments override config values
-RUN_NAME=ssl_s_pool_v2 sbatch scripts/litePT/slurm/pretrain.sbatch total_steps=80000
+# choose the run name (default ssl_s_pool_v1); arguments are config overrides (key=value)
+sbatch scripts/litePT/slurm/pretrain.sbatch run_name=ssl_s_pool_v2 total_steps=80000
+
+# 2 H100s on GPU-shared (shorter queue): same batch 128, as 8 per GPU x 8 accumulation steps
+sbatch -p GPU-shared --gpus=h100-80:2 --cpus-per-task=26 scripts/litePT/slurm/pretrain.sbatch run_name=ssl_s_2gpu
 
 # 1-GPU smoke test
-RUN_NAME=ssl_s_test BATCH=16 sbatch -p GPU-shared --gpus=h100-80:1 --cpus-per-task=12 -t 1:00:00 \
-    scripts/litePT/slurm/pretrain.sbatch total_steps=200 log_every=10
+sbatch -p GPU-shared --gpus=h100-80:1 --cpus-per-task=13 -t 1:00:00 scripts/litePT/slurm/pretrain.sbatch \
+    run_name=ssl_s_test batch_size=16 total_steps=200 log_every=10
 ```
 
-A run stops itself with a checkpoint 30 minutes before the job's time limit. Resubmitting the same
-command (same `RUN_NAME`) resumes from the latest checkpoint and draws new squares.
+The same script runs on any number of GPUs. `train_ssl.py` keeps the global `batch_size` and works out
+the gradient accumulation (at most `max_batch_per_gpu` = 8 samples per GPU per micro-batch) and the
+DataLoader workers per GPU (from the CPU cores per GPU) for the job it is in, so the training recipe
+is unchanged; only the time per step changes (about 13 s on 1 GPU). On GPU-shared, ask for 13 CPUs per
+GPU, the full-node share (104 cores for 8 GPUs). `batch_size` must divide by the number of GPUs.
+
+Pass settings as arguments, not environment variables: exported variables do not reach the job on
+Bridges-2. A run stops itself with a checkpoint 30 minutes before the job's time limit.
+Resubmitting the same command (same `run_name`) resumes from the latest checkpoint and draws new
+squares.
 
 Everything for a run is written to `$EAGLE_SCRATCH/runs/<run_name>/`
 (`$EAGLE_SCRATCH` = `/ocean/projects/bio260075p/sammlapp/eagle`):
@@ -83,7 +95,7 @@ The slurm log is `$EAGLE_SCRATCH/logs/eagle-pretrain-<jobid>.out`.
 
 ## Monitoring training
 
-**Finding the run name.** It is the `RUN_NAME` you submitted with (default `ssl_s_pool_v1`). The
+**Finding the run name.** It is the `run_name=` you submitted with (default `ssl_s_pool_v1`). The
 slurm log also prints it on the line starting `[pretrain] run`:
 
 ```bash
@@ -98,20 +110,50 @@ ls $EAGLE_SCRATCH/runs/          # all runs
 - Terminal: `source scripts/litePT/env.sh && tensorboard --logdir $EAGLE_SCRATCH/runs --port 6006`,
   then forward port 6006.
 
-**What to watch.**
+**What to watch.** `scripts/litePT/TENSORBOARD.md` explains every curve. It is also shown in each
+run's TensorBoard **Text** tab. The short version:
 
 | Metric | Healthy | Warning sign |
 | --- | --- | --- |
-| `loss` | starts near ln(4096) ≈ 8.3 and falls | flat, or NaN |
-| `mask_kl` | falls (the student is learning the teacher's targets) | flat |
-| `target_entropy`, `protos_used` (of 4096) | stay well above 0 | dropping toward 0: collapse onto a few outputs |
-| `argmax_agree` | rises | stuck near 0 |
-| `data_frac` | near 0 | above ~0.2: GPUs are waiting for data (more workers, or larger `pool_uses_per_square`) |
-| `step_s` | steady | slowly rising |
-| `mem_gb` | well under 80 | close to 80: out-of-memory risk |
+| `eval/*` validation probes (e.g. `eval/nlcd/linear_f1`) | rise above the step-0 (random init) value | flat: the encoder is not learning anything useful for the labels |
+| `loss` = `target_entropy` + `mask_kl` | starts near ln(4096) ≈ 8.3, falls, then flattens (normal) | NaN, or rising after the warmups end |
+| `mask_kl` | falls slowly (the student is learning the teacher's targets) | rising |
+| `protos_used`, `student_protos_used` (of 4096) | stable, hundreds to thousands | dropping toward a few: collapse (confirm with `check_embeddings.py`) |
+| `grad_norm` | O(0.1–1) | → 0 (collapse), or often above `clip_grad` |
+| `data_frac` | near 0 | above ~0.2: GPUs are waiting for data |
+| `mem_gb` (peak since last log), `mem_max_gb` (peak since start) | well under 80; `mem_max_gb` steps up on rare large batches | close to 80: out-of-memory risk |
+
+A flat loss is not a reason to stop a run. The loss cannot fall below `target_entropy`, and the
+teacher-temperature warmup raises that floor. Judge runs on the probes.
 
 Without TensorBoard: `tail -f $EAGLE_SCRATCH/logs/eagle-pretrain-<jobid>.out`, or
 `python scripts/litePT/plot_ssl_log.py $EAGLE_SCRATCH/runs/<run_name>` for a PNG of the curves.
+
+**Validation tasks during training.** Every `eval_every` steps (default 1000), and once at step 0 for
+the random-initialisation baseline, rank 0 runs the tasks listed in `eval_tasks` on the frozen
+teacher encoder (`src/eagle_als/evaluation.py`); the other GPUs wait. The default task is `nlcd`:
+NLCD 2021 reference land cover (`datasets/NLCD_eval/README.md`), 15 Level II classes in the
+class-balanced subset, scored on a spatial hold-out (1-degree blocks). Its cookies are cached in
+`$EAGLE_SCRATCH/cache/nlcd` and copied to node-local disk by the slurm job.
+
+A `classification` task (`src/eagle_als/probe.py`) is a cookie cache (`python -m eagle_als.cache`) plus
+a table with one labeled row per cookie:
+
+```python
+eval_tasks = [dict(type="classification", name="nlcd", table="datasets/NLCD_eval/nlcd_lidar_eval.parquet",
+                   cache_dir=_cache_dir("nlcd"), label_col="nlcd_class",
+                   split_col="test_split",       # train/test values or bool (True = test); omit for 5-fold CV
+                   query="balanced_subset",      # optional pandas row filter
+                   probes=("linear", "knn"))]    # optional, default both
+```
+
+`id_col` (default `als_site_id`) is the cookie's id in the cache. Classes with fewer than 5 cached
+cookies are dropped. Rank 0 embeds every cookie (one fixed view: 8 pts/m², central 50 m disc, no
+augmentation, mean of the up-cast point features) and fits logistic regression and cosine kNN. In
+TensorBoard, `eval/<name>/` holds balanced accuracy and macro F1 of each probe, and `eval_<name>/`
+holds the F1 of each class. Keep a task to roughly 2,000 cookies or fewer. Its sites must be listed in
+`squares.EVAL_SITES`, so pre-training never sees them. To add a new kind of task, subclass `EvalTask`
+and register it (see the docstring of `evaluation.py`).
 
 ## Planned experiments
 

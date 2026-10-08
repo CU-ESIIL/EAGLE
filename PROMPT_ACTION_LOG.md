@@ -319,3 +319,75 @@ Develop a simple evaluation task for lidar representations using NLCD classes as
 - `scripts/nlcd_eval/01_build_table.py` matches each point to the nearest-year 3DEP product (`product_name_AWS`, `collection_year_AWS`, `year_diff_AWS`, `als_site_id`, `test_split` as in other datasets), keeps `year_diff_AWS == 0` (1,089 rows, 16 classes + Level I column), and flags a class-balanced subset (988 rows, max 100 per class, max 10 per product).
 - `scripts/nlcd_eval/02_check_streaming.py` streamed a 50 m crop for 1,006 rows including every balanced row (nothing cached): 956 ok, 49 empty, 1 transient S3 error; resumable, appends results (an uncaught PDAL error killed the first version before it saved).
 - Wrote `datasets/NLCD_eval/` (parquet, status csv, README). Caveats: only 3,245 reference points exist so most classes have under 100; perennial ice/snow has 1 point.
+
+## 2026-10-06 (eagle_als package README)
+
+### Actions taken
+
+- Added `src/eagle_als/README.md`: module map, per-module purpose and entry points, cookie / shard / sample formats, conventions (coordinates, HAG, crash isolation, evaluation-site exclusion, PROJ offline), and how to add transforms or datasets.
+- `cache.py` docstring now points to that README (it referenced a non-existent `scripts/litePT/README.md`).
+
+## 2026-10-06 (pretrain smoke test)
+
+### Verification
+
+- Job 47479028 (1 H100 on w004, 12 CPUs): staging to /local worked (environment 16 s, evaluation cookies 207 s); 220 steps of batch 128 (8 x accum 16) at ~13 s/step, data_frac ~0.06; clean timed stop with checkpoint; 1,184 squares fetched (69 empty, 2 errors), retired after a median 24 cookies.
+- Exported RUN_NAME/BATCH did not reach the job, so it ran as ssl_s_pool_v1; its output was moved to runs/ssl_s_pool_smoke_47479028. `pretrain.sbatch` now reads run_name= and batch_size= from its arguments; README updated.
+
+## 2026-10-06 (learning-rate warmup)
+
+### Actions taken
+
+- `configs/ssl_litept_s.py`: `warmup_steps = 2_500` (linear from 0 over the first 5% of 50k steps, then constant 1e-3). Previously there was no learning-rate warmup. The overfit test with a 100-step warmup (job 47450794) reached loss 7.59 vs 7.80 without (job 47450403).
+- README: noted the schedule.
+
+## 2026-10-06 (TensorBoard in VS Code)
+
+### Actions taken
+
+- Root `pixi.toml`: `tensorboard` and `torch-tb-profiler` (conda-forge) for VS Code's TensorBoard integration; removed a duplicate PyPI entry for `torch-tb-profiler`.
+
+### Verification
+
+- VS Code's own probe (`pixi run ... get_output_via_markers.py`) returns tensorboard 2.21.0 and torch_tb_profiler 0.4.3, which meet its requirements (>= 2.4.1, >= 0.2.0); TensorBoard served the smoke-test run's scalars from this environment.
+- Root cause of VS Code's "TensorBoard is required" prompt: pixi printed a warning on stderr about its repodata cache being on a network filesystem ($HOME), and VS Code treated it as a failed probe. Added `~/.pixi/config.toml` with `[cache] repodata = "/tmp/pixi-cache-sammlapp/repodata"`; VS Code's probe now has empty stderr.
+
+## 2026-10-07 (pre-training on any number of GPUs)
+
+### Actions taken
+
+- The 8-H100 job was waiting in the GPU queue (Priority), so pre-training now adapts to the GPUs and CPUs a job gets, for 1-2 GPU runs on GPU-shared.
+- `configs/ssl_litept_s.py`: `grad_accum = "auto"`, `num_workers = "auto"`, new `max_batch_per_gpu = 8`.
+- `train_utils.resolve_batching` (called from `train_ssl.py`): keeps the global `batch_size`; grad_accum = fewest micro-batches with at most 8 samples per GPU (8 GPUs: 2, 2 GPUs: 8, 1 GPU: 16); workers per GPU = (cores per GPU - 1) // 2 in pool mode (6 on a full node, as before). Explicit values still override. Clear error when batch_size does not split over the GPUs.
+- `slurm/pretrain.sbatch`: no longer computes grad_accum; usage lines for 2 GPUs (`--cpus-per-task=26`) and 1 GPU (13 CPUs per GPU). README updated.
+
+### Verification
+
+- Resolver checked with the config for 8 / 2 / 1 GPUs (104 / 26 / 13 cores), 1 GPU with batch_size=16, an explicit grad_accum, cache mode with explicit num_workers, and 3 GPUs (error). `bash -n` on the sbatch. Not yet run on GPUs.
+
+## 2026-10-08 (reading the ssl_s_2gpu curves; probe evaluation during training)
+
+### Prompt
+
+User asked how to interpret the TensorBoard curves of `ssl_s_2gpu` (loss flat after ~2k steps, `mem_gb` stepping up every hour or two), whether to lower the mask ratio and size, and to prepare a periodic classification probe on a fixed labeled eval set.
+
+### Findings (ssl_s_2gpu, 2 H100s, steps 0-3780; last checkpoint step 3000)
+
+- `loss` = `target_entropy` + `mask_kl`. The drop from 8.1 to 6.7 is almost all `target_entropy` (7.67 to 6.4); `mask_kl` stays at 0.25-0.33 and drifts down slowly (0.31 at steps 1500-2500, 0.26 at 3000-3800).
+- The small loss rise at steps 1750-2500 matches the rise in `target_entropy` from the teacher-temperature ramp (0.04 to 0.07). `mask_kl` did not rise when the mask ramp ended, and `unmask_loss` (local views, never masked) flattened at the same time, so harder masking is not what flattened the loss.
+- `mem_gb` was `max_memory_allocated()` since the job started, so it can only step up (on rare large batches, up to ~510k points against a ~310k median). It has been flat at 51.3 GB since step 2300. Not a leak.
+- The run predates the Sinkhorn memory bank (no `sinkhorn_cookies` in its config).
+
+### Actions taken
+
+- New `scripts/litePT/TENSORBOARD.md`: how to read every logged metric. `train_ssl.py` writes it to each run's TensorBoard Text tab; also added to `ssl_s_2gpu/tb` as a separate event file.
+- README "What to watch" table revised (flat loss is expected; judge runs on probes) and linked to the guide; new "Probe evaluation during training" paragraph.
+- `train_ssl.py`: `mem_gb` is now the peak since the previous log line, plus new `mem_max_gb` (peak since the job started).
+- New `src/eagle_als/probe.py`: fixed labeled cookie sets (table + cookie cache), one deterministic view per cookie prepared at startup, mean-pooled up-cast teacher features, logistic regression + cosine kNN (balanced accuracy, macro F1; train/test split column or 5-fold CV).
+- `train_ssl.py`: with `eval_sets` in the config, rank 0 runs the probes every `eval_every` steps (default 1000) and at step 0 of a fresh run; the other ranks wait at a barrier. Logged as `eval/<set>/*`. Config keys `eval_sets = []`, `eval_every`, `eval_knn_k`.
+- `check_embeddings.py` now imports `eval_transform` from `eagle_als.probe`.
+
+### Verification
+
+- 1-GPU smoke job 48795262 (cache mode, 40 steps, a 24-cookie dummy set with 3 cyclic labels): probes ran at steps 0, 20 and 40 (34 s at step 0 including CUDA warm-up, under 1 s after); `eval/*` scalars, `mem_gb` / `mem_max_gb` and the `guide` text appear in TensorBoard; training continued in train mode. Test run and label file deleted afterwards.
+- On the command line, `eval_sets` needs dict literals (`{'name': ...}`), not `dict(...)`.
