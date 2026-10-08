@@ -216,3 +216,68 @@ Develop several false-color options that blend height above ground, return type 
 - Added `scripts/3dep/false_color.py` with `false_color(hag, intensity, return_type, mode)` and five variants: `hsv_return_hue`, `hsv_height_hue`, `rgb_channels`, `ternary`, `palette_shaded` (`MODES`, `DESCRIPTIONS`).
 - `vegbank_class_quiz.ipynb`: `COLOR_BY` accepts any variant, tiles now cache `ReturnType` (cache key `_v4`), and a new "Color options" cell draws one tile in every option.
 - Checked on real tiles by rendering side views with matplotlib; the plotly figures have not been run.
+
+## 2026-10-07 - BLM AIM LMF dataset summary notebook
+
+### Prompt
+
+Look at `datasets/raw/BLM...`, make a python notebook that loads and summarizes the dataset and provide a high level description of contents.
+
+### Actions
+
+- Added `scripts/blm_aim/blm_aim_lmf_summary.ipynb`: lists the 20 geodatabase layers, loads `I_Indicators`, `I_Species`, `F_POINT`, `F_POINTCOORDINATES`, and samples `F_PINTERCEPT` / `F_SOILHORIZON`, with summary tables, plots, a join example and usage notes.
+- All cells were executed as a script and ran without errors; the notebook is saved without outputs.
+
+## 2026-10-07 - BLM AIM tile viewer with measured cover
+
+### Prompt
+
+Read `scripts/3dep/vegbank_class_quiz.ipynb`, then make a notebook that visualizes tiles from the matched BLM AIM plots (`datasets/BLM_AIM/BLM_AIM_plots.gpkg`, same AWS product-matching columns); each tile should report the cover % from the AIM plot.
+
+### Actions
+
+- Added `scripts/3dep/blm_aim_tile_viewer.ipynb`. Tile loading, caching (shared cache dir) and false-color rendering are copied from the quiz notebook, keyed on `PrimaryKey` and `Latitude_WGS84`/`Longitude_WGS84`.
+- Shows one row of tiles per quantile bin of a chosen cover column (`SORT_BY`), titled with state, visit date and shrub / grass / forb / tree / bare-soil cover %, plus a table of all cover columns per row and a single-plot view (`KEY`).
+- Filters: `SPLIT` (train/test), `STATE`, `MAX_YEAR_DIFF`. Lives in `scripts/3dep` because `dataset.py` loads the tile index by relative path.
+- Ran all cells as a script on real tiles (figures built, not displayed in Jupyter); notebook saved without outputs.
+
+## 2026-10-07 - Convert PLOTS v4 Access database to parquet
+
+### Prompt
+
+The NPS PLOTS database (`datasets/raw/PLOTS_v4_Distribute_64`) is for MS Access and I'm on a Mac; convert it to parquet file(s).
+
+### Actions
+
+- Installed `mdbtools` via Homebrew (not on conda-forge) and added `data_cleaning/plots_accdb_to_parquet.py`, which writes one typed parquet per table of `PLOTS_v4_BE.accdb` to `datasets/PLOTS_v4/` (27 files, 2.2 MB).
+- Finding: the distributed back-end is an empty template. The data tables (`tPlots`, `tPlotEvents`, `tPlotEventSpecies`, `tSpecies`, `tPhotos`, ...) have 0 rows; only the `x*_lu` lookups are populated (e.g. `xPLANTS_lu` 34,626 rows, `xVegAssociation_lu` 5,863 NVC types). `PLOTS_v4-64.accdb` is only the front end (forms/queries), with no survey data.
+
+## 2026-10-07 - Crawl and harmonize NPS Vegetation Mapping Inventory plot data
+
+### Prompt
+
+From https://www.nps.gov/im/vmi-products.htm, find each park's vegetation inventory data product (park page -> IRMA DataStore profile -> open-format data package CSVs), download them, harmonize the plot data, and compile dataset questions/concerns per park plus a summary table of which products were accessible.
+
+### Actions
+
+- Found that the park pages and IRMA profiles are JavaScript-rendered, so used the IRMA REST API (`irmaservices.nps.gov/datastore/v8/rest/Profile/<id>`). Added `data_cleaning/nps_vmi/01_catalog.py` (141 park pages -> 824 products -> 103 "Field data ... Open Format Data Package" packages; every HTTP access logged in `catalog/access_log.csv`: 2 park pages 404, 3 profile 500s).
+- `02_download.py` fetched 3,746 CSVs (401 MB) into `datasets/raw/nps_vmi/` (gitignored); a transient DNS failure was recovered by rerun (script skips existing files).
+- `03_profile.py` profiled all packages; `04_harmonize_v4.py` and `05_build_core.py` (with shared `coords.py`) build `datasets/NPS_VMI/vmi_core_events|species.parquet` for 91 packages in 3 schema families (PLOTS v3/v4, NCPN `tbl*`, NER `Plots`/`Plots-Species`): ~56k events (98.7% georeferenced), ~560k species records.
+- Coordinate repairs, each flagged in `qa_flags`: wrong/missing UTM zone (resolved against the park bounding box from IRMA), swapped easting/northing (GUMO), swapped lat/lon with lost longitude sign (CHAT, HOBE, OCMU, BUFF).
+- `06_status_and_concerns.py` writes `catalog/package_status.csv` (all parks, with access/harmonization status) and `DATASET_CONCERNS.md` (cross-cutting concerns + generated per-park notes). `datasets/NPS_VMI/README.md` documents outputs.
+- Not done: 12 custom-schema packages (9 Alaska parks, BIHO, CIRO, SCPN/WUPA); plot size/shape and stratum heights are not harmonized in the core tables; taxonomy not reconciled.
+
+## 2026-10-07 - NPS VMI: ingest NVC community assignments, ALS-matching columns
+
+### Prompt
+
+Ingest community assignments for any datasets where they are provided, and make the unified parquet easy to match to ALS: community name (or null), freeform community name, year, WGS84 lat/lon, location accuracy flag.
+
+### Actions
+
+- `05_build_core.py`: gathers each event's final classification (PLOTS `NVC_Elcode`/`Classified_Code`, NER `NVC.ELCODE`, NCPN `tblFinalAssociationNames*`/`tblFinalClassification`/`tbl_Final_Classification`/`tblVegetation`), AA field call (`Primary_Code`), and freeform provisional names; resolves codes (and association names, matched on scientific or common name) against the USNVC catalog and rolls up to division/macrogroup/group.
+- Added v3 `tAA`/`tAAEvents` accuracy-assessment points (19.6k events, no species lists), which carry many of the community calls; APPA and NATR `tAAEvents` skipped (different shape).
+- Core events now ~75.8k rows; 24.8k resolve to an NVC community (was 10.4k), 28.1k have `community_name`, 41k+ have a community or freeform name.
+- Added `community_name`, `freeform_community_name`, `year`, `lat_wgs84`, `lon_wgs84`, `location_accuracy_flag` (first columns); renamed `lon`/`lat`. `coords.py` now treats UTM zones outside 1-60 as missing.
+- Updated both READMEs and `DATASET_CONCERNS.md` (per-park label coverage and sources).
+- Caveats: park-local, provisional (CEPP/CEPS) and retired CEGL codes do not resolve; AA field calls are lower confidence (`nvc_code_source = aa_field_call`).
