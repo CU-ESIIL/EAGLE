@@ -129,7 +129,7 @@ teacher-temperature warmup raises that floor. Judge runs on the probes.
 Without TensorBoard: `tail -f $EAGLE_SCRATCH/logs/eagle-pretrain-<jobid>.out`, or
 `python scripts/litePT/plot_ssl_log.py $EAGLE_SCRATCH/runs/<run_name>` for a PNG of the curves.
 
-**Validation tasks during training.** Every `eval_every` steps (default 1000), and once at step 0 for
+**Validation tasks during training.** Every `eval_every` steps (default 300), and once at step 0 for
 the random-initialisation baseline, rank 0 runs the tasks listed in `eval_tasks` on the frozen
 teacher encoder (`src/eagle_als/evaluation.py`); the other GPUs wait. The default task is `nlcd`:
 NLCD 2021 reference land cover (`datasets/NLCD_eval/README.md`), 15 Level II classes in the
@@ -153,7 +153,8 @@ augmentation, mean of the up-cast point features) and fits logistic regression a
 TensorBoard, `eval/<name>/` holds balanced accuracy and macro F1 of each probe, and `eval_<name>/`
 holds the F1 of each class. Keep a task to roughly 2,000 cookies or fewer. Its sites must be listed in
 `squares.EVAL_SITES`, so pre-training never sees them. To add a new kind of task, subclass `EvalTask`
-and register it (see the docstring of `evaluation.py`).
+and register it (see the docstring of `evaluation.py`). To score the saved checkpoints of an earlier
+run, use `python scripts/litePT/eval_checkpoints.py $EAGLE_SCRATCH/runs/<run_name> --init --tb` on a GPU.
 
 ## Planned experiments
 

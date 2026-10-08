@@ -391,3 +391,27 @@ User asked how to interpret the TensorBoard curves of `ssl_s_2gpu` (loss flat af
 
 - 1-GPU smoke job 48795262 (cache mode, 40 steps, a 24-cookie dummy set with 3 cyclic labels): probes ran at steps 0, 20 and 40 (34 s at step 0 including CUDA warm-up, under 1 s after); `eval/*` scalars, `mem_gb` / `mem_max_gb` and the `guide` text appear in TensorBoard; training continued in train mode. Test run and label file deleted afterwards.
 - On the command line, `eval_sets` needs dict literals (`{'name': ...}`), not `dict(...)`.
+
+## 2026-10-08 (NLCD land cover as an in-training validation task)
+
+### Prompt
+
+User asked to add the NLCD_eval classification task as a periodic in-training check of the frozen feature extractor (linear probe and kNN, macro and per-class F1 in TensorBoard), in a way that makes it easy to add more evaluation tasks; then asked to score existing checkpoints on it.
+
+### Actions taken
+
+- New `src/eagle_als/evaluation.py`: task registry (`EvalTask`, `@register`), `build_tasks` from the config list `eval_tasks`, `run_tasks` (eval mode, no gradients, train mode restored), `tb_tag` (headline metrics `eval/<task>/*`, detail metrics such as per-class F1 in `eval_<task>/*`).
+- `src/eagle_als/probe.py`: `ProbeSet` / `run_probes` replaced by the registered `classification` task `ClassificationProbe`: relative table paths from the repo root, `query` row filter, boolean or train/test `split_col`, `probes` choice, per-class F1 (`<probe>_f1/<class>`); macro F1 averages the classes present in the test rows.
+- Config: `eval_sets` renamed `eval_tasks`; default task `nlcd` (label `nlcd_class`, `query="balanced_subset"`, `split_col="test_split"`), cookie cache chosen by `_cache_dir` (node-local copy if staged).
+- Cookie cache `$EAGLE_SCRATCH/cache/nlcd` built for all 1,089 rows (1,035 ok, 51 empty, 3 too few points; 7.0 GB) and packed as `cache/nlcd.tar`; `slurm/pretrain.sbatch` stages it (`stage_local.sh sites nlcd`).
+- `squares.EVAL_SITES` now includes the NLCD table (excluded sites 3,229 -> 4,318). Runs started before this change may have seen NLCD sites.
+- New `scripts/litePT/eval_checkpoints.py`: scores a run's saved checkpoints (and a random init) on the eval tasks, writes `<run>/eval_checkpoints.csv` and optionally TensorBoard.
+- README, `TENSORBOARD.md`, `src/eagle_als/README.md` updated.
+
+### Verification
+
+- Task build on a CPU node: 942 of 988 balanced rows usable, 15 classes (perennial ice/snow dropped), 726 train / 216 test, 74 s and 3.3 GB on rank 0.
+- 1-GPU smoke job 48873059 (pool mode, 40 steps, `eval_every=20`): NLCD cache staged in 18 s; evaluation at steps 0/20/40, 6-7 s each; training continued.
+- Job 48939251 scored checkpoints (linear macro F1, test split): `ssl_s_2gpu` init 0.285, 1000 0.318, 2000 0.341, 3000 0.302; `ssl_s_1gpu_test` init 0.281, 500 0.245, 1000 0.244, 1500 0.253, 2000 0.238. kNN macro F1 stays at or below init (0.21) in both runs. Chance 0.067.
+- GPU-shared rejects `--cpus-per-task=13` per GPU (maximum 12).
+- Follow-up: user set `eval_every = 300` (was 1000), since one evaluation takes about 7 s; at batch 128 that is about every 40 min on 2 H100s.

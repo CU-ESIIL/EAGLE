@@ -162,7 +162,7 @@ eval_tasks = [
     dict(type="classification", name="nlcd", table="datasets/NLCD_eval/nlcd_lidar_eval.parquet",
          cache_dir=_cache_dir("nlcd"), label_col="nlcd_class", split_col="test_split", query="balanced_subset"),
 ]
-eval_every = 1000
+eval_every = 300
 eval_knn_k = 20
 
 # ---------------- logging / checkpoints ----------------
