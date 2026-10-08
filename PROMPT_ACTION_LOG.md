@@ -415,3 +415,39 @@ User asked to add the NLCD_eval classification task as a periodic in-training ch
 - Job 48939251 scored checkpoints (linear macro F1, test split): `ssl_s_2gpu` init 0.285, 1000 0.318, 2000 0.341, 3000 0.302; `ssl_s_1gpu_test` init 0.281, 500 0.245, 1000 0.244, 1500 0.253, 2000 0.238. kNN macro F1 stays at or below init (0.21) in both runs. Chance 0.067.
 - GPU-shared rejects `--cpus-per-task=13` per GPU (maximum 12).
 - Follow-up: user set `eval_every = 300` (was 1000), since one evaluation takes about 7 s; at batch 128 that is about every 40 min on 2 H100s.
+
+## 2026-10-08 - Correct collection dates in the AWS 3DEP registry; start leaf-on field
+
+### Prompt
+
+Take collection dates and location from the AWS registry and infer leaf-on/off (provider statement preferred, else external phenology) as a boolean metadata field. Follow-up: find the robust way to get a collection date for every product, update the registry, and list the curated datasets that need matching re-run.
+
+### Actions
+
+- Found that `collect_start/end` were only populated for 1,033 / 2,278 products (exact-name WESM merge) and that `collection_year` was the publication year (`..._LAS_2019` names) for hundreds of products.
+- Added `src/streaming/3dep/leaf_on/` steps 01 (normalized WESM match, 2,249 dated), 01b (measured GpsTime from the EPT root node, 1,830 usable), 01c (reconcile + write registry). WESM and measured dates agree for 99% (exact match) and 95% (normalized match) of products.
+- Registry: `collect_start`, `collect_end`, `collection_year` updated (789 years changed); added `collection_year_prev`, `collect_dates_source`, `collect_dates_check`. Details and the list of curated datasets to rematch are in `datasets/USGS_3dep/leaf_on/README.md`.
+- Leaf-on steps 02-04 (provider metadata scrape, MODIS NDVI phenology from Planetary Computer, merge) written; 02 done, 03 still running, 04 not yet applied.
+
+## 2026-10-08 - Document the 3DEP registry
+
+### Prompt
+
+Document this in datasets/USGS_3dep/README.md.
+
+### Actions
+
+- Added `datasets/USGS_3dep/README.md`: registry files and columns, how collection dates are now obtained and checked, the list of curated datasets to re-match, and the in-progress leaf-on method with its limits.
+
+## 2026-10-08 - NAIP <-> 3DEP coregistration research and lookup-database pipeline
+
+### Prompt
+
+Perform accurate spatial alignment between NAIP and USGS 3DEP; try approaches, design an evaluation in metres, report performance and caveats on flat cropland, closed forest and complex landscapes, implement a module; then: design a landmark-based held-out evaluation (not biased to urban areas) and prepare a cluster pipeline that builds a precomputed lat/lon lookup of NAIP/3DEP products and coregistration calibrations.
+
+### Actions
+
+- Added `src/eagle_als/coreg/` (data access, estimators, physical model with fitted sun/cast shadows and relief lean, large-area const/affine field model with spatial CV, evaluation helpers, landmark helpers, `pipeline.py`, `lookup.py`).
+- Added `scripts/naip/01-10_*.py`, `scripts/naip/COREGISTRATION_NOTES.md` (running findings) and `scripts/naip/cluster/` (SLURM workflow, README with cost model).
+- Key findings: plain matching is biased by cast shadows and relief lean; errors are smooth fields (constant in Iowa, ~1.5 m/km cross-track gradient in hilly PA); see the notes file. Landmark evaluation and the final report (`COREGISTRATION_REPORT.md`) are not finished; the working-document artifact has not been updated; nothing is committed.
+- Environment: `leafmap` (added by the user) installed with `pixi install --locked`; leafmap pip-installed `overturemaps`.
