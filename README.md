@@ -1,6 +1,5 @@
 # EAGLE: Extracting Airborne Gestalts from Lidar for Ecology
 
-
 ## Project description
 
 EAGLE pre-trains a point-cloud encoder (LitePT-S, 12.4M parameters) on USGS 3DEP aerial lidar with
@@ -61,7 +60,7 @@ sbatch scripts/litePT/slurm/pretrain.sbatch
 sbatch scripts/litePT/slurm/pretrain.sbatch run_name=ssl_s_pool_v2 total_steps=80000
 
 # 2 H100s on GPU-shared (shorter queue): same batch 128, as 8 per GPU x 8 accumulation steps
-sbatch -p GPU-shared --gpus=h100-80:2 --cpus-per-task=26 scripts/litePT/slurm/pretrain.sbatch run_name=ssl_s_2gpu
+sbatch -p GPU-shared --gpus=h100-80:2 --cpus-per-task=24 scripts/litePT/slurm/pretrain.sbatch run_name=ssl_s_2gpu
 
 # 1-GPU smoke test
 sbatch -p GPU-shared --gpus=h100-80:1 --cpus-per-task=13 -t 1:00:00 scripts/litePT/slurm/pretrain.sbatch \
@@ -105,10 +104,9 @@ ls $EAGLE_SCRATCH/runs/          # all runs
 
 **Live dashboard (TensorBoard).** Curves update every `log_every` steps (default 20).
 
-- VS Code: command palette → "Python: Launch TensorBoard" → `$EAGLE_SCRATCH/runs/<run_name>/tb`
-  (or `$EAGLE_SCRATCH/runs` to compare runs). VS Code forwards the port.
-- Terminal: `source scripts/litePT/env.sh && tensorboard --logdir $EAGLE_SCRATCH/runs --port 6006`,
-  then forward port 6006.
+- VS Code: command palette → "Python: Launch TensorBoard" → `/ocean/projects/bio260075p/sammlapp/eagle/runs`. VS Code forwards the port.
+- Terminal: `source scripts/litePT/env.sh && tensorboard --logdir $EAGLE_SCRATCH/runs --port 6006`,  
+then forward port 6006.
 
 **What to watch.** `scripts/litePT/TENSORBOARD.md` explains every curve. It is also shown in each
 run's TensorBoard **Text** tab. The short version:
@@ -171,5 +169,3 @@ run, use `python scripts/litePT/eval_checkpoints.py $EAGLE_SCRATCH/runs/<run_nam
 7. **Further ideas:** a landscape-context view (e.g. 1 km × 1 km at ~0.1 pts/m²) alongside the
    detailed cookie, and contrastive views from overlapping flight lines (`point_source_id`) of the
    same place.
-
-
