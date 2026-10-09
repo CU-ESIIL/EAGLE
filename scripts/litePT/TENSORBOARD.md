@@ -50,6 +50,11 @@ over 4,096 prototypes:
 | `eval/<task>/linear_bal_acc`, `…/linear_f1` | logistic-regression probe on frozen, mean-pooled teacher embeddings (e.g. task `nlcd`: NLCD land cover, spatial hold-out); `_f1` is macro F1 | rises above the step-0 (random init) value | flat at the random-init value |
 | `eval/<task>/knn_bal_acc`, `…/knn_f1` | cosine kNN (k = 20) on the same embeddings | rises | |
 | `eval/<task>/chance`, `…/seconds` | 1 / number of classes; time the task took | | `seconds` near 600: the NCCL timeout |
+| `eval/embed/cookie_erank` | effective rank of the 256 cookie embeddings (how many directions they really spread over) | stays well above a few tens | falls steadily: cookies collapsing onto a few directions |
+| `eval/embed/cookie_cos` | mean cosine similarity between pairs of cookie embeddings | well below 1 | rises toward 1: all cookies look alike |
+| `eval/embed/point_erank` | effective rank of point features (64 per cookie) | stays in the hundreds | falls steadily: dimensional collapse of point features |
+| `eval/embed/point_cos_within` | mean cosine similarity between points of the same cookie | below 1 | → 1: no spatial detail inside a cookie |
+| `eval/embed/point_std` | mean per-dimension std of L2-normalised point features | stable | → 0: complete collapse |
 | `eval_<task>/linear_f1/<class>`, `eval_<task>/knn_f1/<class>` | F1 of each class on the test rows (own section per task) | most classes rise | NLCD classes with few test rows (barren, high-intensity developed: 4 each) are noisy |
 
 Before 2026-10-08, `mem_gb` was the peak since the job started (now `mem_max_gb`). That is why it
@@ -58,8 +63,8 @@ rose in steps every hour or two in the `ssl_s_2gpu` run.
 ## Collapse vs. slow learning
 
 - **Collapse** (bad): `protos_used` and `student_protos_used` drop toward a few, `grad_norm` → 0,
-  and `scripts/litePT/check_embeddings.py` shows `cookie_cos` → 1 or effective rank falling.
+  and the `eval/embed/*` curves show `cookie_cos` → 1 or effective rank falling.
   Sinkhorn targets hide collapse in the prototype metrics (`protos_soft_used` stays high), so check
-  the encoder itself with `check_embeddings.py`.
+  the encoder itself with `eval/embed/*` (or `check_embeddings.py` for runs without that task).
 - **Slow learning** (normal): the loss is flat, `mask_kl` creeps down, the prototype metrics are
   stable, and the probes improve. Judge a run on the probes, not on the loss.

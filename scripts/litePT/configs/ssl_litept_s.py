@@ -149,7 +149,9 @@ empty_cache = False
 # run on rank 0 every eval_every steps and at step 0 of a fresh run (random-init baseline); headline
 # metrics in tensorboard eval/<name>/*, per-class scores in eval_<name>/*. Each entry: dict(type=, name=,
 # ...); type "classification" (eagle_als.probe) takes table=, cache_dir=, label_col=, id_col="als_site_id",
-# split_col=None (-> 5-fold CV), query=None, probes=("linear", "knn"). Empty list: no evaluation.
+# split_col=None (-> 5-fold CV), query=None, probes=("linear", "knn"); type "embedding_check"
+# (eagle_als.embedding_check, collapse statistics, no labels) takes cache_dir=, n_cookies=256. Empty list:
+# no evaluation.
 def _cache_dir(name):
     """The node-local copy staged by stage_local.sh when the job has one, else the cache on /ocean."""
     local = os.path.join(os.environ.get("EAGLE_LOCAL_CACHE", ""), name)
@@ -161,6 +163,8 @@ eval_tasks = [
     # subset (<= 100 per class), spatial hold-out by 1-degree blocks; perennial ice/snow (1 row) is dropped
     dict(type="classification", name="nlcd", table="datasets/NLCD_eval/nlcd_lidar_eval.parquet",
          cache_dir=_cache_dir("nlcd"), label_col="nlcd_class", split_col="test_split", query="balanced_subset"),
+    # collapse check (same statistics as check_embeddings.py) on 256 of the held-out NLCD cookies
+    dict(type="embedding_check", name="embed", cache_dir=_cache_dir("nlcd"), n_cookies=256),
 ]
 eval_every = 300
 eval_knn_k = 20

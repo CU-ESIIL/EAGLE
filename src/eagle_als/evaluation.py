@@ -2,7 +2,8 @@
 
 Tasks are listed in the config as `eval_tasks`, one spec per task with a `type` and a `name`:
 
-    eval_tasks = [dict(type="classification", name="nlcd", table=..., ...)]   # see eagle_als.probe
+    eval_tasks = [dict(type="classification", name="nlcd", table=..., ...),   # see eagle_als.probe
+                  dict(type="embedding_check", name="embed", cache_dir=...)]   # see eagle_als.embedding_check
 
 `train_ssl.py` builds every task once on rank 0 when the run starts, then runs them every `eval_every`
 steps (and at step 0 of a fresh run, the random-initialisation baseline) while the other ranks wait.
@@ -22,7 +23,7 @@ import time
 
 import torch
 
-TASK_MODULES = ("eagle_als.probe",)  # imported by build_tasks so their task types register
+TASK_MODULES = ("eagle_als.probe", "eagle_als.embedding_check")  # imported by build_tasks so their task types register
 TASKS = {}
 
 

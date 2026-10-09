@@ -116,7 +116,7 @@ run's TensorBoard **Text** tab. The short version:
 | `eval/*` validation probes (e.g. `eval/nlcd/linear_f1`) | rise above the step-0 (random init) value | flat: the encoder is not learning anything useful for the labels |
 | `loss` = `target_entropy` + `mask_kl` | starts near ln(4096) ≈ 8.3, falls, then flattens (normal) | NaN, or rising after the warmups end |
 | `mask_kl` | falls slowly (the student is learning the teacher's targets) | rising |
-| `protos_used`, `student_protos_used` (of 4096) | stable, hundreds to thousands | dropping toward a few: collapse (confirm with `check_embeddings.py`) |
+| `protos_used`, `student_protos_used` (of 4096) | stable, hundreds to thousands | dropping toward a few: collapse (confirm with `eval/embed/*`) |
 | `grad_norm` | O(0.1–1) | → 0 (collapse), or often above `clip_grad` |
 | `data_frac` | near 0 | above ~0.2: GPUs are waiting for data |
 | `mem_gb` (peak since last log), `mem_max_gb` (peak since start) | well under 80; `mem_max_gb` steps up on rare large batches | close to 80: out-of-memory risk |
@@ -153,6 +153,12 @@ holds the F1 of each class. Keep a task to roughly 2,000 cookies or fewer. Its s
 `squares.EVAL_SITES`, so pre-training never sees them. To add a new kind of task, subclass `EvalTask`
 and register it (see the docstring of `evaluation.py`). To score the saved checkpoints of an earlier
 run, use `python scripts/litePT/eval_checkpoints.py $EAGLE_SCRATCH/runs/<run_name> --init --tb` on a GPU.
+
+An `embedding_check` task (`src/eagle_als/embedding_check.py`, task `embed`) needs no labels. It
+checks the encoder for collapse on 256 held-out NLCD cookies: how spread out the cookie embeddings
+and point features are (effective rank, cosine similarity). Its curves are `eval/embed/*`. To run the
+same check on the saved checkpoints of a run, use `python scripts/litePT/check_embeddings.py
+$EAGLE_SCRATCH/runs/<run_name> --cache $EAGLE_SCRATCH/cache/nlcd` on a GPU.
 
 ## Planned experiments
 

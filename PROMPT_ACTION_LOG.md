@@ -451,3 +451,36 @@ Perform accurate spatial alignment between NAIP and USGS 3DEP; try approaches, d
 - Added `scripts/naip/01-10_*.py`, `scripts/naip/COREGISTRATION_NOTES.md` (running findings) and `scripts/naip/cluster/` (SLURM workflow, README with cost model).
 - Key findings: plain matching is biased by cast shadows and relief lean; errors are smooth fields (constant in Iowa, ~1.5 m/km cross-track gradient in hilly PA); see the notes file. Landmark evaluation and the final report (`COREGISTRATION_REPORT.md`) are not finished; the working-document artifact has not been updated; nothing is committed.
 - Environment: `leafmap` (added by the user) installed with `pixi install --locked`; leafmap pip-installed `overturemaps`.
+
+## 2026-10-09 - Embedding (collapse) check as a validation task
+
+### Prompt
+
+Inspect run ssl_s_2gpu_2 (mask_kl rising, NLCD probes falling); run the embeddings check, add it as an eval step (do not increase keep_ckpts), and explain what it measures.
+
+### Actions
+
+- Added `src/eagle_als/embedding_check.py`: the collapse statistics from `check_embeddings.py` (cookie/point effective rank, cosine similarity, point std) as a registered `embedding_check` eval task; registered in `evaluation.TASK_MODULES`.
+- `scripts/litePT/check_embeddings.py` now uses the shared module (same inputs and numbers); docstring notes `--cache` for runs whose cache was node-local.
+- Config `ssl_litept_s.py`: added task `embed` (256 held-out NLCD cookies) to `eval_tasks`; TensorBoard `eval/embed/*`. Documented in README and `TENSORBOARD.md`.
+- Ran `check_embeddings.py` on ssl_s_2gpu_2 (checkpoints 7000-9000 + random init) as slurm job 48979752; check_embeddings needs a GPU (spconv), it cannot run on CPU nodes.
+
+## 2026-10-09 - SSL components documentation
+
+### Prompt
+
+Read the top-level README and `ssl.py`; describe each SSL component (Sinkhorn, losses, student-teacher, masking and matching, up_cast, network layers, spatial resolution through the network, how embeddings are made) in `src/eagle_als/README.md` under "SSL components", for a reader new to Sonata.
+
+### Actions
+
+- Added the "SSL components" section to `src/eagle_als/README.md` (before "Conventions"). Documentation only; no code changes.
+
+## 2026-10-09 - NLCD land-cover quiz notebook
+
+### Prompt
+
+Write another quiz notebook based on the NLCD classification task.
+
+### Actions
+
+- Added `scripts/3dep/nlcd_class_quiz.ipynb`, adapted from `vegbank_class_quiz.ipynb` (same tile streaming, caching, coloring and widget quiz) for `datasets/NLCD_eval`: Level I or Level II classes, balanced/stable/all subsets, known-empty tiles skipped via the status csv, a red outline of the labeled 30 m pixel, strict and lenient (alternate-label) scores, and a confusion table of answers.
