@@ -1,0 +1,277 @@
+species,common_name,taxon_class,is_human_or_domestic,n_locations,n_events,n_locations_train,prevalence_train,n_locations_test,prevalence_test,included
+Homo sapiens,Horseback Rider | Human | Human - Biker | Human - Soldier | Human-Camera Trapper | Human-Hunter | Human-Maintenance crew | Human-Park Ranger | Human-Pedestrian | Human-Researcher | Human-Resident | Human-Tourist,Mammalia,True,3100,25165,1561,0.9102,1539,0.9085,False
+Odocoileus virginianus,White-tailed Deer,Mammalia,False,2606,76940,1282,0.7475,1324,0.7816,True
+Procyon lotor,Northern Raccoon,Mammalia,False,1785,30370,886,0.5166,899,0.5307,True
+Sciurus carolinensis,Eastern Gray Squirrel,Mammalia,False,1615,60658,828,0.4828,787,0.4646,True
+Canis latrans,Coyote,Mammalia,False,1565,9589,798,0.4653,767,0.4528,True
+Didelphis virginiana,Virginia Opossum,Mammalia,False,1095,9496,473,0.2758,622,0.3672,True
+Meleagris gallopavo,Domestic Turkey | Wild Turkey,Aves,False,694,3909,322,0.1878,372,0.2196,True
+Sylvilagus floridanus,Eastern Cottontail,Mammalia,False,674,7561,303,0.1767,371,0.219,True
+Canis familiaris,Domestic Dog,Mammalia,True,625,5180,347,0.2023,278,0.1641,False
+Lynx rufus,Bobcat,Mammalia,False,582,1694,303,0.1767,279,0.1647,True
+Ursus americanus,American Black Bear,Mammalia,False,478,2004,214,0.1248,264,0.1558,True
+Sciurus niger,Eastern Fox Squirrel,Mammalia,False,439,17605,139,0.081,300,0.1771,True
+Vulpes vulpes,Red Fox,Mammalia,False,430,3727,239,0.1394,191,0.1128,True
+Tamias striatus,Eastern Chipmunk,Mammalia,False,419,7781,228,0.1329,191,0.1128,True
+Dasypus novemcinctus,Nine-banded Armadillo,Mammalia,False,403,2419,122,0.0711,281,0.1659,True
+Odocoileus hemionus,Mule Deer,Mammalia,False,385,4253,221,0.1289,164,0.0968,True
+Mephitis mephitis,Striped Skunk,Mammalia,False,354,1460,151,0.088,203,0.1198,True
+Sus scrofa,Wild Pig,Mammalia,False,322,4709,114,0.0665,208,0.1228,True
+Urocyon cinereoargenteus,Grey Fox,Mammalia,False,316,2020,157,0.0915,159,0.0939,True
+Felis catus,Domestic Cat,Mammalia,True,306,1641,117,0.0682,189,0.1116,False
+Turdus migratorius,American Robin,Aves,False,282,1429,122,0.0711,160,0.0945,True
+Tamiasciurus hudsonicus,Red Squirrel,Mammalia,False,243,4757,126,0.0735,117,0.0691,True
+Cervus canadensis,Elk,Mammalia,False,187,1277,81,0.0472,106,0.0626,True
+Bos taurus,Domestic Cattle,Mammalia,True,187,4519,104,0.0606,83,0.049,False
+Cyanocitta cristata,Blue Jay,Aves,False,164,386,76,0.0443,88,0.0519,True
+Marmota monax,Groundhog,Mammalia,False,107,404,35,0.0204,72,0.0425,True
+Pekania pennanti,Fisher,Mammalia,False,105,190,63,0.0367,42,0.0248,True
+Colaptes auratus,Northern Flicker,Aves,False,97,160,46,0.0268,51,0.0301,True
+Lepus californicus,Black-tailed Jackrabbit,Mammalia,False,96,786,40,0.0233,56,0.0331,True
+Geococcyx californianus,Greater Roadrunner,Aves,False,86,382,50,0.0292,36,0.0213,True
+Erethizon dorsatum,North American Porcupine,Mammalia,False,84,263,45,0.0262,39,0.023,True
+Puma concolor,Puma,Mammalia,False,83,188,35,0.0204,48,0.0283,True
+Sylvilagus audubonii,Desert Cottontail,Mammalia,False,81,1196,54,0.0315,27,0.0159,True
+Pecari tajacu,Collared Peccary,Mammalia,False,77,477,42,0.0245,35,0.0207,True
+Lepus americanus,Snowshoe Hare,Mammalia,False,76,974,35,0.0204,41,0.0242,True
+Glaucomys volans,Mexican Flying Squirrel,Mammalia,False,71,181,36,0.021,35,0.0207,True
+Equus caballus,Domestic Horse,Mammalia,True,68,422,49,0.0286,19,0.0112,False
+Zenaida macroura,Mourning Dove,Aves,False,64,240,41,0.0239,23,0.0136,True
+Corvus corax,Common Raven,Aves,False,61,265,17,0.0099,44,0.026,True
+Bonasa umbellus,Ruffed Grouse,Aves,False,60,143,25,0.0146,35,0.0207,True
+Cardinalis cardinalis,Northern Cardinal,Aves,False,58,116,30,0.0175,28,0.0165,True
+Canis lupus,Grey Wolf,Mammalia,False,58,133,29,0.0169,29,0.0171,True
+Sciurus griseus,Western Gray Squirrel,Mammalia,False,58,633,17,0.0099,41,0.0242,True
+Taxidea taxus,American Badger,Mammalia,False,57,86,31,0.0181,26,0.0153,True
+Tamiasciurus douglasii,Douglas's Squirrel,Mammalia,False,57,877,41,0.0239,16,0.0094,True
+Peromyscus leucopus,White-footed Mouse,Mammalia,False,54,2492,30,0.0175,24,0.0142,True
+Alces alces,Moose,Mammalia,False,52,158,26,0.0152,26,0.0153,True
+Ursus arctos,Brown Bear,Mammalia,False,49,189,38,0.0222,11,0.0065,True
+Corvus brachyrhynchos,American Crow,Aves,False,49,144,18,0.0105,31,0.0183,True
+Quiscalus quiscula,Common Grackle,Aves,False,48,65,16,0.0093,32,0.0189,True
+Antilocapra americana,Pronghorn,Mammalia,False,48,532,29,0.0169,19,0.0112,True
+Neovison vison,American Mink,Mammalia,False,47,117,18,0.0105,29,0.0171,True
+Pica hudsonia,Black-billed Magpie,Aves,False,46,125,33,0.0192,13,0.0077,True
+Callipepla gambelii,Gambel's Quail,Aves,False,45,603,29,0.0169,16,0.0094,True
+Mustela frenata,Long-tailed Weasel,Mammalia,False,40,72,22,0.0128,18,0.0106,True
+Phasianus colchicus,Common Pheasant | Ring-necked Pheasant,Aves,False,39,160,6,0.0035,33,0.0195,True
+Ardea herodias,Great Blue Heron,Aves,False,38,251,14,0.0082,24,0.0142,True
+Vulpes macrotis,Kit Fox,Mammalia,False,38,131,3,0.0017,35,0.0207,True
+Lepus townsendii,White-tailed Jackrabbit,Mammalia,False,37,533,24,0.014,13,0.0077,True
+Ammospermophilus leucurus,White-tailed Antelope Squirrel,Mammalia,False,36,362,15,0.0087,21,0.0124,True
+Lontra canadensis,North American River Otter,Mammalia,False,33,114,18,0.0105,15,0.0089,True
+Otospermophilus variegatus,Rock Squirrel,Mammalia,False,31,233,23,0.0134,8,0.0047,True
+Rattus norvegicus,Brown Rat,Mammalia,False,29,673,27,0.0157,2,0.0012,True
+Strix varia,Barred Owl,Aves,False,28,40,18,0.0105,10,0.0059,True
+Sylvilagus nuttallii,Mountain Cottontail,Mammalia,False,27,163,11,0.0064,16,0.0094,True
+Glaucomys sabrinus,Northern Flying Squirrel,Mammalia,False,27,191,17,0.0099,10,0.0059,True
+Dipodomys merriami,Merriam's Kangaroo Rat,Mammalia,False,26,566,9,0.0052,17,0.01,True
+Hylatomus pileatus,Pileated Woodpecker,Aves,False,26,32,14,0.0082,12,0.0071,True
+Cathartes aura,Turkey Vulture,Aves,False,26,51,7,0.0041,19,0.0112,True
+Buteo jamaicensis,Red-tailed Hawk,Aves,False,26,35,12,0.007,14,0.0083,True
+Mephitis macroura,Hooded Skunk,Mammalia,False,24,163,13,0.0076,11,0.0065,True
+Callipepla californica,California Quail,Aves,False,22,91,3,0.0017,19,0.0112,True
+Cyanocitta stelleri,Steller's Jay,Aves,False,22,56,20,0.0117,2,0.0012,True
+Baeolophus bicolor,Tufted Titmouse,Aves,False,20,36,14,0.0082,6,0.0035,True
+Buteo lineatus,Red-shouldered Hawk,Aves,False,20,25,4,0.0023,16,0.0094,True
+Mustela erminea,Stoat,Mammalia,False,19,30,14,0.0082,5,0.003,True
+Castor canadensis,American Beaver,Mammalia,False,19,518,10,0.0058,9,0.0053,True
+Mimus polyglottos,Northern Mockingbird,Aves,False,19,52,9,0.0052,10,0.0059,True
+Urva javanica,Javan Mongoose,Mammalia,False,18,131,0,0.0,18,0.0106,False
+Tympanuchus phasianellus,Sharp-tailed Grouse,Aves,False,18,34,12,0.007,6,0.0035,True
+Spilogale gracilis,Western Spotted Skunk,Mammalia,False,18,29,11,0.0064,7,0.0041,True
+Colinus virginianus,Northern Bobwhite,Aves,False,18,32,7,0.0041,11,0.0065,True
+Sylvilagus palustris,Marsh Rabbit,Mammalia,False,17,63,13,0.0076,4,0.0024,True
+Ixoreus naevius,Varied Thrush,Aves,False,17,153,17,0.0099,0,0.0,False
+Lanius ludovicianus,Loggerhead Shrike,Aves,False,17,22,9,0.0052,8,0.0047,True
+Ammospermophilus harrisii,Harris's Antelope Squirrel,Mammalia,False,16,141,15,0.0087,1,0.0006,True
+Neotoma floridana,Eastern Woodrat,Mammalia,False,16,41,6,0.0035,10,0.0059,True
+Circus hudsonius,Northern Harrier,Aves,False,16,36,15,0.0087,1,0.0006,True
+Dryobates pubescens,Downy Woodpecker,Aves,False,15,19,8,0.0047,7,0.0041,True
+Melanerpes carolinus,Red-bellied Woodpecker,Aves,False,15,26,7,0.0041,8,0.0047,True
+Falco sparverius,American Kestrel,Aves,False,15,40,6,0.0035,9,0.0053,True
+Nasua narica,White-nosed Coati,Mammalia,False,15,90,5,0.0029,10,0.0059,True
+Neotoma lepida,Desert Woodrat,Mammalia,False,15,117,8,0.0047,7,0.0041,True
+Conepatus leuconotus,American Hog-nosed Skunk,Mammalia,False,14,41,10,0.0058,4,0.0024,True
+Pipilo maculatus,Spotted Towhee,Aves,False,13,60,10,0.0058,3,0.0018,True
+Sturnus vulgaris,Common Starling,Aves,False,13,26,7,0.0041,6,0.0035,True
+Junco hyemalis,Dark-eyed Junco,Aves,False,13,66,7,0.0041,6,0.0035,True
+Poecile atricapillus,Black-capped Chickadee,Aves,False,12,13,4,0.0023,8,0.0047,True
+Spilopelia chinensis,Eastern Spotted Dove,Aves,False,12,53,0,0.0,12,0.0071,False
+Sturnella neglecta,Western Meadowlark,Aves,False,12,19,5,0.0029,7,0.0041,True
+Aphelocoma wollweberi,Mexican Jay,Aves,False,12,121,6,0.0035,6,0.0035,True
+Branta canadensis,Canada Goose,Aves,False,12,37,5,0.0029,7,0.0041,True
+Catharus guttatus,Hermit Thrush,Aves,False,12,52,7,0.0041,5,0.003,True
+Dendragapus obscurus,Blue Grouse | Dusky Grouse,Aves,False,12,39,9,0.0052,3,0.0018,True
+Antigone canadensis,Sandhill Crane,Aves,False,11,21,0,0.0,11,0.0065,False
+Ortalis vetula,Plain Chachalaca,Aves,False,11,43,0,0.0,11,0.0065,False
+Bassariscus astutus,Ringtail,Mammalia,False,11,23,3,0.0017,8,0.0047,True
+Leuconotopicus villosus,Hairy Woodpecker,Aves,False,11,17,4,0.0023,7,0.0041,True
+Accipiter cooperii,Cooper's Hawk,Aves,False,10,12,5,0.0029,5,0.003,True
+Otospermophilus beecheyi,California Ground Squirrel,Mammalia,False,10,189,0,0.0,10,0.0059,False
+Hylocichla mustelina,Wood Thrush,Aves,False,10,22,5,0.0029,5,0.003,True
+Bubo virginianus,Great Horned Owl,Aves,False,10,13,7,0.0041,3,0.0018,True
+Boselaphus tragocamelus,Nilgai,Mammalia,False,9,74,9,0.0052,0,0.0,False
+Sciurus aberti,Abert's Squirrel,Mammalia,False,9,26,8,0.0047,1,0.0006,True
+Zonotrichia albicollis,White-throated Sparrow,Aves,False,8,19,5,0.0029,3,0.0018,True
+Sus scrofa scrofa,Domestic Pig,Mammalia,False,8,23,0,0.0,8,0.0047,False
+Dumetella carolinensis,Grey Catbird,Aves,False,8,17,6,0.0035,2,0.0012,True
+Seiurus aurocapilla,Ovenbird,Aves,False,8,36,5,0.0029,3,0.0018,True
+Vulpes velox,Swift Fox,Mammalia,False,8,14,0,0.0,8,0.0047,False
+Martes americana,American Marten,Mammalia,False,8,8,7,0.0041,1,0.0006,True
+Ovis aries,Domestic Sheep,Mammalia,True,8,66,6,0.0035,2,0.0012,False
+Toxostoma rufum,Brown Thrasher,Aves,False,8,20,8,0.0047,0,0.0,False
+Sylvilagus bachmani,Brush Rabbit,Mammalia,False,8,68,3,0.0017,5,0.003,True
+Peromyscus gossypinus,Cotton Mouse,Mammalia,False,8,40,3,0.0017,5,0.003,True
+Peromyscus maniculatus,North American Deermouse,Mammalia,False,8,17,4,0.0023,4,0.0024,True
+Sialia sialis,Eastern Bluebird,Aves,False,7,11,2,0.0012,5,0.003,True
+Pipilo erythrophthalmus,Rufous-sided Towhee,Aves,False,7,11,1,0.0006,6,0.0035,True
+Aphelocoma californica,California Scrub-Jay,Aves,False,7,9,1,0.0006,6,0.0035,True
+Oreortyx pictus,Mountain Quail,Aves,False,7,10,0,0.0,7,0.0041,False
+Neotamias dorsalis,Cliff Chipmunk,Mammalia,False,7,16,7,0.0041,0,0.0,False
+Canachites canadensis,Spruce Grouse,Aves,False,7,14,4,0.0023,3,0.0018,True
+Columbina passerina,Common Ground Dove,Aves,False,7,7,6,0.0035,1,0.0006,True
+Sitta carolinensis,White-breasted Nuthatch,Aves,False,7,7,3,0.0017,4,0.0024,True
+Catharus swainsoni,Swainson's Thrush,Aves,False,7,14,5,0.0029,2,0.0012,True
+Coragyps atratus,American Black Vulture,Aves,False,7,10,3,0.0017,4,0.0024,True
+Pooecetes gramineus,Vesper Sparrow,Aves,False,7,12,7,0.0041,0,0.0,False
+Eremophila alpestris,Horned Lark,Aves,False,6,11,4,0.0023,2,0.0012,True
+Neotamias townsendii,Townsend's Chipmunk,Mammalia,False,6,54,6,0.0035,0,0.0,False
+Ondatra zibethicus,Muskrat,Mammalia,False,6,91,3,0.0017,3,0.0018,True
+Sylvilagus aquaticus,Swamp Rabbit,Mammalia,False,6,12,1,0.0006,5,0.003,True
+Cyanocorax yncas,Green Jay,Aves,False,6,12,0,0.0,6,0.0035,False
+Rattus rattus,House Rat,Mammalia,False,6,113,6,0.0035,0,0.0,False
+Dipodomys ingens,Giant Kangaroo Rat,Mammalia,False,6,149,0,0.0,6,0.0035,False
+Megascops asio,Eastern Screech-owl,Aves,False,6,9,1,0.0006,5,0.003,True
+Toxostoma longirostre,Long-billed Thrasher,Aves,False,6,85,0,0.0,6,0.0035,False
+Thryothorus ludovicianus,Carolina Wren,Aves,False,6,8,4,0.0023,2,0.0012,True
+Leptotila verreauxi,White-tipped Dove,Aves,False,6,77,0,0.0,6,0.0035,False
+Toxostoma curvirostre,Curve-billed Thrasher,Aves,False,6,25,6,0.0035,0,0.0,False
+Gopherus agassizii,Mojave Desert Tortoise,Reptilia,False,5,5,0,0.0,5,0.003,False
+Anas platyrhynchos,Mallard,Aves,False,5,40,3,0.0017,2,0.0012,True
+Campylorhynchus brunneicapillus,Cactus Wren,Aves,False,5,11,4,0.0023,1,0.0006,True
+Haliaeetus leucocephalus,Bald Eagle,Aves,False,5,5,3,0.0017,2,0.0012,True
+Lepus alleni,Antelope Jackrabbit,Mammalia,False,5,6,3,0.0017,2,0.0012,True
+Neotoma mexicana,Mexican Woodrat,Mammalia,False,5,29,3,0.0017,2,0.0012,True
+Neotoma cinerea,Bushy-tailed Woodrat,Mammalia,False,5,125,5,0.0029,0,0.0,False
+Setophaga palmarum,Palm Warbler,Aves,False,4,6,1,0.0006,3,0.0018,True
+Sayornis phoebe,Eastern Phoebe,Aves,False,4,5,1,0.0006,3,0.0018,True
+Tyto alba,Common Barn Owl,Aves,False,4,18,1,0.0006,3,0.0018,True
+Oreoscoptes montanus,Sage Thrasher,Aves,False,4,10,4,0.0023,0,0.0,False
+Perisoreus canadensis,Grey Jay,Aves,False,4,7,2,0.0012,2,0.0012,True
+Quiscalus mexicanus,Great-tailed Grackle,Aves,False,4,9,4,0.0023,0,0.0,False
+Zonotrichia leucophrys,White-crowned Sparrow,Aves,False,4,5,1,0.0006,3,0.0018,True
+Neotamias minimus,Least Chipmunk,Mammalia,False,4,42,4,0.0023,0,0.0,False
+Molothrus ater,Brown-headed Cowbird,Aves,False,4,12,4,0.0023,0,0.0,False
+Melanerpes aurifrons,Golden-fronted Woodpecker,Aves,False,4,7,1,0.0006,3,0.0018,True
+Euphagus cyanocephalus,Brewer's Blackbird,Aves,False,4,5,3,0.0017,1,0.0006,True
+Dipodomys ordii,Ord's Kangaroo Rat,Mammalia,False,4,123,4,0.0023,0,0.0,False
+Chondestes grammacus,Lark Sparrow,Aves,False,4,4,1,0.0006,3,0.0018,True
+Melospiza melodia,Song Sparrow,Aves,False,4,17,2,0.0012,2,0.0012,True
+Neotamias umbrinus,Uinta Chipmunk,Mammalia,False,4,5,4,0.0023,0,0.0,False
+Aix sponsa,Wood Duck,Aves,False,4,24,3,0.0017,1,0.0006,True
+Ardea albus,Great Egret,Aves,False,3,5,2,0.0012,1,0.0006,True
+Cyrtonyx montezumae,Montezuma quail,Aves,False,3,8,1,0.0006,2,0.0012,True
+Agelaius phoeniceus,Red-winged Blackbird,Aves,False,3,5,2,0.0012,1,0.0006,True
+Neotoma fuscipes,Dusky-footed Woodrat,Mammalia,False,3,72,3,0.0017,0,0.0,False
+Sialia currucoides,Mountain Bluebird,Aves,False,3,9,3,0.0017,0,0.0,False
+Spilopelia suratensis,Western Spotted Dove,Aves,False,3,5,0,0.0,3,0.0018,False
+Cynomys ludovicianus,Arizona Black-tailed Prairie Dog | Black-tailed Prairie Dog,Mammalia,False,3,105,1,0.0006,2,0.0012,True
+Asio flammeus,Short-eared Owl,Aves,False,3,15,3,0.0017,0,0.0,False
+Colaptes cafer,Red-shafted Flicker,Aves,False,3,4,2,0.0012,1,0.0006,True
+Zapus hudsonius,Meadow Jumping Mouse,Mammalia,False,3,13,0,0.0,3,0.0018,False
+Aquila chrysaetos,Golden Eagle,Aves,False,3,7,2,0.0012,1,0.0006,True
+Troglodytes aedon,House Wren,Aves,False,3,4,1,0.0006,2,0.0012,True
+Troglodytes troglodytes,Wren,Aves,False,3,16,3,0.0017,0,0.0,False
+Athene cunicularia,Burrowing Owl,Aves,False,3,9,3,0.0017,0,0.0,False
+Neotoma albigula,White-throated Woodrat,Mammalia,False,3,4,3,0.0017,0,0.0,False
+Setophaga coronata,Myrtle Warbler,Aves,False,3,7,1,0.0006,2,0.0012,True
+Napaeozapus insignis,Woodland Jumping Mouse,Mammalia,False,3,12,2,0.0012,1,0.0006,True
+Neotoma micropus,Southern Plains Woodrat,Mammalia,False,3,33,0,0.0,3,0.0018,False
+Neotamias sonomae,Sonoma Chipmunk,Mammalia,False,3,3,3,0.0017,0,0.0,False
+Neotamias amoenus,Yellow-pine Chipmunk,Mammalia,False,3,8,0,0.0,3,0.0018,False
+Sciurus arizonensis,Arizona Gray Squirrel,Mammalia,False,2,2,1,0.0006,1,0.0006,True
+Equus asinus,Domestic Donkey,Mammalia,True,2,3,1,0.0006,1,0.0006,False
+Cygnus buccinator,Trumpeter Swan,Aves,False,2,2,0,0.0,2,0.0012,False
+Parabuteo unicinctus,Harris's Hawk,Aves,False,2,2,2,0.0012,0,0.0,False
+Scolopax minor,American Woodcock,Aves,False,2,2,1,0.0006,1,0.0006,True
+Buteo swainsoni,Swainson's Hawk,Aves,False,2,3,2,0.0012,0,0.0,False
+Eudocimus albus,White Ibis,Aves,False,2,9,1,0.0006,1,0.0006,True
+Butorides virescens,Green Heron,Aves,False,2,3,1,0.0006,1,0.0006,True
+Thryomanes bewickii,Bewick's Wren,Aves,False,2,3,2,0.0012,0,0.0,False
+Myadestes townsendi,Townsend's Solitaire,Aves,False,2,2,2,0.0012,0,0.0,False
+Sigmodon hispidus,Hispid Cotton Rat,Mammalia,False,2,2,1,0.0006,1,0.0006,True
+Callospermophilus lateralis,Golden Mantled Ground Squirrel,Mammalia,False,2,22,2,0.0012,0,0.0,False
+Sayornis saya,Say's Phoebe,Aves,False,2,2,2,0.0012,0,0.0,False
+Neotamias merriami,Merriam's Chipmunk,Mammalia,False,2,4,0,0.0,2,0.0012,False
+Streptopelia decaocto,Collared Dove,Aves,False,2,7,1,0.0006,1,0.0006,True
+Sturnella magna,Eastern Meadowlark,Aves,False,2,2,2,0.0012,0,0.0,False
+Dipodomys deserti,Desert Kangaroo Rat,Mammalia,False,2,11,1,0.0006,1,0.0006,True
+Corvus cryptoleucus,Chihuahuan Raven,Aves,False,2,47,0,0.0,2,0.0012,False
+Troglodytes pacificus,Pacific Wren,Aves,False,2,14,2,0.0012,0,0.0,False
+Cynomys leucurus,White-tailed Prairie Dog,Mammalia,False,2,36,2,0.0012,0,0.0,False
+Arremonops rufivirgatus,Olive Sparrow,Aves,False,2,26,0,0.0,2,0.0012,False
+Tyrannus verticalis,Western Kingbird,Aves,False,2,2,1,0.0006,1,0.0006,True
+Melanerpes uropygialis,Gila Woodpecker,Aves,False,2,2,2,0.0012,0,0.0,False
+Ardea alba,Great White Egret,Aves,False,2,3,2,0.0012,0,0.0,False
+Nucifraga columbiana,Clark's Nutcracker,Aves,False,2,12,1,0.0006,1,0.0006,True
+Aplodontia rufa,Mountain Beaver,Mammalia,False,2,7,2,0.0012,0,0.0,False
+Nyctidromus albicollis,Pauraque,Aves,False,2,10,2,0.0012,0,0.0,False
+Tyrannus forficatus,Scissor-tailed Flycatcher,Aves,False,2,2,1,0.0006,1,0.0006,True
+Xerospermophilus tereticaudus,Round-tailed Ground Squirrel,Mammalia,False,2,2,1,0.0006,1,0.0006,True
+Zenaida asiatica,White-winged Dove,Aves,False,2,2,1,0.0006,1,0.0006,True
+Haemorhous mexicanus,House Finch,Aves,False,2,4,2,0.0012,0,0.0,False
+Accipiter striatus,Sharp-Shinned Hawk,Aves,False,2,2,2,0.0012,0,0.0,False
+Gopherus polyphemus,Gopher Tortoise,Reptilia,False,2,2,1,0.0006,1,0.0006,True
+Calypte anna,Anna's Hummingbird,Aves,False,1,1,1,0.0006,0,0.0,False
+Neotamias speciosus,Lodgepole Chipmunk,Mammalia,False,1,1,0,0.0,1,0.0006,False
+Charadrius vociferus,Killdeer,Aves,False,1,1,1,0.0006,0,0.0,False
+Catharus fuscescens,Veery,Aves,False,1,1,1,0.0006,0,0.0,False
+Neotamias senex,Allen's Chipmunk,Mammalia,False,1,5,0,0.0,1,0.0006,False
+Numenius americanus,Long-billed Curlew,Aves,False,1,1,1,0.0006,0,0.0,False
+Callipepla squamata,Scaled Quail,Aves,False,1,1,0,0.0,1,0.0006,False
+Bombycilla cedrorum,Cedar Waxwing,Aves,False,1,1,0,0.0,1,0.0006,False
+Artemisiospiza nevadensis,Sagebrush Sparrow,Aves,False,1,1,1,0.0006,0,0.0,False
+Cairina moschata,Muscovy Duck,Aves,False,1,13,1,0.0006,0,0.0,False
+Nyctanassa violacea,Yellow-crowned Night-heron,Aves,False,1,1,1,0.0006,0,0.0,False
+Brachylagus idahoensis,Pygmy Rabbit,Mammalia,False,1,2,1,0.0006,0,0.0,False
+Blarina brevicauda,Northern Short-tailed Shrew,Mammalia,False,1,2,1,0.0006,0,0.0,False
+Botaurus lentiginosus,American Bittern,Aves,False,1,1,0,0.0,1,0.0006,False
+Neotamias panamintinus,Panamint Chipmunk,Mammalia,False,1,1,1,0.0006,0,0.0,False
+Passerina caerulea,Blue Grosbeak,Aves,False,1,1,1,0.0006,0,0.0,False
+Myodes gapperi,Southern Red-backed Vole,Mammalia,False,1,3,0,0.0,1,0.0006,False
+Oryx gazella,Gemsbok,Mammalia,False,1,2,0,0.0,1,0.0006,False
+Melospiza georgiana,Swamp Sparrow,Aves,False,1,1,1,0.0006,0,0.0,False
+Lama glama,Llama,Mammalia,False,1,10,1,0.0006,0,0.0,False
+Leiothlypis celata,Orange-crowned Warbler,Aves,False,1,1,0,0.0,1,0.0006,False
+Megaceryle alcyon,Belted Kingfisher,Aves,False,1,1,0,0.0,1,0.0006,False
+Poecile carolinensis,Carolina Chickadee,Aves,False,1,1,0,0.0,1,0.0006,False
+Passerculus sandwichensis,Savannah Sparrow,Aves,False,1,1,1,0.0006,0,0.0,False
+Pitangus sulphuratus,Great Kiskadee,Aves,False,1,1,0,0.0,1,0.0006,False
+Passerella arborea,American Tree Sparrow,Aves,False,1,1,1,0.0006,0,0.0,False
+Heloderma suspectum,Gila Monster,Reptilia,False,1,1,1,0.0006,0,0.0,False
+Melozone aberti,Abert's Towhee,Aves,False,1,1,1,0.0006,0,0.0,False
+Phalacrocorax auritus,Double-crested Cormorant,Aves,False,1,1,0,0.0,1,0.0006,False
+Melozone fusca,Canyon Towhee,Aves,False,1,1,1,0.0006,0,0.0,False
+Mergus merganser,Goosander,Aves,False,1,6,0,0.0,1,0.0006,False
+Mniotilta varia,Black-and-white Warbler,Aves,False,1,1,0,0.0,1,0.0006,False
+Passerella iliaca,Red Fox-sparrow,Aves,False,1,11,1,0.0006,0,0.0,False
+Ictidomys tridecemlineatus,Thirteen-lined Ground Squirrel,Mammalia,False,1,1,0,0.0,1,0.0006,False
+Salpinctes obsoletus,Rock Wren,Aves,False,1,19,1,0.0006,0,0.0,False
+Dipodomys nitratoides,Fresno Kangaroo Rat,Mammalia,False,1,2,0,0.0,1,0.0006,False
+Sialia mexicana,Western Bluebird,Aves,False,1,1,0,0.0,1,0.0006,False
+Spizella pallida,Clay-colored Sparrow,Aves,False,1,1,1,0.0006,0,0.0,False
+Myiarchus crinitus,Great Crested Flycatcher,Aves,False,1,1,0,0.0,1,0.0006,False
+Dromaius novaehollandiae,Emu,Aves,False,1,1,0,0.0,1,0.0006,False
+Sphyrapicus varius,Yellow-bellied Sapsucker,Aves,False,1,1,1,0.0006,0,0.0,False
+Spatula discors,Blue-winged Teal,Aves,False,1,2,1,0.0006,0,0.0,False
+Egretta caerulea,Little Blue Heron,Aves,False,1,1,0,0.0,1,0.0006,False
+Mycteria americana,Wood Stork,Aves,False,1,1,0,0.0,1,0.0006,False
+Gopherus berlandieri,Berlandier's Tortoise,Reptilia,False,1,3,1,0.0006,0,0.0,False
+Setophaga pinus,Pine Warbler,Aves,False,1,1,0,0.0,1,0.0006,False
+Ovis canadensis,Bighorn Sheep,Mammalia,False,1,1,1,0.0006,0,0.0,False
+Euphagus carolinus,Rusty Blackbird,Aves,False,1,1,1,0.0006,0,0.0,False
+Gallus gallus,Domestic Chicken,Aves,False,1,1,0,0.0,1,0.0006,False
+Geopelia striata,Zebra Dove,Aves,False,1,2,0,0.0,1,0.0006,False
+Geranoaetus albicaudatus,White-tailed Hawk,Aves,False,1,6,1,0.0006,0,0.0,False
+Microtus ochrogaster,Prairie Vole,Mammalia,False,1,1,0,0.0,1,0.0006,False

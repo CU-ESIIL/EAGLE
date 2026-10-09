@@ -1,0 +1,7 @@
+step,n_deployments,dropped
+all deployments,9679,0
+1. valid coordinates,9679,0
+2. >= 4 decimals in lat and lon,9378,301
+3. >= 7 survey nights,9081,297
+4. covered by a 3DEP footprint with a collection year,8022,1059
+5. 3DEP collection year within +/-3 yr of the survey,4761,3261

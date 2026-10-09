@@ -521,3 +521,63 @@ Remove the old columns and scripts since they won't be used.
 
 - Dropped `leaf_on_frac`, `leaf_on_provider`, `leaf_on_note` from the AWS registry (`leaf_on`, `leaf_on_source` unchanged).
 - Deleted `02_provider_leaf_text.py`, `03_modis_ndvi_samples.py`, `04_merge_leaf_on.py`. Left `leaf_on/provider_evidence.csv` and `leaf_on/modis_ndvi_samples.parquet` (now unused) pending a decision. Leaf-on sections of both READMEs rewritten.
+
+## 2026-10-09 - sPlotOpen ingestion, filtering, ALS matching, split and attribute summary
+
+### Prompt
+
+Look at `datasets/raw/splot_open` and the BBS, butterfly and OFO ingestion/matching/split code; write ingestion + filtering + ALS matching + train/test split scripts for sPlotOpen (precise locations only, a flag for which plants were recorded, +/-3 years of ALS), and summarize the plot-level attributes (cover, CWM traits, structure) so benchmark targets can be chosen.
+
+### Actions
+
+- Added `data_cleaning/splot_open/` (`01_ingest.py`, `02_filter_and_match_als.py`, `03_split_and_export.py`, `04_summarize_targets.py`, `README.md`, `catalog/`), modelled on the LFRDB pipeline.
+- Filters: US, valid coordinates, `Location_uncertainty <= 25` m, >= 4 decimals, 3DEP footprint, |year gap| <= 3. `Plant_recorded` is a flag (`plants_recorded_class`, `woody_only`), not a filter. Split: 50% by 0.1-degree lat/lon block (seed 20260909).
+- Result: 19,098 US plots -> 10,906 located with a lidar footprint -> **82** within 3 years (81 CVS, 1 VegBank; 41 train, 41 test). The year rule removes almost everything (plots mostly 2001-2004, lidar mostly 2010+); gap <= 5 yr gives 203, <= 10 yr 892.
+- Layer cover is null for all 82 matched plots (exists only for VegBank 2000-2004) and all height columns are null for the whole US portion; CWM traits are available for 80 of 82. Targets are not chosen yet.
+- Wrote `datasets/SPLOT_eval/` (`splot_open_eval.parquet`, `attribute_summary.csv`, `attribute_availability_by_year_gap.csv`, figures, README). The CWM values appear to be natural-log transformed (inferred, not stated in the dataset notes).
+- Raw-data derived parquet files are in the gitignored `datasets/raw/splot_open/derived/`. `01_ingest.py` reads the species and metadata files with `encoding_errors="replace"` (a few original species names are not UTF-8).
+
+## 2026-10-09 - Snapshot USA occupancy / encounter-rate task
+
+### Prompt
+
+Skip sPlotOpen. Look at `datasets/raw/snapshotUSA_2019-2023` (sequences = annotated camera-trap records, deployments = camera locations/dates); targets are per-species encounter rate or occupancy per location. Write ingestion, filtering, ALS matching and split scripts.
+
+### Actions
+
+- Added `data_cleaning/snapshot_usa/` (`01_ingest_and_count.py`, `02_filter_and_match_als.py`, `03_split_and_export.py`, `README.md`, `catalog/`) and `datasets/SNAPSHOT_USA_eval/` (table, long species table, species summary, figures, README).
+- Found that `Deployment_ID` is reused across years (46 IDs), so sequences are joined on (Year, Deployment_ID); with the ID alone 4,710 sequences fall outside their deployment dates.
+- Filters: >= 4 coordinate decimals, >= 7 survey nights, 3DEP footprint, lidar within +/-3 yr. 9,679 deployments -> **4,761** (3,409 locations); 50% spatial split by 0.1-degree block (seed 20260909; no location in both splits).
+- Targets: `occ__<species>` and `rate__<species>` (independent events, 30-min rule, per 100 camera-nights) for 45 eligible wild species with >= 20 present deployments in both splits; all 276 detected species in `species_events_long.parquet` and `species_summary.csv`.
+- sPlotOpen was dropped by the user: `data_cleaning/splot_open/` and `datasets/SPLOT_eval/` are no longer in the working tree (not removed by this session); the earlier sPlotOpen log entry is kept as history.
+
+## 2026-10-09 - Snapshot USA per-location occupancy and detection-rate tables
+
+### Prompt
+
+Create separate per-location targets for occupancy and detection rate, one row per location with a matched ALS product; require only 1 record in each of train and test to include a species.
+
+### Actions
+
+- Added `data_cleaning/snapshot_usa/04_location_targets.py`. Deployments are pooled by `location_id`; each location keeps the lidar product matched by most of its deployments (ties: smaller year gap) and only deployments on that product are pooled (22 of 4,761 left out, 12 locations).
+- Wrote `datasets/SNAPSHOT_USA_eval/location_occupancy.parquet` and `location_detection_rate.parquet` (3,409 locations: 1,715 train, 1,694 test; 159 wild species present at >= 1 location in each split) and `location_species_summary.csv`. 73 of the 159 have fewer than 5 locations in one split. Updated both READMEs.
+
+## 2026-10-09 - Snapshot USA "-20" per-location evaluation set
+
+### Prompt
+
+Create a separate eval set called "...-20" where the minimum number of occurrences of the species in either split is 20.
+
+### Actions
+
+- `04_location_targets.py` takes `--min-locations N` (default 1, output unchanged). N = 20 writes `datasets/SNAPSHOT_USA_eval-20/` (occupancy and detection-rate tables, species summary, README): same 3,409 locations and split, 39 wild species with >= 20 locations in both train and test (min 25 train / 23 test). Read "minimum in either split" as at least 20 in each split.
+
+## 2026-10-09 - Snapshot USA data-prep README resynchronized
+
+### Prompt
+
+Update the data prep README; the user's and the session's versions had drifted apart.
+
+### Actions
+
+- `data_cleaning/snapshot_usa/README.md`: kept the user's Dryad link, replaced the now-contradictory "no provenance" sentence, restored the `--min-locations N` note on the stage 4 row (the user's copy lacked it), listed the outputs of stages 3 and 4 (including `SNAPSHOT_USA_eval-20/`), added the location-level rules and a location-table results table, and extended the intro.
