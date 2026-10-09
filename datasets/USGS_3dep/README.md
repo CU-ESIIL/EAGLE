@@ -8,7 +8,7 @@ Polygon registries of USGS 3DEP lidar products, used to match field datasets to 
 | `usgs_3dep_resources_ALL.geojson` | 2,844 | every WESM lidar workunit with its staged-LAZ link (`lpc_link`). Not updated by the date work below |
 | `leaf_on/` | | intermediate tables, logs and notes for collection dates and leaf-on status (see `leaf_on/README.md`) |
 
-Code: `src/streaming/3dep/fetch_3dep_metadata.py` builds both registries from hobu's EPT boundary list plus the USGS WESM table. The scripts in `src/streaming/3dep/leaf_on/` then correct the dates and (in progress) add leaf-on status. **Re-running `fetch_3dep_metadata.py` overwrites the AWS registry, so re-run the `leaf_on` steps afterwards.**
+Code: `src/streaming/3dep/fetch_3dep_metadata.py` builds both registries from hobu's EPT boundary list plus the USGS WESM table. The scripts in `src/streaming/3dep/leaf_on/` then correct the dates and add leaf-on status. **Re-running `fetch_3dep_metadata.py` overwrites the AWS registry, so re-run the `leaf_on` steps afterwards.**
 
 ## Key columns (AWS registry)
 
@@ -23,6 +23,7 @@ Code: `src/streaming/3dep/fetch_3dep_metadata.py` builds both registries from ho
 | `collection_year_prev` | the value before the 2026-10-08 correction |
 | `collect_dates_source` | `wesm_exact_workunit`, `wesm_normalized_workunit`, `gpstime` or null |
 | `collect_dates_check` | agreement with measured GPS time (table below) |
+| `leaf_on`, `leaf_on_source` | leaf-on status from the collection season (see the last section) |
 
 ## Collection dates
 
@@ -60,14 +61,10 @@ Curated datasets store `collection_year_AWS` / `year_diff_AWS` from the old regi
 
 Also `scripts/litePT/sample_pretrain_locations.py` (uses `collection_year` for `--min-year`): rerun if its output was used. `NPS_VMI` has no lidar matching and is unaffected.
 
-## Leaf-on status (in progress, not yet in the registry)
+## Leaf-on status
 
-Goal: a `leaf_on` boolean per product. Preference order: what the data provider documents, then an inference from phenology.
+Registry columns: `leaf_on` (boolean, null when not determinable) and `leaf_on_source` (`collection_season` or null).
 
-- `02_provider_leaf_text.py` scrapes USGS staged metadata (vendor XML and LPC reports on `prd-tnm.s3.amazonaws.com`) for "leaf-off" / "leaf-on" statements. Of 2,243 metadata links: 342 say leaf-off, 23 leaf-on, 1 conflicting. WESM itself has no leaf field. Output: `leaf_on/provider_evidence.csv` (with the quoted snippet).
-- `03_modis_ndvi_samples.py` samples Terra MOD13Q1 16-day NDVI (Planetary Computer, anonymous) at 8 random points per product for the collection year(s). MCD12Q2 phenology is not on Planetary Computer and needs an Earthdata login.
-- `04_merge_leaf_on.py` (not yet run on the registry) will add `leaf_on`, `leaf_on_source` (`provider_metadata` or `modis_ndvi_phenology`), `leaf_on_frac` (share of collection days with leaf-on canopy), `leaf_on_provider` and `leaf_on_note`. Rule: a day is leaf-on when NDVI is at least halfway between that year's minimum and maximum; flat curves count as leaf-on if green (NDVI >= 0.3). It prints the agreement between this rule and the provider labels.
+Built by `src/streaming/3dep/leaf_on/05_leaf_on_from_dates.py` from the collection dates alone (CONUS rule): `True` if every month touched by `collect_start`..`collect_end` is in June-September, `False` if every month is in December-March, null otherwise (spans other months, shoulder season, or undated). Result: 201 True, 541 False, 1,536 null.
 
-Known limits of the phenology inference: points are random within the footprint, not restricted to forest; evergreen conifers under snow can read as leaf-off; large footprints mix phenologies, so check `leaf_on_frac` rather than only the boolean.
-
-See `leaf_on/README.md` for the same material in step-by-step form.
+An earlier approach using provider metadata and MODIS NDVI phenology was dropped: NDVI also tracks evergreen conifers (Maine in December reads ~0.6), provider statements are often templated requirements, and a binary label does not fit multi-month or shoulder-season collections. Its columns and scripts were removed; the intermediate files `leaf_on/provider_evidence.csv` and `leaf_on/modis_ndvi_samples.parquet` remain only as unused leftovers.

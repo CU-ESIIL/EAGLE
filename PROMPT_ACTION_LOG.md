@@ -484,3 +484,40 @@ Write another quiz notebook based on the NLCD classification task.
 ### Actions
 
 - Added `scripts/3dep/nlcd_class_quiz.ipynb`, adapted from `vegbank_class_quiz.ipynb` (same tile streaming, caching, coloring and widget quiz) for `datasets/NLCD_eval`: Level I or Level II classes, balanced/stable/all subsets, known-empty tiles skipped via the status csv, a red outline of the labeled 30 m pixel, strict and lenient (alternate-label) scores, and a confusion table of answers.
+
+## 2026-10-09 - Leaf-on field added to the AWS 3DEP registry
+
+### Prompt
+
+Scheduled checks (every 20 min) until the leaf-on pipeline was complete.
+
+### Actions
+
+- NDVI sampling (`03_modis_ndvi_samples.py`) stalled repeatedly (laptop sleep, hanging COG reads); added read retries, GDAL/STAC timeouts, search retries and a per-year deadline. It was stopped with 2002-2022 sampled; 2023-2024 and some skipped reads are missing.
+- Fixed a bug in `04_merge_leaf_on.py` (np.interp on unsorted day-of-year gave ~100% leaf-on everywhere; first run's registry was restored from a backup before the fixed run).
+- Registry now has `leaf_on`, `leaf_on_source`, `leaf_on_frac`, `leaf_on_provider`, `leaf_on_note`. Validation against provider labels: 65.5% agreement (n=348, 328 off / 20 on). Provider statements are often templated requirements, so strong contradictions with the phenology (59 products) get `leaf_on` null and source `conflict_provider_vs_phenology`.
+- 118 products have no leaf-on value (72 from 2023, 13 from 2024, 5 undated, 28 other). Documented in `datasets/USGS_3dep/README.md` and `leaf_on/README.md`.
+
+## 2026-10-09 - Leaf-on label replaced by a collection-season rule
+
+### Prompt
+
+NDVI is a poor proxy for deciduous leaf state (conifers; Maine in December reads 0.6) and multi-month or shoulder-season collections cannot be binary. Replace the label: only June-September -> one value, only December-March -> the other, null otherwise; no imagery or NDVI.
+
+### Actions
+
+- The review notebook built earlier in the day (`05_leaf_on_review.ipynb`) was removed as obsolete; the small `ndvi_curve()` refactor in `04_merge_leaf_on.py` stays (behaviour unchanged).
+- Added `src/streaming/3dep/leaf_on/05_leaf_on_from_dates.py`. Registry `leaf_on` is now True for June-September-only windows, False for December-March-only, null otherwise; `leaf_on_source` = `collection_season`. Result: 201 True, 541 False, 1,536 null.
+- The request literally said June-September = False and December-March = True; this was taken as a slip and implemented as summer = leaf-on True (flip the two month sets in the script if it was intended).
+- `leaf_on_frac`, `leaf_on_provider`, `leaf_on_note` kept for reference only. Both READMEs updated; the working-document artifact has not been updated.
+
+## 2026-10-09 - Remove NDVI/provider leaf-on columns and scripts
+
+### Prompt
+
+Remove the old columns and scripts since they won't be used.
+
+### Actions
+
+- Dropped `leaf_on_frac`, `leaf_on_provider`, `leaf_on_note` from the AWS registry (`leaf_on`, `leaf_on_source` unchanged).
+- Deleted `02_provider_leaf_text.py`, `03_modis_ndvi_samples.py`, `04_merge_leaf_on.py`. Left `leaf_on/provider_evidence.csv` and `leaf_on/modis_ndvi_samples.parquet` (now unused) pending a decision. Leaf-on sections of both READMEs rewritten.

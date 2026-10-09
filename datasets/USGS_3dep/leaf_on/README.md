@@ -46,7 +46,10 @@ Rows listed are those whose stored `collection_year_AWS` no longer equals the re
 Not affected: NPS VMI (no ALS matching). Rematching can change the chosen product, `year_diff_AWS`, `als_site_id`
 and the rows kept, so downstream splits and evaluation tables should be rebuilt, not patched.
 
-## Leaf-on status (in progress)
+## Leaf-on status
 
-Steps 02 (provider "leaf-off/leaf-on" statements in USGS metadata), 03 (MODIS NDVI phenology samples) and
-04 (merge into `leaf_on`, `leaf_on_source`, `leaf_on_frac`) are being run; 04 has not been applied to the registry yet.
+Registry columns: `leaf_on` (boolean, null when not determinable) and `leaf_on_source` (`collection_season` or null).
+
+Built by `src/streaming/3dep/leaf_on/05_leaf_on_from_dates.py` from the collection dates alone (CONUS rule): `True` if every month touched by `collect_start`..`collect_end` is in June-September, `False` if every month is in December-March, null otherwise (spans other months, shoulder season, or undated). Result: 201 True, 541 False, 1,536 null.
+
+An earlier approach using provider metadata and MODIS NDVI phenology was dropped: NDVI also tracks evergreen conifers (Maine in December reads ~0.6), provider statements are often templated requirements, and a binary label does not fit multi-month or shoulder-season collections. Its columns and scripts were removed; the intermediate files `leaf_on/provider_evidence.csv` and `leaf_on/modis_ndvi_samples.parquet` remain only as unused leftovers.
