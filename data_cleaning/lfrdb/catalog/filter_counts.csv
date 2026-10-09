@@ -6,6 +6,6 @@ all plots in the nine public regional databases,539373,0
 4. visit type = field visit,217672,34287
 5. visit year in 1970-2025,215098,2574
 6. covered by a 3DEP footprint with a collection year,175279,39819
-7. 3DEP collection year within +/-3 yr of visit,7783,167496
-8. ecosys label not missing,7538,245
-9. ecosys is not an 'Unclassified ...' fallback,6742,796
+7. 3DEP collection year within +/-3 yr of visit,9365,165914
+8. ecosys label not missing,9100,265
+9. ecosys is not an 'Unclassified ...' fallback,8027,1073

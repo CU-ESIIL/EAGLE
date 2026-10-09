@@ -4,7 +4,7 @@ Primary evaluation column: `ecosys` (LANDFIRE/NatureServe Ecological System). Ro
 null or an 'Unclassified ...' fallback (a lifeform bucket, not a habitat type) are dropped.
 Structure columns (cover, height) are NOT used to drop rows; they stay null where not recorded.
 
-Split: ~50% of rows held out, assigned by whole 1-degree lat/lon blocks (spatial hold-out; plots
+Split: ~50% of rows held out, assigned by 0.1-degree lat/lon blocks (spatial hold-out; plots
 from one survey sit close together, so a random plot split would leak). Blocks are shuffled with
 SEED (same seed as the BBS and butterfly splits) and added to the test set while that moves the
 test share closer to 50%.
@@ -42,7 +42,7 @@ COLUMNS = [
 
 
 def spatial_split(d):
-    block = np.floor(d.lat).astype(int) * 1000 + np.floor(d.lon).astype(int)
+    block = (np.floor(d.lat)*10).astype(int) * 1000 + (np.floor(d.lon)*10).astype(int)
     sizes = block.value_counts()
     order = np.sort(sizes.index.to_numpy())  # sorted, writable, so the shuffle depends only on SEED
     np.random.default_rng(SEED).shuffle(order)
@@ -92,7 +92,7 @@ def main():
     for flag, color, name in [(False, "#1565c0", "train"), (True, "#c62828", "test")]:
         g = d[(d.test_split == flag) & d.lon.between(-126, -66) & d.lat.between(24, 50)]
         ax.scatter(g.lon, g.lat, s=4, alpha=0.6, color=color, label=f"{name} ({int((d.test_split == flag).sum())} total)")
-    ax.set_title("Train/test split by 1-degree block (CONUS shown)", fontsize=9)
+    ax.set_title("Train/test split by 0.1-degree block (CONUS shown)", fontsize=9)
     ax.set_xlabel("lon")
     ax.set_ylabel("lat")
     ax.legend(fontsize=8, markerscale=2)
