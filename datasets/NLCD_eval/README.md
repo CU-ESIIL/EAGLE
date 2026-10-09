@@ -2,7 +2,7 @@
 
 A small CONUS classification benchmark for checking that representation training is progressing (e.g. a linear probe on frozen embeddings). Each row is a 30 m pixel with an analyst-interpreted land-cover label and the 3DEP lidar product closest in time to that label.
 
-Labels are **reference labels, not the modeled NLCD map**: the NLCD 2021 accuracy-assessment points (Wickham et al. 2026, https://doi.org/10.5066/P9JZ7AO3), 3,245 CONUS pixels interpreted by trained analysts who were blind to the map labels, using high-resolution imagery. Each point has a primary and an alternate label for 2016, 2019 and 2021. Raw files are in `datasets/raw/NLCD_AA2021/` (gitignored). Code: `scripts/nlcd_eval/`.
+Labels are **reference labels, not the modeled NLCD map**: the NLCD 2021 accuracy-assessment points (Wickham et al. 2026, https://doi.org/10.5066/P9JZ7AO3), 3,245 CONUS pixels interpreted by trained analysts who were blind to the map labels, using high-resolution imagery. Each point has a primary and an alternate label for 2016, 2019 and 2021. Raw files are in `datasets/raw/NLCD_AA2021/` (gitignored). Code: `data_cleaning/nlcd/`.
 
 ## Files
 
@@ -47,6 +47,6 @@ Labels are **reference labels, not the modeled NLCD map**: the NLCD 2021 accurac
 ## Regenerating
 
 ```
-python scripts/nlcd_eval/01_build_table.py                      # builds the parquet
-python scripts/nlcd_eval/02_check_streaming.py --max-seconds 600  # optional, resumable, appends to the status csv
+python data_cleaning/nlcd/01_build_table.py                      # builds the parquet
+python data_cleaning/nlcd/02_check_streaming.py --max-seconds 600  # optional, resumable, appends to the status csv
 ```
