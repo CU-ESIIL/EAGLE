@@ -1,0 +1,6 @@
+revisit radius 5.0 m, gap >= 1.0 yr: 549 pairs, 747 surveys, 306 sites, 21 projects, same project 0.95
+gap quantiles (yr): {'count': 549.0, 'mean': 5.2, 'std': 3.8, 'min': 1.0, '25%': 2.0, '50%': 4.9, '75%': 6.1, 'max': 33.1}
+overall agreement: formation_class 0.97, formation_subclass 0.90, formation 0.86, division 0.85, macrogroup 0.85, group 0.77, alliance 0.73, association 0.65
+labeled pairs per level: formation_class 548, formation_subclass 548, formation 548, division 548, macrogroup 548, group 548, alliance 549, association 437
+alliance change vs log(gap): slope 0.356, p 0.021
+of 149 pairs with a changed alliance: group also changed 0.86, macrogroup 0.56, formation class 0.09

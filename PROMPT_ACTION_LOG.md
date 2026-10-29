@@ -581,3 +581,95 @@ Update the data prep README; the user's and the session's versions had drifted a
 ### Actions
 
 - `data_cleaning/snapshot_usa/README.md`: kept the user's Dryad link, replaced the now-contradictory "no provenance" sentence, restored the `--min-locations N` note on the stage 4 row (the user's copy lacked it), listed the outputs of stages 3 and 4 (including `SNAPSHOT_USA_eval-20/`), added the location-level rules and a location-table results table, and extended the intro.
+
+## 2026-10-11 - NestWatch lidar cookie explorer notebook
+
+### Prompt
+
+Following the vegbank_class_quiz.ipynb example, build a notebook in data_cleaning/data_exploration that visualizes lidar cookies of 30 m radius centered on reported nests from the NestWatch dataset. Only select nests whose reported year is within +/- 1 year of a matching lidar tile (see get_nearest_year_product in get_als.py), and let the user select a species or list of species to filter nest observations to.
+
+### Actions
+
+- Added `data_cleaning/data_exploration/nestwatch_lidar_cookies.ipynb`. Config cell takes `SPECIES` (common names or codes), `N_SHOW`, `MAX_YEAR_DIFF` (default 1), `RADIUS` (default 30), and display options. It matches the selected species' nests with `get_nearest_year_product`, keeps those within the year limit (one per Location ID by default), streams cookies with `load_als_cookie`, and draws a shared-scale grid of 3D scenes plus a table of the shown nests with map links. It reuses the tile/plot helpers from `scripts/3dep/vegbank_class_quiz.ipynb`.
+- The notebook treats a `ValueError` from `get_nearest_year_product` (all covering products have NaN `collection_year`) as "no match"; `get_als.py` is unchanged.
+- Test run (Mountain Bluebird, 4 cookies): 24,829 attempts, 18,069 with ALS coverage, 3,515 within +/-1 year, 1,301 after one-per-location.
+
+## 2026-10-11 - NestWatch cookie plots: height-dependent thinning
+
+### Prompt
+
+Does the visualization downsample points? If so, retain full point density above 3 m HAG and greatly reduce density below 3 m.
+
+### Actions
+
+- `nestwatch_lidar_cookies.ipynb`: replaced the uniform `MAX_POINTS` random thinning with `HIGH_HAG = 3` (all points at or above are plotted) and `LOW_KEEP_FRAC = 0.1` (fraction of points below that are kept). Falls back to Z when a cookie has no ground points.
+
+## 2026-10-29 - Ingest VegBench and match to 3DEP lidar
+
+### Prompt
+
+Read the README and a couple of data_cleaning workflows, then ingest VegBench (curated train/val/test split of California vegetation surveys): check which surveys have lidar within N years (N = 0..5, usually 3) and add the 3DEP tile info to a table with coordinates, NVC labels at each level, survey year and plot id.
+
+### Actions
+
+- Added `data_cleaning/vegbench/01_match_als.py` (modelled on `snapshot_usa/02_filter_and_match_als.py` and `lfrdb/03_filter_and_match_als.py`), `README.md` and `catalog/` counts.
+- Wrote `datasets/VegBench_eval/vegbench_eval.parquet` (10,455 surveys with year gap <= 3) and the gitignored `datasets/raw/vegbench/derived/vegbench_als_covered.parquet` (all 37,380 covered surveys).
+- Counts for N = 0..5: 2,477 / 6,721 / 8,723 / 10,455 / 11,687 / 13,462. The VegBench split is kept as given; no new split was made.
+
+## 2026-10-29 - VegBench label turnover and dataset ingestion guide
+
+### Prompt
+
+Using repeated-location VegBench surveys, characterize how labels at each taxonomy level turn over with time, in a repo script with outputs. Also write data_cleaning/DATASET_INGESTION.md: general steps to ingest a new dataset and the target output format for an evaluation-ready dataset.
+
+### Actions
+
+- Added `data_cleaning/vegbench/02_label_turnover.py`: finds revisit pairs (<= 5 m, >= 1 yr apart; 549 pairs, 306 sites), computes label agreement per level and gap bin with site-bootstrap intervals, and writes `catalog/turnover_*.csv`, `turnover_summary.txt` and `datasets/VegBench_eval/figures/01_label_turnover.png`. Summary added to `data_cleaning/vegbench/README.md`.
+- Added `data_cleaning/DATASET_INGESTION.md` (steps, folder layout, eval table columns, checklist), written from the lfrdb, snapshot_usa, nps_vmi and vegbench pipelines and `eagle_als` (`cache.py`, `probe.py`, `squares.EVAL_SITES`).
+
+## 2026-10-29 - VegBench class counts per level and split
+
+### Prompt
+
+Summarize / visualize the number of samples per classification level and split.
+
+### Actions
+
+- Added `data_cleaning/vegbench/03_class_counts.py`: rows per class, level and split for the eval table (and the full benchmark), a per-level summary (classes per split, classes only in test, classes with >= 20 rows), a rank-abundance figure and a stacked-bar figure for the six coarsest levels. Outputs in `data_cleaning/vegbench/catalog/` and `datasets/VegBench_eval/figures/02-03_*.png`; summary table added to `data_cleaning/vegbench/README.md`.
+
+## 2026-10-29 - SatBird ingestion and task-variant guidance
+
+### Prompt
+
+Ingest SatBird (labels on Hugging Face lack coordinates; the full set is a 152 GB Drive archive). Do not rely on third-party datasets of unknown provenance for coordinates: get hotspots in bulk from the eBird API. Build 4 classification variants (all species or species with > 20 occupied sites in each of train and eval) x (encounter rate or binary occupancy), and update the ingestion guide to recommend the "all" and per-split minimum variants.
+
+### Actions
+
+- Found that the HF targets pickle (122,593 hotspots x 670 species) has no coordinates or species names; the Drive holds only one 154.7 GB tarball. The split CSVs of two companion HF datasets (`cisosdm/SatBirdxsPlotOpen`, `SatBirdxSatButterfly`) carry 2023 coordinates for 87,939 hotspots; they are used only as a cross-check to drop moved hotspots.
+- Added `data_cleaning/satbird/` (01 download via eBird API `ref/hotspot/US-<state>`, 51 bulk calls; 02 filter and 3DEP match with year = 2022; 03 1-degree block split and four variants), `README.md`, `catalog/`.
+- eBird returns coordinates for only 55,399 of the 122,593 ids (others were merged, hidden or are personal locations); 27,384 remain with lidar within 3 yr. Wrote `datasets/SATBIRD_eval/` (606 species) and `datasets/SATBIRD_eval-20/` (518 species), each with encounter-rate and occupancy parquet files, plus README and figures.
+- Updated `data_cleaning/DATASET_INGESTION.md` with a "Recommended task variants" section ("all" and "-20", rate and presence tables) and a checklist item; added the table to `squares.EVAL_SITES`. Cookie cache not built.
+
+## 2026-10-29 - SatBird: lidar match over the pooled label years
+
+### Prompt
+
+Pooled checklists make a single survey year wrong: match any lidar year within the pooled checklist range, with the latest year in the range as the preference, and document this clearly.
+
+### Actions
+
+- `satbird/02_filter_and_match_als.py` now lists every 3DEP product covering a hotspot (`lookup_3dep_by_latlon`) and accepts any collection year in 2010-2023; the latest year in the window is chosen. `year_diff_AWS` is the gap to the window (0 inside); `label_year_min`/`label_year_max` added. `03_split_and_export.py` keeps gap 0.
+- Result: 48,048 hotspots (was 27,384 with a +/-3 yr rule around 2022), 1,320 products, collection years 2010-2023; 618 species ("all") and 537 ("-20"). Gap table N = 0..5: 48,048 / 48,126 / 48,136 / 48,184 / 48,254 / 48,254.
+- Documented the rule and its consequences in `data_cleaning/satbird/README.md`, `datasets/SATBIRD_eval/README.md` and `DATASET_INGESTION.md` (step 5 note for pooled labels).
+
+## 2026-10-29 - Baseline evaluation harness (AlphaEarth + linear probes) and Bridges-2 handoff
+
+### Prompt
+
+Evaluate lidar embedding models and alternative representations (AlphaEarth first) on the benchmark suite (BBS, BLM AIM, LFRDB, NPS VMI, butterflies, OFO trees, SnapShot USA, VegBench, NLCD) with linear probes, in scripts/baseline_eval with reusable code in src/. Then: document for a handoff to a local agent on Bridges-2; do not drop sites whose year has no AlphaEarth imagery (use the closest year); add SatBird (all and -20).
+
+### Actions
+
+- Added `src/eagle_bench/` (`tasks.py`: 16 task loaders on the stored spatial splits; `aef.py`: AlphaEarth COG reader from Source Cooperative with nearest-year fallback; `probes.py`: logistic / ridge linear probes) and its README.
+- Added `scripts/baseline_eval/` (`01_extract_aef.py` resumable extraction, `02_linear_probe.py`, `extract_aef.sbatch`, `README.md` with the handoff steps and checks).
+- Measured: 93,971 unique points need ~33,400 COG blocks (~1 TB read, ~100 MB kept); too heavy for a laptop, so the full extraction was not run. Tested the probes on random embeddings (chance-level scores) and the reader on 2 real points (unit norm, 81 valid pixels). No probe results yet.

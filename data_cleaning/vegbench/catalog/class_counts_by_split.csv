@@ -1,0 +1,2168 @@
+class,level,n_train,n_val,n_test/strat,n_test/acc,full_n_train,full_n_val,full_n_test/strat,full_n_test/acc,n_total
+Cryomorphic Shrub and Herb Vegetation (Polar and High Montane Vegetation),formation_class,7,0,0,1,64,8,3,15,8
+Hydromorphic Vegetation (Aquatic Vegetation),formation_class,26,3,5,0,63,26,22,37,34
+Lithomorphic Vegetation (Nonvascular and Sparse Vascular Rock Vegetation),formation_class,38,7,2,6,262,54,59,33,53
+Mesomorphic Shrub and Herb Vegetation (Shrubland and Grassland),formation_class,3545,492,368,883,12592,1862,1862,4696,5288
+Mesomorphic Tree Vegetation (Forest and Woodland),formation_class,2268,362,408,1255,6660,1844,1856,4062,4293
+Xeromorphic Scrub and Herb Vegetation (Semi-Desert),formation_class,279,68,89,260,3369,1077,1069,548,696
+Cool Semi-Desert Scrub and Grassland,formation_subclass,195,53,74,201,1306,451,491,243,523
+Freshwater Aquatic Vegetation,formation_subclass,21,1,4,0,54,24,21,37,26
+Mediterranean Scrub and Grassland,formation_subclass,1471,263,110,558,7507,1067,931,3061,2402
+"Mediterranean, Temperate, and Boreal Nonvascular and Sparse Vegetation",formation_subclass,38,6,2,6,167,6,2,24,52
+Saltwater Aquatic Vegetation,formation_subclass,5,2,1,0,9,2,1,0,8
+Semi-Desert Nonvascular and Sparse Vascular Vegetation,formation_subclass,0,1,0,0,95,48,57,9,1
+Temperate Forest,formation_subclass,2268,362,408,1255,6660,1844,1856,4062,4293
+Temperate and Boreal Alpine Vegetation,formation_subclass,7,0,0,1,64,8,3,15,8
+Temperate and Boreal Shrubland and Grassland,formation_subclass,2074,229,258,325,5085,795,931,1635,2886
+Warm Semi-Desert Scrub and Grassland,formation_subclass,84,15,15,59,2063,626,578,305,173
+"Alpine Scrub, Forb Meadow, and Grassland",formation,7,0,0,1,64,8,3,15,8
+Benthic Macroalgae Saltwater Vegetation,formation,5,2,1,0,9,2,1,0,8
+Cool Semi-Desert Scrub and Grassland,formation,195,53,74,201,1306,451,491,243,523
+Cool Temperate Forest,formation,917,152,210,240,2139,548,620,1295,1519
+Freshwater Aquatic Vegetation,formation,21,1,4,0,54,24,21,37,26
+"Mediterranean Cliff, Scree, and Rock Vegetation",formation,38,6,2,6,167,6,2,24,52
+Mediterranean Grassland and Forb Meadow,formation,626,93,53,79,2256,469,450,198,851
+Mediterranean Scrub,formation,845,170,57,479,5251,598,481,2863,1551
+Temperate Flooded and Swamp Forest,formation,428,59,82,311,1924,597,601,1024,880
+"Temperate Grassland, Meadow, and Shrubland",formation,638,88,118,192,1561,314,313,522,1036
+Temperate and Boreal Bog and Fen,formation,17,2,2,4,40,15,7,5,25
+Temperate and Boreal Freshwater Marsh,formation,577,67,78,54,1332,280,360,326,776
+Temperate and Boreal Salt Marsh,formation,326,35,14,39,1410,139,195,189,414
+Temperate and Boreal Scrub and Herb Coastal Vegetation,formation,516,37,46,36,742,47,56,593,635
+"Warm Semi-Desert Cliff, Scree, and Rock Vegetation",formation,0,1,0,0,95,48,57,9,1
+Warm Semi-Desert Scrub and Grassland,formation,84,15,15,59,2063,626,578,305,173
+Warm Temperate Forest,formation,923,151,116,704,2597,699,635,1743,1894
+California Grassland and Meadow,division,626,93,53,79,2256,469,450,198,851
+California Scrub,division,845,170,57,479,5251,598,481,2863,1551
+Madrean Forest and Woodland,division,923,151,116,704,2597,699,635,1743,1894
+"Mediterranean California Cliff, Scree & Rock Vegetation",division,38,6,2,6,167,6,2,24,52
+North American Freshwater Aquatic Vegetation,division,21,1,4,0,54,24,21,37,26
+North American Intermountain Basins Scrub Woodland,division,66,17,51,57,436,239,237,103,191
+North American Introduced Evergreen Broadleaf and Conifer Forest,division,45,2,7,15,95,13,18,98,69
+North American Scrub and Herb Peatland,division,17,2,2,4,40,15,7,5,25
+"North American Warm Semi-Desert Cliff, Scree, and Rock Vegetation",division,0,1,0,0,95,48,57,9,1
+Pacific Coast Scrub and Herb Littoral Vegetation,division,516,37,46,36,742,47,56,593,635
+Sonoran and Chihuahuan Semi-Desert Scrub and Grassland,division,84,15,15,59,2063,626,578,305,173
+Temperate Intertidal Shore,division,5,2,1,0,9,2,1,0,8
+Temperate and Boreal Pacific Coastal Salt Marsh,division,255,15,9,11,629,27,28,60,290
+Vancouverian and Rocky Mountain Grassland and Shrubland,division,553,79,89,111,1089,253,213,317,832
+"Western North America Alpine Scrub, Forb Meadow, and Grassland",division,7,0,0,1,64,8,3,15,8
+Western North America Cool Temperate Forest,division,806,133,152,168,1608,296,365,1094,1259
+Western North America Flooded and Swamp Forest,division,176,20,44,87,451,85,94,169,327
+Western North America Interior Sclerophyllous Shrubland,division,85,9,29,81,472,61,100,205,204
+Western North America Warm Temperate Flooded and Swamp Forest,division,252,39,38,224,1473,512,507,855,553
+Western North American Cool Semi-Desert Scrub and Grassland,division,195,53,74,201,1306,451,491,243,523
+Western North American Freshwater Marsh,division,577,67,78,54,1332,280,360,326,776
+Western North American Interior Alkali-Saline Wetland,division,71,20,5,28,781,112,167,129,124
+California Annual and Perennial Grassland,macrogroup,626,93,53,79,2256,469,450,198,851
+California Chaparral,macrogroup,549,106,29,261,3050,396,333,1551,945
+"California Cliff, Scree, and Other Rock Vegetation",macrogroup,38,6,2,6,167,6,2,24,52
+California Coastal Scrub,macrogroup,296,64,28,218,2201,202,148,1312,606
+California Forest and Woodland,macrogroup,923,151,116,704,2597,699,635,1743,1894
+Californian-Vancouverian Montane and Foothill Forest,macrogroup,539,93,94,83,921,187,189,427,809
+Cool Semi-Desert Alkali-Saline Flats,macrogroup,8,0,0,13,113,45,45,15,21
+Cool Semi-Desert Alkali-Saline Wetlands,macrogroup,17,2,0,11,162,16,17,16,30
+Cool Semi-desert wash and disturbance scrub,macrogroup,20,4,9,24,178,29,52,28,57
+Inter-Mountain Dry Shrubland and Grassland,macrogroup,76,20,21,72,567,189,205,74,189
+Intermountain Basins Pinyon-Juniper Woodland,macrogroup,66,17,51,57,436,239,237,103,191
+Introduced North American Mediterranean woodland and forest,macrogroup,45,2,7,15,95,13,18,98,69
+Madrean Warm Semi-Desert Wash Woodland/Scrub,macrogroup,49,6,12,14,795,183,152,37,81
+Mojavean-Sonoran Desert Scrub,macrogroup,27,4,3,36,1166,434,424,86,70
+North American Pacific Coastal Salt Marsh,macrogroup,255,15,9,11,629,27,28,60,290
+"North American Warm Semi-Desert Cliff, Scree, and Other Rock Vegetation",macrogroup,0,1,0,0,95,48,57,9,1
+"Rocky Mountain Alpine Scrub, Forb Meadow, and Grassland",macrogroup,0,0,0,0,9,0,0,0,0
+Rocky Mountain Subalpine and High Montane Conifer Forest,macrogroup,11,5,2,12,114,30,31,167,30
+"Southwestern North American Riparian, Flooded and Swamp Forest",macrogroup,252,39,38,224,1473,512,507,855,553
+Temperate Pacific Intertidal Shore,macrogroup,5,2,1,0,9,2,1,0,8
+"Vancouverian Alpine Scrub, Forb Meadow, and Grassland",macrogroup,7,0,0,1,55,8,3,15,8
+Vancouverian Coastal Dune and Bluff,macrogroup,516,37,46,36,742,47,56,593,635
+Vancouverian Lowland Grassland and Shrubland,macrogroup,302,24,32,19,456,60,56,173,377
+Vancouverian Rainforest,macrogroup,226,27,47,6,302,29,47,68,306
+Vancouverian Subalpine Forest,macrogroup,30,8,9,67,271,50,98,432,114
+Viscaino-Baja California Desert Scrub,macrogroup,8,5,0,9,102,9,2,182,22
+Warm Interior Chaparral,macrogroup,30,3,14,11,361,20,68,71,58
+Warm Semi-Desert/Mediterranean Alkali-Saline Wetland,macrogroup,54,18,5,17,619,96,150,113,94
+Western Cordilleran Montane Shrubland and Grassland,macrogroup,48,14,20,58,185,97,77,81,140
+Western Cordilleran montane-boreal riparian scrub,macrogroup,166,20,44,87,426,85,94,168,317
+Western Cordilleran montane-boreal wet meadow,macrogroup,13,6,8,5,48,22,16,6,32
+Western North America Dwarf Sage Shrubland and Steppe,macrogroup,40,18,29,29,127,76,64,29,116
+Western North America Tall Sage Shrubland and Steppe,macrogroup,51,11,15,63,321,112,125,97,140
+Western North America Vernal Pool,macrogroup,34,9,11,0,248,97,170,2,54
+Western North America Wet Meadow and Low Shrub Carr,macrogroup,122,19,14,15,400,85,85,69,170
+Western North American Cool/Montane Sclerophyllous Evergreen Scrub,macrogroup,55,6,15,70,111,41,32,134,146
+Western North American Freshwater Aquatic Vegetation,macrogroup,21,1,4,0,54,24,21,37,26
+Western North American Freshwater Marsh,macrogroup,421,39,53,39,684,98,105,255,552
+Western North American Montane/Boreal Peatland,macrogroup,17,2,2,4,40,15,7,5,25
+Western North American Temperate Grassland and Meadow,macrogroup,190,35,29,29,400,74,64,57,283
+Western cool temperate scrub swamp,macrogroup,10,0,0,0,25,0,0,1,10
+Arid West freshwater emergent marsh,group,45,15,9,30,202,70,55,165,99
+Arizonan upland Sonoran desert scrub,group,0,0,0,0,17,8,3,0,0
+California Coastal evergreen bluff and dune scrub,group,418,25,43,30,632,35,53,561,516
+California annual herb/grass,group,219,21,18,14,907,224,221,33,272
+California perennial grassland,group,235,36,22,11,654,68,58,48,304
+California-Vancouverian semi-natural littoral scrub and herb vegetation,group,23,1,1,5,31,1,1,30,30
+Californian alpine-subalpine turf,group,0,0,0,1,35,5,3,15,1
+Californian broadleaf forest and woodland,group,691,112,84,450,2014,615,556,1391,1337
+Californian evergreen coniferous forest and woodland,group,232,39,32,254,583,84,79,352,557
+Californian maritime chaparral,group,144,24,6,42,651,41,29,358,216
+Californian mesic chaparral,group,87,13,2,88,783,74,54,474,190
+Californian mixed annual/perennial freshwater vernal pool / swale bottomland,group,34,9,11,0,248,97,170,2,54
+Californian montane chaparral,group,33,1,8,27,63,25,14,67,69
+Californian montane conifer forest,group,246,43,35,74,489,129,122,276,398
+Californian pre-montane chaparral,group,102,27,6,30,420,93,51,78,165
+Californian serpentine chaparral,group,49,13,5,10,156,16,12,10,77
+Californian warm temperate marsh/seep,group,99,13,13,10,259,65,66,34,135
+Californian xeric chaparral,group,167,29,10,91,1040,172,187,631,297
+Central California Coast Ranges cliff and canyon,group,38,6,2,6,167,6,2,24,52
+Central and South Coastal Californian coastal sage scrub,group,204,53,9,183,1629,135,85,1059,449
+Central and south coastal California seral scrub,group,75,11,19,30,536,65,61,235,135
+Coastal Baja California Norte maritime succulent scrub,group,8,5,0,9,102,9,2,182,22
+Great Basin cool semi-desert alkali basin group,group,3,2,0,11,106,14,12,14,16
+Great Basin montane riparian scrub,group,12,0,3,6,25,6,6,6,21
+Inter-Mountain West mesic tall sagebrush shrubland and steppe,group,51,11,15,63,321,112,125,97,140
+Intermontane deep or well-drained soil scrub,group,14,1,1,28,160,37,47,29,44
+Intermontane seral shrubland,group,20,4,9,24,178,29,52,28,57
+Intermountain low sage shrubland and steppe,group,40,18,29,29,127,76,64,29,116
+Intermountain shallow/calcareous soil scrub,group,40,18,15,34,291,120,113,34,107
+Introduced North American Mediterranean woodland and forest,group,45,2,7,15,95,13,18,98,69
+Lower Bajada and Fan Mojavean-Sonoran desert scrub,group,7,1,1,8,720,319,325,56,17
+Mediterranean California alpine fell-field,group,4,0,0,0,11,2,0,0,4
+Mediterranean California naturalized annual and perennial grassland,group,172,36,13,54,695,177,171,117,275
+Mogollion Rim chaparral,group,14,2,14,2,103,14,29,17,32
+Mojavean semi-desert wash scrub,group,46,6,12,14,605,150,134,37,78
+Mojavean upper desert scrub,group,20,3,2,28,429,107,96,30,53
+Naturalized non-native Mediterranean scrub,group,17,0,0,5,36,2,2,18,22
+Naturalized non-native deciduous scrub,group,3,6,1,2,13,14,9,37,12
+Naturalized temperate Pacific freshwater vegetation,group,7,0,2,0,28,19,17,32,9
+Naturalized warm-temperate riparian and wetland group,group,17,6,1,4,130,19,16,34,28
+North American Desert Alkaline-Saline Marsh & Playa,group,14,0,0,0,56,2,5,2,14
+North American warm desert bedrock cliff and outcrop,group,0,0,0,0,65,43,40,3,0
+North American warm desert dunes and sand flats,group,0,1,0,0,30,5,17,6,1
+Northern Great Basin semi-desert grassland group,group,17,0,4,9,76,24,41,9,30
+Rocky Mountain alpine turf,group,0,0,0,0,9,0,0,0,0
+Rocky Mountain mesic subalpine forest and woodland,group,11,5,2,12,60,20,17,22,30
+Shadscale-saltbush cool semi-desert scrub,group,8,0,0,13,113,45,45,15,21
+Sierran montane rock crevice and outcrop scrub and herbaceous,group,4,1,1,2,19,9,2,3,8
+Sonoran-Coloradan semi-desert wash woodland/scrub,group,3,0,0,0,190,33,18,0,3
+Southern Great Basin semi-desert grassland group,group,5,1,1,1,40,8,4,2,8
+Southern Vancouverian montane deciduous scrub,group,6,6,5,14,34,29,18,36,31
+Southwestern North American alkali marsh/seep vegetation,group,35,6,5,10,324,29,69,30,56
+Southwestern North American introduced riparian scrub,group,2,0,0,1,48,2,0,11,3
+Southwestern North American riparian evergreen and deciduous woodland,group,135,18,23,147,852,360,360,516,323
+Southwestern North American riparian/wash scrub,group,115,21,15,76,573,150,147,328,227
+Southwestern North American salt basin and high marsh,group,19,12,0,7,295,67,81,83,38
+Temperate Pacific freshwater aquatic bed,group,9,0,2,0,15,2,3,1,11
+Temperate Pacific intertidal flat,group,5,2,1,0,9,2,1,0,8
+Temperate Pacific tidal salt and brackish meadow,group,248,15,9,11,590,26,27,60,283
+Temperate freshwater floating mat,group,5,1,0,0,11,3,1,4,6
+Upland Vancouverian mixed woodland and forest,group,85,3,17,8,121,8,24,60,113
+Vancouverian and Rocky Mountain naturalized annual grassland,group,31,7,10,16,78,24,29,17,64
+Vancouverian and Rocky Mountain naturalized perennial grassland,group,61,8,12,11,91,15,14,32,92
+Vancouverian coastal deciduous scrub,group,98,6,10,16,162,23,25,89,130
+Vancouverian coastal grassland,group,201,12,21,1,281,23,22,47,235
+Vancouverian coastal riparian scrub,group,64,1,19,11,92,3,19,37,95
+Vancouverian coastal/tidal marsh and meadow,group,376,24,44,9,482,28,50,90,453
+Vancouverian evergreen broadleaf and mixed forest,group,208,47,42,1,311,50,43,91,298
+Vancouverian hypermaritime lowland rainforest,group,226,27,47,6,302,29,47,68,306
+Vancouverian mesic montane coniferous forest and woodland,group,30,8,9,67,271,50,98,432,114
+Vancouverian riparian deciduous forest,group,69,15,18,40,258,71,62,88,142
+Vancouverian snowbank turf,group,3,0,0,0,9,1,0,0,3
+Vancouverian/Pacific dune mat,group,75,11,2,1,79,11,2,2,89
+Western Cordilleran montane deciduous scrub,group,11,2,8,16,26,25,34,16,37
+Western Cordilleran montane moist graminoid meadow,group,27,5,6,26,106,34,23,26,64
+Western Cordilleran montane sclerophyll scrub,group,22,5,7,43,48,16,18,67,77
+Western Cordilleran montane-boreal summer-saturated meadow,group,6,0,0,1,11,1,3,1,7
+Western Cordilleran xeric subalpine coniferous forest and woodland,group,0,0,0,0,54,10,14,145,0
+Western Great Basin montane conifer woodland,group,66,17,51,57,436,239,237,103,191
+Western Mojave and Western Sonoran Desert borderland chaparral,group,16,1,0,9,258,6,39,54,26
+Western North American Montane/Boreal Peatland,group,17,2,2,4,40,15,7,5,25
+Western North American disturbed alkaline marsh and meadow,group,7,0,0,0,39,1,1,0,7
+Western North American montane-subalpine riparian scrub,group,21,4,4,30,51,5,7,37,59
+Western cordilleran montane-boreal mesic wet meadow,group,13,6,8,5,48,22,16,6,32
+Western dogwood thicket,group,10,0,0,0,25,0,0,1,10
+Western dry upland perennial grassland,group,98,20,7,2,231,35,21,8,127
+Abies concolor,alliance,20,3,4,22,63,18,15,46,49
+Abies concolor Dry,alliance,0,0,0,0,0,1,0,0,0
+Abies concolor – Pinus lambertiana,alliance,2,1,3,10,24,4,9,75,16
+Abies concolor – Pseudotsuga menziesii,alliance,1,0,4,7,10,4,9,7,12
+Abies grandis,alliance,0,0,1,0,0,0,1,0,1
+Abies magnifica,alliance,12,4,5,27,150,18,57,221,48
+Abronia latifolia – Ambrosia chamissonis,alliance,59,11,2,1,60,11,2,2,73
+Acacia spp. – Grevillea spp. – Leptospermum laevigatum,alliance,4,0,0,5,11,0,0,5,9
+Acer glabrum,alliance,1,0,1,0,3,0,1,0,2
+Acer macrophyllum,alliance,53,2,3,0,70,3,5,3,58
+Acer negundo,alliance,8,0,0,0,15,33,20,37,8
+Achnatherum hymenoides,alliance,0,0,0,0,5,2,0,0,0
+Achnatherum speciosum,alliance,1,1,1,1,2,2,2,2,4
+Adenostoma fasciculatum,alliance,38,6,3,9,118,13,8,55,56
+Adenostoma fasciculatum – Salvia spp.,alliance,37,0,0,15,169,4,12,113,52
+Adenostoma sparsifolium,alliance,0,0,0,0,126,0,2,21,0
+Aegilops triuncialis,alliance,0,0,0,0,1,0,0,0,0
+Aesculus californica,alliance,22,2,5,33,82,21,30,49,62
+Agastache urticifolia – Geranium viscosissimum – Pteridium aquilinum,alliance,1,1,2,18,1,2,5,18,22
+Agave deserti,alliance,0,0,0,0,5,6,1,0,0
+Agropyron cristatum – Bromus inermis – Poa pratensis,alliance,2,0,1,1,2,0,1,1,4
+Allenrolfea occidentalis,alliance,0,0,0,0,104,13,21,30,0
+Allium spp. – Streptanthus spp. – Hesperolinon spp. Serpentinite,alliance,20,0,1,0,38,0,1,0,21
+Alnus incana,alliance,10,2,2,14,20,3,3,14,28
+Alnus rhombifolia,alliance,24,9,10,7,111,47,37,25,50
+Alnus rubra,alliance,31,1,10,1,41,1,10,50,43
+Aloysia wrightii – Pericome caudata – Ephedra nevadensis,alliance,0,0,0,0,3,1,0,0,0
+Ambrosia dumosa,alliance,1,0,0,0,43,20,13,0,1
+Ambrosia psilostachya,alliance,0,0,0,0,4,0,0,0,0
+Ambrosia salsola – Bebbia juncea,alliance,4,0,0,1,136,29,46,1,5
+Amelanchier utahensis – Cercocarpus montanus – Cercocarpus intricatus,alliance,2,0,0,0,15,6,2,0,2
+Ammophila arenaria,alliance,14,0,0,5,16,0,0,17,19
+Amphipappus fremontii – Salvia funerea,alliance,0,0,0,0,15,11,5,0,0
+"Amsinckia (menziesii, tessellata) – Phacelia spp.",alliance,14,2,0,0,177,23,18,7,16
+Anemopsis californica – Helianthus nuttallii – Solidago spectabilis,alliance,0,0,0,0,26,5,3,0,0
+Arbutus menziesii,alliance,48,16,10,0,69,17,10,3,74
+"Arctostaphylos (bakeri, montana)",alliance,22,0,0,0,45,0,0,0,22
+"Arctostaphylos (canescens, manzanita, stanfordiana)",alliance,23,4,3,0,38,8,4,0,30
+"Arctostaphylos (crustacea, tomentosa)",alliance,63,3,1,0,85,3,2,0,67
+"Arctostaphylos (nummularia, sensitiva) – Chrysolepis chrysophylla",alliance,36,11,4,19,65,12,4,42,70
+Arctostaphylos columbiana [pending],alliance,1,0,1,1,1,0,1,1,3
+Arctostaphylos glandulosa,alliance,26,4,1,1,129,31,10,26,32
+Arctostaphylos glauca,alliance,13,2,0,4,101,6,9,30,19
+Arctostaphylos hookeri,alliance,1,0,0,0,1,0,0,0,1
+Arctostaphylos hooveri,alliance,0,0,1,0,1,0,1,0,1
+Arctostaphylos montereyensis,alliance,0,0,0,0,3,0,0,0,0
+Arctostaphylos morroensis,alliance,0,0,0,0,1,0,0,0,0
+Arctostaphylos myrtifolia,alliance,0,0,0,0,10,0,2,0,0
+Arctostaphylos pajaroensis,alliance,0,0,0,0,1,0,0,0,0
+Arctostaphylos patula – Arctostaphylos nevadensis,alliance,9,4,5,28,25,10,10,52,46
+Arctostaphylos pungens – Arctostaphylos pringlei,alliance,12,2,0,0,22,2,7,1,14
+Arctostaphylos viscida,alliance,8,4,0,16,47,35,62,29,28
+Aristida purpurea – Elymus elymoides – Poa secunda,alliance,5,4,0,1,93,15,11,2,10
+Artemisia arbuscula ssp. arbuscula,alliance,33,14,15,14,106,59,44,14,76
+Artemisia californica – (Salvia leucophylla),alliance,123,30,5,98,717,61,37,578,256
+Artemisia cana,alliance,7,2,6,14,15,20,27,14,29
+Artemisia dracunculus,alliance,2,0,0,3,23,1,1,3,5
+Artemisia nova,alliance,2,0,3,0,13,4,7,0,5
+Artemisia rothrockii,alliance,0,0,0,0,5,0,0,4,0
+Artemisia tridentata,alliance,29,9,13,26,223,84,97,56,77
+Artemisia tridentata ssp. vaseyana,alliance,22,2,2,37,93,28,28,37,63
+Arthrocnemum subterminale,alliance,10,10,0,0,16,11,3,0,20
+Atriplex canescens,alliance,3,0,0,2,28,7,3,4,5
+Atriplex confertifolia,alliance,5,0,0,11,85,38,42,11,16
+Atriplex hymenelytra,alliance,0,0,0,0,52,41,35,3,0
+Atriplex lentiformis,alliance,1,1,0,7,55,8,36,32,9
+Atriplex polycarpa,alliance,3,1,1,3,120,13,24,43,8
+Atriplex prostrata – Cotula coronopifolia,alliance,7,0,0,0,27,0,0,0,7
+Atriplex spinifera,alliance,0,0,0,0,41,6,0,1,0
+Avena spp. – Bromus spp.,alliance,86,24,10,30,369,137,138,45,150
+"Azolla (filiculoides, microphylla)",alliance,5,1,0,0,11,3,1,4,6
+Baccharis emoryi – Baccharis sergiloides,alliance,1,0,0,0,26,1,3,1,1
+Baccharis pilularis,alliance,225,15,17,29,407,23,25,466,286
+Baccharis salicifolia,alliance,12,0,1,32,124,8,11,56,45
+Betula occidentalis,alliance,0,0,0,0,3,3,2,0,0
+Bidens cernua – Euthamia occidentalis – Ludwigia palustris,alliance,12,0,0,0,23,9,8,19,12
+Bolboschoenus maritimus,alliance,28,1,2,0,41,1,2,1,31
+Brasenia schreberi Aquatic [pending],alliance,0,0,1,0,0,0,1,0,1
+"Brassica nigra – Centaurea (solstitialis, melitensis)",alliance,27,3,0,17,113,16,16,40,47
+Bromus carinatus – Elymus glaucus,alliance,93,16,7,1,138,20,10,6,117
+"Bromus rubens – Schismus (arabicus, barbatus)",alliance,3,1,0,0,55,6,2,6,4
+Bromus tectorum – Taeniatherum caput-medusae,alliance,31,7,10,16,78,24,29,17,64
+"Cakile (edentula, maritima)",alliance,7,0,0,0,7,0,0,0,7
+Calamagrostis muiriana,alliance,0,0,0,0,10,2,0,0,0
+Calamagrostis nutkaensis,alliance,21,1,12,1,31,5,12,38,35
+Calamagrostis purpurascens,alliance,0,0,0,0,4,0,0,0,0
+Calamagrostis scopulorum – Andropogon glomeratus,alliance,0,0,0,0,6,0,0,0,0
+Calocedrus decurrens,alliance,0,0,0,0,8,1,1,0,0
+Carex barbarae,alliance,4,0,0,0,8,2,2,0,4
+Carex breweri,alliance,0,0,0,0,4,0,0,0,0
+Carex congdonii,alliance,0,0,0,0,2,0,0,0,0
+Carex filifolia,alliance,0,0,0,1,15,2,3,15,1
+Carex helleri,alliance,0,0,0,0,4,0,0,0,0
+Carex limosa – Carex simulata – Eleocharis quinqueflora,alliance,13,2,2,3,34,13,7,3,20
+Carex nigricans,alliance,0,0,0,0,1,0,0,0,0
+Carex nudata,alliance,2,2,1,0,5,4,1,0,5
+Carex obnupta – Oenanthe sarmentosa – Scirpus microcarpus,alliance,102,0,18,4,109,0,18,30,124
+Carex spectabilis,alliance,3,0,0,0,5,1,0,0,3
+Carex subnigricans,alliance,0,0,0,0,1,0,0,0,0
+Carex utriculata – Calamagrostis canadensis,alliance,19,3,4,1,84,24,16,1,27
+Cassiope mertensiana,alliance,1,0,0,0,1,0,0,0,1
+"Ceanothus (oliganthus, tomentosus)",alliance,9,1,1,5,101,13,8,19,16
+Ceanothus cordulatus – Ceanothus integerrimus,alliance,24,1,7,12,38,16,11,32,44
+Ceanothus crassifolius,alliance,3,0,0,3,111,4,3,57,6
+Ceanothus cuneatus,alliance,20,12,3,39,97,77,56,77,74
+Ceanothus greggii – Fremontodendron californicum,alliance,12,2,14,2,37,13,21,5,30
+Ceanothus leucodermis,alliance,5,1,0,3,45,6,6,3,9
+Ceanothus megacarpus,alliance,2,0,1,5,210,0,1,270,8
+Ceanothus papillosus,alliance,4,0,0,0,6,2,1,0,4
+Ceanothus thyrsiflorus,alliance,21,2,4,0,32,4,6,38,27
+Ceanothus velutinus,alliance,13,1,2,15,23,6,8,15,31
+Ceanothus verrucosus,alliance,3,0,0,0,11,1,0,0,3
+Celtis laevigata var. reticulata – Rhus trilobata,alliance,0,0,0,0,1,0,0,0,0
+Centromadia (pungens),alliance,0,1,0,0,33,12,10,0,1
+Cephalanthus occidentalis,alliance,0,0,0,3,6,10,8,7,3
+Cephalanthus occidentalis - Rosa californica,alliance,0,0,0,0,1,1,2,0,0
+Ceratophyllum demersum Aquatic,alliance,3,1,0,0,3,1,1,0,4
+Cercocarpus ledifolius,alliance,10,2,5,5,47,18,12,5,22
+Cercocarpus montanus,alliance,23,2,0,14,164,22,17,119,39
+Chilopsis linearis – Psorothamnus spinosus,alliance,2,0,0,0,102,13,6,0,2
+Chorizanthe rigida – Geraea canescens Desert Pavement,alliance,0,0,0,0,13,2,5,0,0
+Chrysolepis sempervirens,alliance,2,0,1,0,8,6,1,20,3
+Chrysothamnus viscidiflorus,alliance,1,0,2,3,11,5,7,3,6
+Cistanthe (umbellata) – Gayophytum (diffusum),alliance,6,0,0,4,10,1,1,4,10
+Cladium californicum,alliance,0,0,0,0,1,0,0,0,0
+Coleogyne ramosissima,alliance,9,0,1,0,113,29,22,0,10
+Conium maculatum – Foeniculum vulgare,alliance,2,1,0,1,19,2,0,6,4
+Coreopsis gigantea,alliance,0,0,0,0,33,0,0,135,0
+"Corethrogyne filaginifolia – Eriogonum (elongatum, nudum)",alliance,30,8,2,1,170,22,7,14,41
+Cornus sericea,alliance,10,0,0,0,25,0,0,1,10
+Cornus sericea – Rosa woodsii – Ribes spp.,alliance,4,0,2,0,8,2,3,0,6
+"Cortaderia (jubata, selloana)",alliance,3,0,0,1,5,0,0,1,4
+Corylus cornuta var. californica,alliance,13,1,0,0,20,1,0,15,14
+Cressa truxillensis – Distichlis spicata,alliance,2,3,0,0,9,3,2,1,5
+Cylindropuntia acanthocarpa / Pleuraphis rigida,alliance,6,1,0,0,53,4,0,0,7
+Cylindropuntia bigelovii,alliance,0,0,0,0,4,3,3,0,0
+Cynodon dactylon - Crypsis spp. - Paspalum spp.,alliance,0,0,1,0,0,0,1,1,1
+Cynodon dactylon – Crypsis spp. – Paspalum spp.,alliance,1,1,0,1,16,4,5,6,3
+Cynosurus echinatus – Arrhenatherum elatius,alliance,12,1,0,0,12,1,1,0,13
+Cytisus scoparius – Genista monspessulana – Cotoneaster spp.,alliance,13,0,0,0,25,2,2,13,13
+Danthonia californica – Deschampsia cespitosa – Camassia quamash,alliance,12,6,8,5,39,21,16,6,31
+Danthonia intermedia,alliance,0,0,0,0,4,0,0,0,0
+Dasiphora fruticosa,alliance,0,0,0,0,5,0,1,0,0
+Deinandra clementina – Eriogonum giganteum,alliance,0,0,0,0,0,0,0,4,0
+Deinandra fasciculata,alliance,1,0,0,0,10,6,10,0,1
+Deschampsia cespitosa – Festuca rubra Brackish Salt Marsh,alliance,2,0,0,0,4,0,0,0,2
+Deschampsia cespitosa – Hordeum brachyantherum – Danthonia californica,alliance,115,11,9,2,154,12,11,12,137
+Dicoria canescens – Abronia villosa – Panicum urvilleanum,alliance,0,1,0,0,30,5,17,6,1
+Diplacus aurantiacus,alliance,2,1,0,5,39,1,1,16,8
+Distichlis spicata – (Juncus cooperi – Frankenia salina) Interior,alliance,14,0,0,0,56,2,5,2,14
+Distichlis spicata – Frankenia salina Coastal,alliance,55,3,0,0,140,6,3,12,58
+Dudleya cymosa – Dudleya lanceolata / Lichen – Moss,alliance,9,1,0,0,57,1,0,0,10
+"Eleocharis (palustris, rostellata) Alkaline-Saline",alliance,1,0,0,0,24,0,2,0,1
+Elymus glaucus Montane,alliance,1,0,0,0,7,1,0,0,1
+"Encelia (actonii, virginensis) – Viguiera reticulata",alliance,2,0,0,2,35,17,8,3,4
+Encelia californica – Eriogonum cinereum,alliance,4,4,1,10,187,5,4,107,19
+Encelia farinosa,alliance,0,0,0,0,41,32,26,8,0
+Ephedra californica – Ephedra trifurca,alliance,5,0,0,0,90,8,2,12,5
+Ephedra funerea,alliance,0,0,0,0,13,3,9,0,0
+Ephedra nevadensis – Lycium andersonii – Grayia spinosa,alliance,8,0,0,14,102,29,33,14,22
+Ephedra viridis,alliance,3,1,1,10,29,5,8,11,15
+Ephedra viridis – Chrysothamnus viscidiflorus – Rhus trilobata [pending],alliance,2,0,0,0,6,1,0,0,2
+"Equisetum (arvense, variegatum, hyemale)",alliance,0,0,0,0,1,1,0,0,0
+Ericameria discoidea – Hulsea algida,alliance,4,0,0,0,7,2,0,0,4
+Ericameria linearifolia – Cleome isomeris,alliance,14,2,4,1,205,10,9,53,21
+Ericameria nauseosa,alliance,17,4,7,20,140,21,41,24,48
+Ericameria palmeri,alliance,3,1,0,9,6,1,1,9,13
+Ericameria paniculata,alliance,0,0,0,0,39,12,13,0,0
+Ericameria teretifolia,alliance,1,0,0,1,16,2,2,1,2
+Eriogonum fasciculatum,alliance,10,0,2,0,230,16,17,67,12
+Eriogonum fasciculatum – Salvia apiana,alliance,8,1,1,1,33,5,4,2,11
+Eriogonum fasciculatum – Viguiera parishii,alliance,0,0,0,8,89,19,18,8,8
+Eriogonum spp. / Poa secunda,alliance,5,4,11,15,8,13,13,15,35
+Eriogonum wrightii – Eriogonum heermannii – Buddleja utahensis,alliance,3,1,1,18,46,14,11,20,23
+Eriophyllum staechadifolium – Erigeron glaucus – Eriogonum latifolium,alliance,121,6,11,0,127,6,11,12,138
+Eryngium aristulatum,alliance,1,0,0,0,12,0,0,0,1
+Eschscholzia (californica) – Lupinus (nanus),alliance,26,5,2,0,128,23,23,1,33
+Eucalyptus spp. – Ailanthus altissima – Robinia pseudoacacia,alliance,16,2,5,14,49,13,16,84,37
+Fallugia paradoxa,alliance,0,0,0,0,5,0,0,0,0
+Festuca idahoensis – Danthonia californica,alliance,180,11,9,0,250,18,10,9,200
+Festuca idahoensis – Pseudoroegneria spicata – Poa secunda,alliance,17,0,4,9,71,22,41,9,30
+Frangula californica – Rhododendron occidentale – Salix breweri,alliance,19,0,2,2,37,0,2,2,23
+Fraxinus latifolia,alliance,9,2,2,20,20,18,16,33,33
+Gaultheria shallon – Rubus (ursinus),alliance,64,3,9,5,78,3,9,17,81
+Gutierrezia sarothrae – Gutierrezia microcephala,alliance,1,0,0,0,11,1,2,0,1
+Hazardia squarrosa,alliance,0,0,0,0,37,0,0,17,0
+"Hesperocyparis (pigmaea, abramsiana, macrocarpa, goveniana)",alliance,23,1,0,91,27,1,2,91,115
+"Hesperocyparis (sargentii, macnabiana)",alliance,42,4,0,7,74,4,0,7,53
+Hesperocyparis bakeri,alliance,0,0,1,0,0,0,1,0,1
+Hesperocyparis forbesii – Hesperocyparis nevadensis,alliance,0,0,0,2,2,6,1,4,2
+Hesperocyparis macrocarpa – Pinus radiata,alliance,23,0,2,1,26,0,2,14,26
+"Heterotheca (oregona, sessiliflora)",alliance,3,2,1,0,14,15,11,20,6
+Holcus lanatus – Anthoxanthum odoratum,alliance,36,2,9,1,38,2,9,13,48
+Holocarpha virgata - Deinandra fasciculata,alliance,3,4,2,5,57,27,27,7,14
+Hydrilla verticillata – Myriophyllum spicatum,alliance,0,0,0,0,5,1,0,1,0
+"Hydrocotyle (ranunculoides, umbellata)",alliance,3,0,2,0,4,0,2,1,5
+Isocoma menziesii,alliance,1,1,1,7,8,3,1,38,10
+"Isoetes (bolanderi, echinospora, howellii, nuttallii, occidentalis)",alliance,0,0,0,0,1,3,0,0,0
+Juglans californica,alliance,12,1,2,0,109,1,2,103,15
+Juglans hindsii and Hybrids,alliance,2,0,1,0,7,19,18,26,3
+"Juncus (effusus, patens) – Carex (pansa, praegracilis)",alliance,159,13,17,3,219,16,21,48,192
+"Juncus (oxymeris, xiphioides)",alliance,2,3,0,0,5,3,1,2,5
+"Juncus arcticus (var. balticus, mexicanus)",alliance,28,5,10,9,98,23,30,10,52
+Juncus drummondii – Juncus parryi – Sibbaldia procumbens [pending],alliance,0,0,0,1,0,0,0,1,1
+Juncus parryi,alliance,0,0,0,0,6,1,0,0,0
+Juniperus californica,alliance,46,1,2,28,199,18,22,62,77
+Juniperus grandis,alliance,1,1,2,10,17,7,9,44,14
+Juniperus occidentalis,alliance,36,10,32,18,128,97,102,19,96
+Juniperus osteosperma,alliance,6,1,0,9,48,5,0,9,16
+Keckiella antirrhinoides,alliance,1,0,0,1,35,8,8,8,2
+Krascheninnikovia lanata,alliance,3,0,0,4,29,3,6,4,7
+Larrea tridentata,alliance,2,0,0,3,76,59,47,3,5
+Larrea tridentata – Ambrosia dumosa,alliance,1,0,0,2,335,169,195,2,3
+Larrea tridentata – Encelia farinosa,alliance,0,0,0,0,31,16,10,0,0
+Lasthenia californica – Plantago erecta – Vulpia microstachys,alliance,157,8,6,6,417,119,104,14,177
+Lasthenia fremontii – Distichlis spicata,alliance,1,0,0,0,40,1,4,0,1
+Lasthenia fremontii – Downingia (bicornuta),alliance,1,0,0,0,48,13,11,0,1
+Lasthenia glaberrima – Eleocharis macrostachya,alliance,4,0,0,0,18,4,2,1,4
+Layia fremontii – Achyrachaena mollis,alliance,1,0,1,0,22,16,34,0,2
+Lemna (minor) and Relatives,alliance,0,0,0,0,1,0,0,4,0
+Lepidium latifolium – Lactuca serriola,alliance,13,3,0,0,24,6,2,1,16
+Lepidospartum squamatum,alliance,29,6,12,5,136,37,40,15,52
+Leymus cinereus – Leymus triticoides,alliance,20,3,3,10,98,18,30,26,36
+Leymus condensatus,alliance,2,0,1,1,33,0,1,9,4
+Leymus mollis,alliance,16,0,0,0,19,0,0,0,16
+Lolium perenne,alliance,39,6,3,5,112,15,14,16,53
+Lotus scoparius – Lupinus albifrons – Eriodictyon spp.,alliance,48,7,2,19,185,47,38,38,76
+Lotus unifoliolatus,alliance,2,0,2,0,16,7,5,0,4
+"Ludwigia (hexapetala, peploides) – Eichhornia crassipes",alliance,7,0,2,0,23,18,17,31,9
+Lupinus arboreus,alliance,22,2,9,1,29,2,9,25,34
+Lupinus chamissonis – Ericameria ericoides,alliance,29,0,2,0,33,0,2,19,31
+Lycium californicum,alliance,1,2,0,1,12,6,1,2,4
+Malacothamnus fasciculatus – Malacothamnus spp.,alliance,12,1,12,3,101,5,13,89,28
+Malosma laurina,alliance,22,5,0,2,357,19,15,223,29
+Menodora spinescens,alliance,0,0,0,0,50,13,21,0,0
+Mesembryanthemum spp. – Carpobrotus spp.,alliance,9,1,1,0,15,1,1,13,11
+Mimulus guttatus – Cirsium spp. – Stachys spp.,alliance,16,3,0,0,42,10,5,0,19
+Monolopia (lanceolata) – Coreopsis (calliopsidea),alliance,1,1,1,0,62,8,4,1,3
+Montia fontana – Sidalcea calycosa,alliance,0,0,0,0,3,0,0,0,0
+Mortonia utahensis,alliance,0,0,0,0,5,3,0,0,0
+Muhlenbergia filiformis,alliance,0,0,0,0,3,0,0,0,0
+Muhlenbergia rigens,alliance,0,0,0,1,9,1,5,1,1
+Nassella spp. – Melica spp.,alliance,203,28,19,9,451,46,50,25,259
+Navarretia leucocephala ssp. minima – Plagiobothrys cusickii,alliance,18,5,5,0,27,22,12,0,28
+Notholithocarpus densiflorus,alliance,30,10,13,0,46,10,13,7,53
+Nuphar lutea,alliance,8,0,2,0,9,0,4,1,10
+Opuntia littoralis – Opuntia oricola – Cylindropuntia prolifera,alliance,7,3,0,8,57,3,1,41,18
+Parkinsonia florida – Olneya tesota,alliance,0,0,0,0,5,3,1,0,0
+Pennisetum setaceum – Pennisetum ciliare,alliance,0,0,0,0,10,0,0,3,0
+Penstemon newberryi,alliance,2,1,1,1,4,4,1,1,5
+Peucephyllum schottii – Pleurocoronis pluriseta [pending],alliance,0,0,0,0,6,4,4,0,0
+Phalaris aquatica – Phalaris arundinacea,alliance,13,4,2,6,33,8,3,13,25
+Phlox covillei,alliance,0,0,0,0,6,0,0,0,0
+Phoenix dactylifera – Washingtonia filifera,alliance,0,0,0,0,17,1,0,0,0
+Phragmites australis – Arundo donax,alliance,3,2,0,3,90,9,8,26,8
+Phyllodoce breweri,alliance,2,0,0,1,9,4,1,2,3
+Pinus albicaulis,alliance,0,0,0,0,29,2,9,8,0
+Pinus attenuata,alliance,29,7,2,5,37,9,4,5,43
+Pinus balfouriana,alliance,0,0,0,0,4,1,1,137,0
+Pinus contorta ssp. contorta,alliance,6,0,0,0,8,1,0,0,6
+Pinus contorta ssp. murrayana,alliance,8,2,3,25,63,18,26,166,38
+Pinus coulteri,alliance,15,2,0,0,113,2,0,3,17
+Pinus edulis,alliance,0,0,0,0,8,0,0,0,0
+Pinus flexilis,alliance,0,0,0,0,13,4,3,0,0
+Pinus jeffreyi,alliance,25,3,4,27,146,33,51,86,59
+Pinus lambertiana,alliance,5,0,0,0,5,0,0,0,5
+Pinus longaeva,alliance,0,0,0,0,8,3,1,0,0
+Pinus monophylla – (Juniperus osteosperma),alliance,7,3,4,6,180,66,50,17,20
+Pinus monticola,alliance,2,1,1,2,11,3,6,32,6
+Pinus muricata – Pinus radiata,alliance,51,14,23,46,65,15,24,94,134
+Pinus ponderosa,alliance,16,2,1,0,25,4,2,1,19
+Pinus ponderosa / Shrub Understory,alliance,16,2,13,14,55,63,76,14,45
+Pinus ponderosa – Calocedrus decurrens – Pseudotsuga menziesii,alliance,11,2,8,14,34,37,29,52,35
+Pinus quadrifolia,alliance,0,0,0,0,3,0,0,0,0
+Pinus sabiniana,alliance,16,10,4,75,51,29,25,86,105
+Pinus torreyana,alliance,10,0,0,0,12,0,0,0,10
+Plagiobothrys nothofulvus,alliance,16,1,7,0,43,23,44,0,24
+Platanus racemosa – Quercus agrifolia,alliance,48,2,5,41,268,53,48,150,96
+Pleuraphis jamesii,alliance,4,0,0,0,27,3,0,0,4
+Pleuraphis rigida,alliance,0,0,0,0,2,0,1,0,0
+Pluchea sericea,alliance,1,0,0,0,20,7,2,0,1
+Poa pratensis – Agrostis gigantea – Agrostis stolonifera,alliance,10,2,0,3,18,5,1,5,15
+Poa secunda – Muhlenbergia richardsonis – Carex douglasii,alliance,1,1,0,3,9,6,1,3,5
+Polygonum lapathifolium – Xanthium strumarium,alliance,37,3,2,0,73,15,15,4,42
+Populus fremontii – Fraxinus velutina – Salix gooddingii,alliance,27,1,9,30,196,82,100,128,67
+Populus tremuloides,alliance,11,5,2,12,60,20,17,22,30
+Populus trichocarpa,alliance,22,2,2,12,82,3,2,24,38
+Prosopis glandulosa – Prosopis velutina – Prosopis pubescens,alliance,0,0,0,0,63,10,9,0,0
+Prunus emarginata – Holodiscus discolor,alliance,5,4,4,14,29,17,9,36,27
+Prunus fasciculata – Salazaria mexicana,alliance,5,0,0,6,69,24,9,6,11
+Prunus fremontii,alliance,0,0,0,0,12,2,2,0,0
+Prunus ilicifolia - Heteromeles arbutifolia - Ceanothus spinosus,alliance,0,0,0,0,2,0,0,0,0
+Prunus ilicifolia – Heteromeles arbutifolia – Ceanothus spinosus,alliance,17,2,1,39,310,9,5,232,59
+Prunus virginiana,alliance,4,0,2,2,11,5,7,2,8
+Pseudotsuga macrocarpa,alliance,167,32,15,1,181,32,15,1,215
+Pseudotsuga menziesii – (Notholithocarpus densiflorus – Arbutus menziesii),alliance,104,13,11,0,168,15,12,80,128
+Psorothamnus fremontii – Psorothamnus polydenius,alliance,0,0,0,0,68,7,6,0,0
+Ptilagrostis kingii,alliance,0,0,0,0,2,1,0,0,0
+Purshia stansburiana,alliance,0,0,0,0,13,11,1,0,0
+Purshia tridentata – Artemisia tridentata,alliance,19,16,9,29,83,42,71,29,73
+"Quercus (agrifolia, douglasii, garryana, kelloggii, lobata, wislizeni)",alliance,25,9,8,0,43,15,14,0,42
+Quercus agrifolia,alliance,181,25,15,113,507,31,24,362,334
+Quercus berberidifolia,alliance,43,6,1,29,278,25,13,113,79
+Quercus cedrosensis [pending],alliance,0,0,0,0,1,0,0,0,0
+Quercus chrysolepis (tree),alliance,130,26,22,20,222,88,89,89,198
+Quercus cornelius-mulleri,alliance,0,0,0,0,30,0,29,7,0
+Quercus douglasii,alliance,64,4,9,195,358,131,137,277,272
+Quercus dumosa – Quercus pacifica,alliance,7,0,0,1,18,0,1,1,8
+Quercus durata,alliance,27,13,5,10,111,16,12,10,55
+Quercus engelmannii,alliance,2,0,0,0,47,8,0,4,2
+Quercus garryana (shrub),alliance,1,2,1,0,5,12,9,0,4
+Quercus garryana (tree),alliance,26,8,8,1,28,8,8,1,43
+Quercus john-tuckeri,alliance,16,1,0,9,102,6,8,26,26
+Quercus kelloggii,alliance,41,18,10,19,109,86,58,68,88
+Quercus lobata,alliance,31,9,5,13,88,46,38,187,58
+Quercus lobata Riparian,alliance,17,5,4,30,115,94,92,33,56
+Quercus palmeri,alliance,0,0,0,0,6,0,0,0,0
+Quercus turbinella,alliance,0,0,0,0,8,0,0,0,0
+Quercus vacciniifolia,alliance,7,0,0,14,16,3,2,14,21
+Quercus vacciniifolia - Chrysolepis sempervirens,alliance,0,0,0,1,1,0,0,1,1
+Quercus wislizeni - Quercus chrysolepis (shrub),alliance,1,2,1,0,1,2,1,0,4
+Quercus wislizeni – Quercus chrysolepis (shrub),alliance,49,17,3,21,122,39,19,29,90
+Quercus wislizeni – Quercus parvula (tree),alliance,39,3,4,49,207,167,151,142,95
+Ranunculus aquatilis - Callitriche palustris - Callitriche heterophylla,alliance,0,0,0,0,0,2,0,0,0
+Rhododendron columbianum,alliance,4,0,0,1,6,2,0,2,5
+Rhus integrifolia,alliance,12,5,0,20,107,5,3,92,37
+Rhus ovata,alliance,2,0,0,0,58,1,8,12,2
+Rhus trilobata – Crataegus rivularis – Forestiera pubescens,alliance,9,2,1,5,55,10,13,15,17
+Ribes quercetorum – Rhus trilobata – Frangula californica,alliance,4,3,0,6,29,18,19,10,13
+Rosa californica,alliance,3,0,0,1,20,3,3,4,4
+Rubus armeniacus – Sesbania punicea – Ficus carica,alliance,3,6,1,2,13,14,9,37,12
+Rubus spectabilis – Morella californica,alliance,26,0,9,4,36,2,9,30,39
+Salix boothii – Salix geyeriana – Salix lutea,alliance,8,0,1,6,14,1,1,6,15
+Salix eastwoodiae,alliance,6,0,0,0,7,0,0,0,6
+Salix eastwoodiae - Salix lemmonii,alliance,1,0,0,4,1,0,0,4,5
+Salix exigua,alliance,19,3,4,18,110,68,61,90,44
+Salix gooddingii – Salix laevigata,alliance,33,10,4,46,247,79,80,142,93
+Salix hookeriana – Salix sitchensis – Spiraea douglasii,alliance,19,1,8,5,19,1,8,5,33
+Salix jepsonii,alliance,0,0,0,0,1,0,0,0,0
+Salix lasiolepis,alliance,67,14,8,17,203,26,26,112,106
+Salix lemmonii,alliance,4,2,2,12,12,2,2,12,20
+Salix lucida ssp. lasiandra,alliance,14,2,4,1,45,3,7,6,21
+Salix nivalis,alliance,0,0,0,0,1,0,0,0,0
+Salix orestera,alliance,0,0,0,0,5,0,1,7,0
+Salix petrophila,alliance,0,0,0,0,9,0,0,0,0
+Salix planifolia,alliance,0,0,0,0,3,0,0,0,0
+Salix scouleriana [pending],alliance,2,0,3,11,3,0,3,11,16
+Salsola tragus – Isatis tinctoria – Bassia spp. [pending],alliance,0,0,0,0,9,1,0,1,0
+Salvia apiana,alliance,3,0,0,5,41,5,3,7,8
+Salvia mellifera - (Artemisia californica),alliance,0,0,0,13,3,0,0,13,13
+Salvia mellifera – (Artemisia californica),alliance,53,17,0,50,344,34,11,261,120
+Sarcobatus vermiculatus,alliance,3,2,0,11,106,14,12,14,16
+Sarcocornia pacifica (Salicornia depressa),alliance,140,10,7,7,352,16,19,41,164
+Saxifraga nidifica,alliance,0,0,0,0,1,0,0,0,0
+"Schinus (molle, terebinthifolius) – Myoporum laetum",alliance,6,0,0,0,20,0,0,0,6
+"Schoenoplectus (acutus, californicus)",alliance,29,11,4,15,99,43,30,90,59
+Schoenoplectus americanus,alliance,14,3,2,0,64,4,6,3,19
+Sedum spathulifolium,alliance,4,0,0,0,12,1,0,0,4
+"Selaginella (bigelovii, wallacei)",alliance,9,5,1,6,72,5,1,24,21
+Senecio triangularis – Veratrum californicum – Mimulus spp.,alliance,6,0,0,1,11,1,3,1,7
+Senegalia greggii – Hyptis emoryi – Justicia californica,alliance,1,0,0,0,100,23,16,0,1
+Sequoia sempervirens,alliance,220,27,46,6,294,28,46,68,299
+Sequoiadendron giganteum,alliance,0,0,0,0,3,0,0,15,0
+Sesuvium verrucosum,alliance,0,0,0,0,12,1,1,0,0
+Simmondsia chinensis,alliance,1,0,0,0,8,1,5,0,1
+Solidago canadensis,alliance,0,0,0,0,2,1,1,0,0
+Sparganium (angustifolium),alliance,6,0,0,0,11,2,1,0,6
+Spartina foliosa,alliance,25,1,0,4,57,3,3,6,30
+"Sphaeralcea (ambigua, coccinea, parvifolia)",alliance,0,0,0,0,11,3,2,0,0
+Sporobolus airoides – Muhlenbergia asperifolia – Spartina gracilis,alliance,0,0,0,0,105,2,28,1,0
+Stuckenia (pectinata) – Potamogeton spp.,alliance,5,2,1,0,9,2,1,0,8
+Suaeda moquinii,alliance,8,1,0,0,79,29,21,20,9
+Tamarix spp.,alliance,2,0,0,1,31,1,0,11,3
+Toxicodendron diversilobum,alliance,21,2,1,11,64,19,16,57,35
+Trifolium longipes,alliance,2,0,1,0,8,1,1,0,3
+Trifolium longipes - Muhlenbergia filiformis,alliance,0,0,0,0,1,0,0,0,0
+Trifolium variegatum,alliance,5,0,5,0,26,20,85,0,10
+Tsuga mertensiana,alliance,8,1,0,13,47,11,9,13,22
+"Typha (angustifolia, domingensis, latifolia)",alliance,16,4,5,15,103,27,25,75,40
+Umbellularia californica,alliance,144,15,4,8,236,21,13,110,171
+Vaccinium cespitosum,alliance,0,0,0,0,6,1,0,0,0
+Venegasia carpesioides,alliance,0,0,0,0,4,0,0,1,0
+Vitis arizonica – Vitis girdiana,alliance,1,0,0,0,14,8,9,23,1
+Washingtonia filifera,alliance,0,0,0,0,4,0,2,0,0
+Xylococcus bicolor,alliance,23,1,0,0,149,25,32,0,24
+Yucca brevifolia,alliance,6,1,1,2,104,38,17,2,10
+Yucca schidigera,alliance,5,0,0,0,74,16,20,0,5
+(Arctostaphylos viscida – Adenostoma fasciculatum) / Salvia sonomensis,association,0,0,0,0,0,2,31,0,0
+(Artemisia californica) – Eriogonum fasciculatum – Salvia leucophylla,association,0,0,0,0,17,0,0,6,0
+(Buddleja utahensis – Eriogonum heermannii) – Gutierrezia spp. limestone,association,0,0,0,0,3,0,0,0,0
+(Dicoria canescens) – Salsola tragus,association,0,0,0,0,0,1,3,0,0
+(Trifolium variegatum – Vulpia bromoides) – Hypochaeris glabra – Leontodon saxatilis,association,0,0,0,0,0,4,16,0,0
+Abies concolor / Arctostaphylos nevadensis,association,0,0,0,0,2,0,0,0,0
+Abies concolor / Ceanothus prostratus,association,0,0,0,5,1,0,1,5,5
+Abies concolor / Ceanothus velutinus,association,5,0,1,0,5,0,1,0,6
+Abies concolor / Chimaphila spp. – Pyrola picta,association,5,3,2,1,22,6,3,1,11
+Abies concolor / Symphoricarpos mollis,association,0,0,0,6,6,0,1,6,6
+Abies concolor – Calocedrus decurrens / Pyrola pictaursinus,association,0,0,0,0,1,0,0,0,0
+Abies concolor – Calocedrus decurrens – Pinus jeffreyi,association,0,0,0,0,2,0,0,0,0
+Abies concolor – Calocedrus decurrens – Pseudotsuga macrocarpa – Pinus coulteri,association,0,0,0,0,4,0,0,0,0
+Abies concolor – Calocedrus decurrens – Quercus kelloggii,association,0,0,0,0,1,1,0,0,0
+Abies concolor – Pinus lambertiana,association,0,0,0,1,1,0,0,7,1
+Abies concolor – Pinus lambertiana – Calocedrus decurrens / Adenocaulon bicolor,association,0,0,0,0,3,1,0,0,0
+Abies concolor – Pinus lambertiana – Calocedrus decurrens / Symphoricarpos mollis / Kelloggia galioides,association,1,0,0,3,2,0,4,3,4
+Abies concolor – Pinus lambertiana – Calocedrus decurrens – Quercus chrysolepis,association,0,0,0,0,2,0,0,0,0
+Abies concolor – Pinus lambertiana – Pinus jeffreyi,association,0,0,0,0,3,0,1,23,0
+Abies concolor – Pinus lambertiana – Pseudotsuga menziesii / Carex rossii,association,1,1,3,1,5,2,4,1,6
+Abies concolor – Pinus ponderosa / Amelanchier alnifolia,association,10,0,1,0,13,9,5,0,11
+Abies concolor – Pseudotsuga menziesii / Cornus nuttallii,association,0,0,0,0,1,1,0,0,0
+Abies concolor – Pseudotsuga menziesii / Rosa gymnocarpa – Symphoricarpos mollis,association,0,0,0,1,2,1,1,1,1
+Abies concolor – Pseudotsuga menziesii – (Quercus chrysolepis),association,0,0,0,1,0,0,0,1,1
+Abies concolor – Pseudotsuga menziesii – Calocedrus decurrens,association,1,0,1,1,7,0,4,1,3
+Abies magnifica – (Pinus monticola) / Arctostaphylos nevadensis,association,3,1,1,6,30,2,12,6,11
+Abies magnifica – Abies concolor,association,2,1,0,7,6,1,1,7,10
+Abies magnifica – Abies concolor / Arctostaphylos nevadensis,association,0,0,0,0,0,0,1,0,0
+Abies magnifica – Abies concolor / Pinus lambertiana,association,0,0,0,0,1,0,0,8,0
+Abies magnifica – Abies concolor – Pinus jeffreyi,association,0,0,0,0,5,0,0,8,0
+Abies magnifica – Pinus contorta ssp. murrayana,association,0,0,0,0,12,2,2,17,0
+Abies magnifica – Pinus monticola,association,1,1,1,4,8,3,4,60,7
+Abies magnifica – Pinus monticola / Chrysolepis sempervirens,association,0,0,0,0,0,1,1,0,0
+Abies magnifica – Pinus monticola – Pinus contorta ssp. murrayana,association,0,0,0,0,6,0,7,18,0
+Abies magnifica – Tsuga mertensiana / Orthilia secunda,association,0,0,0,0,11,0,1,0,0
+Abronia latifolia – Calystegia soldanella – Lathyrus littoralis,association,18,1,0,0,18,1,0,0,19
+Abronia pogonantha – Oenothera deltoides,association,0,1,0,0,6,1,0,0,1
+"Acacia (cyclops, dealbata)",association,2,0,0,0,6,0,0,0,2
+Acacia melanoxylon,association,0,0,1,0,1,0,1,0,1
+Acer glabrum drainage bottom,association,0,0,0,0,2,0,0,0,0
+Acer macrophyllum / (Rubus ursinus),association,10,0,0,0,13,0,1,0,10
+Acer macrophyllum – Pseudotsuga menziesii / Dryopteris arguta,association,0,0,0,0,0,1,1,0,0
+Acer macrophyllum – Pseudotsuga menziesii / Polystichum munitum,association,8,0,1,0,9,0,1,1,9
+Acer negundo / (Rubus ursinus),association,7,0,0,0,10,10,9,1,7
+Acer negundo – Salix gooddingii,association,0,0,0,0,3,16,8,0,0
+Achnatherum hymenoides Shrub,association,0,0,0,0,2,1,0,0,0
+Achnatherum hymenoides – Oenothera deltoides,association,0,0,0,0,0,1,0,0,0
+Achnatherum speciosum Shrub,association,1,0,1,0,1,0,2,0,2
+Adenostoma fasciculatum / Selaginella bigelovii,association,0,0,0,9,7,0,0,9,9
+Adenostoma fasciculatum Southern Maritime,association,0,0,0,0,5,0,0,0,0
+Adenostoma fasciculatum – Arctostaphylos manzanita,association,4,2,2,0,4,7,3,0,8
+Adenostoma fasciculatum – Arctostaphylos pringlei,association,0,0,0,0,2,0,0,0,0
+Adenostoma fasciculatum – Arctostaphylos stanfordiana / Salvia sonomensis,association,5,2,0,0,7,2,0,0,7
+Adenostoma fasciculatum – Diplacus aurantiacus,association,26,2,1,0,40,2,1,4,29
+Adenostoma fasciculatum – Eriogonum fasciculatum,association,2,0,0,0,21,2,4,9,2
+Adenostoma fasciculatum – Eriogonum fasciculatum – Salvia apiana,association,0,0,0,0,3,0,0,3,0
+Adenostoma fasciculatum – Heteromeles arbutifolia / Melica torreyana,association,1,0,0,0,3,0,0,0,1
+Adenostoma fasciculatum – Malosma laurina,association,0,0,0,0,28,0,0,31,0
+Adenostoma fasciculatum – Salvia apiana – Artemisia californica,association,0,0,0,0,25,0,0,0,0
+Adenostoma fasciculatum – Salvia leucophylla,association,1,0,0,0,7,0,0,4,1
+Adenostoma fasciculatum – Salvia mellifera,association,20,0,0,11,46,2,4,36,31
+Adenostoma fasciculatum – Salvia mellifera – Artemisia californica,association,0,0,0,0,2,0,3,0,0
+Adenostoma fasciculatum – Salvia mellifera – Ceanothus crassifolius,association,0,0,0,0,5,1,2,0,0
+Adenostoma fasciculatum – Salvia mellifera – Malosma laurina,association,0,0,0,0,29,0,0,36,0
+Adenostoma fasciculatum – Salvia mellifera – Rhus ovata,association,0,0,0,0,10,0,0,15,0
+Adenostoma fasciculatum – Xylococcus bicolor,association,3,0,0,0,28,5,10,0,3
+Adenostoma fasciculatum – Xylococcus bicolor – Ceanothus crassifolius,association,0,0,0,0,25,1,8,0,0
+Adenostoma fasciculatum – Xylococcus bicolor – Ceanothus crassifolius – Malosma laurina,association,0,0,0,0,14,0,0,0,0
+Adenostoma fasciculatum – Xylococcus bicolor – Ceanothus tomentosus,association,4,0,0,0,20,8,7,0,4
+Adenostoma fasciculatum – Xylococcus bicolor – Ceanothus verrucosus,association,9,0,0,0,25,0,0,0,9
+Adenostoma fasciculatum – Xylococcus bicolor – Cneoridium dumosum,association,0,0,0,0,5,0,0,0,0
+Adenostoma fasciculatum – Xylococcus bicolor – Quercus berberidifolia,association,6,0,0,0,19,7,7,0,6
+Adenostoma fasciculatum – Xylococcus bicolor – Salvia mellifera – Malosma laurina,association,0,0,0,0,3,0,0,0,0
+Adenostoma sparsifolium – Adenostoma fasciculatum – Arctostaphylos glauca,association,0,0,0,0,27,0,1,2,0
+Adenostoma sparsifolium – Adenostoma fasciculatum – Arctostaphylos pungens,association,0,0,0,0,6,0,0,1,0
+Adenostoma sparsifolium – Adenostoma fasciculatum – Ceanothus crassifolius,association,0,0,0,0,10,0,0,5,0
+Adenostoma sparsifolium – Adenostoma fasciculatum – Ceanothus greggii,association,0,0,0,0,9,0,0,0,0
+Adenostoma sparsifolium – Adenostoma fasciculatum – Cylindropuntia californica var. parkeri,association,0,0,0,0,4,0,0,0,0
+Adenostoma sparsifolium – Artemisia tridentata,association,0,0,0,0,4,0,0,0,0
+Adenostoma sparsifolium – Ceanothus crassifolius,association,0,0,0,0,3,0,0,0,0
+Adenostoma sparsifolium – Ceanothus cuneatus,association,0,0,0,0,3,0,0,0,0
+Adenostoma sparsifolium – Cercocarpus montanus,association,0,0,0,0,14,0,0,2,0
+Adenostoma sparsifolium – Ericameria linearifolia – Eriogonum fasciculatum – Opuntia basilaris,association,0,0,0,0,5,0,0,1,0
+Adenostoma sparsifolium – Eriogonum fasciculatum – Lotus scoparius,association,0,0,0,0,9,0,0,0,0
+Aegilops triuncialis – Hemizonia congesta,association,0,0,0,0,1,0,0,0,0
+Aesculus californica / Datisca glomerata,association,0,0,0,0,0,0,1,0,0
+Aesculus californica / Lupinus albifrons,association,0,0,0,0,0,0,1,0,0
+Aesculus californica / Toxicodendron diversilobum / moss,association,8,0,0,7,45,12,11,7,15
+Aesculus californica – Umbellularia californica,association,4,0,0,0,7,1,2,4,4
+Agave deserti – Ambrosia salsola (wash and terrace),association,0,0,0,0,3,0,1,0,0
+Agave deserti – Yucca schidigera,association,0,0,0,0,0,4,0,0,0
+Agropyron cristatum,association,0,0,1,1,0,0,1,1,2
+"Agrostis (gigantea, stolonifera)",association,3,0,0,0,3,0,0,0,3
+Ailanthus altissima,association,0,0,1,0,6,5,3,15,1
+Aliciella latifolia – Nama pusillum – Phacelia rotundifolia,association,0,0,0,0,2,0,1,0,0
+Alisma (triviale),association,4,0,0,0,4,0,0,0,4
+Allenrolfea occidentalis / (Frankenia salina – Centromadia spp.),association,0,0,0,0,13,4,7,1,0
+Allenrolfea occidentalis / Distichlis spicata,association,0,0,0,0,16,0,0,0,0
+Allenrolfea occidentalis / Lasthenia gracilis,association,0,0,0,0,10,0,0,0,0
+Allenrolfea occidentalis – Suaeda moquinii,association,0,0,0,0,37,4,9,0,0
+Allium falcifolium – Eriogonum dasyanthemum – Streptanthus breweri,association,4,0,0,0,4,0,0,0,4
+"Allium falcifolium – Eriogonum luteolum – Streptanthus (batrachopus, morrisonii)",association,8,0,0,0,11,0,0,0,8
+Alnus incana,association,9,2,2,14,16,3,3,14,27
+Alnus rhombifolia,association,4,1,1,0,22,17,10,1,6
+Alnus rhombifolia / Carex (nudata),association,6,2,5,0,9,6,10,0,13
+Alnus rhombifolia / Cornus sericea,association,0,0,0,0,9,0,0,0,0
+Alnus rhombifolia / Darmera peltata,association,0,0,0,0,0,0,2,0,0
+Alnus rhombifolia / Salix exigua – (Rosa californica),association,0,0,0,0,14,2,2,0,0
+Alnus rhombifolia – Acer macrophyllum,association,4,1,3,0,5,1,3,0,8
+Alnus rhombifolia – Platanus racemosa,association,2,0,0,0,19,0,0,3,2
+Alnus rhombifolia – Pseudotsuga menziesii,association,0,0,0,0,1,2,0,0,0
+Alnus rhombifolia – Salix laevigata,association,0,0,0,0,4,4,1,0,0
+Alnus rhombifolia – Umbellularia californica – (Quercus chrysolepis),association,5,1,0,0,14,5,4,0,6
+Alnus rubra / Rubus spectabilis – Sambucus racemosa,association,8,0,2,0,14,0,2,28,10
+Alnus rubra / Salix lasiolepis – Rubus spp.,association,16,1,6,0,20,1,6,20,23
+Ambrosia chamissonis,association,21,1,2,0,21,1,2,0,24
+Ambrosia chamissonis – Abronia maritima – Cakile maritima,association,1,5,0,0,2,5,0,0,6
+Ambrosia chamissonis – Abronia umbellata,association,6,0,0,0,6,0,0,0,6
+Ambrosia dumosa,association,1,0,0,0,10,4,2,0,1
+Ambrosia dumosa – Acamptopappus sphaerocephalus,association,0,0,0,0,4,0,1,0,0
+Ambrosia eriocentra – Brickellia spp.,association,0,0,0,0,1,0,0,0,0
+Ambrosia salsola – Eriogonum fasciculatum,association,1,0,0,0,1,0,2,0,1
+Ambrosia salsola – Larrea tridentata,association,0,0,0,0,14,1,7,0,0
+Ambrosia salsola – Salazaria mexicana,association,0,0,0,0,4,3,1,0,0
+Amelanchier utahensis,association,2,0,0,0,2,0,0,0,2
+Ammophila arenaria,association,12,0,0,5,13,0,0,8,17
+Amphipappus fremontii (limestone),association,0,0,0,0,2,0,0,0,0
+Amsinckia menziesii – Erodium spp.,association,0,0,0,0,7,2,2,0,0
+Amsinckia tessellata – Erodium cicutarium,association,2,0,0,0,46,2,0,0,2
+Anemopsis californica,association,0,0,0,0,5,1,1,0,0
+Anemopsis californica – Juncus arcticus var. mexicanus,association,0,0,0,0,13,2,1,0,0
+Arbutus menziesii – (Quercus agrifolia),association,24,9,3,0,33,9,3,2,36
+Arbutus menziesii – Umbellularia californica,association,15,1,1,0,27,2,1,1,17
+"Arctostaphylos (andersonii, pallida)",association,2,0,0,0,2,0,1,0,2
+Arctostaphylos bakeri,association,9,0,0,0,12,0,0,0,9
+Arctostaphylos canescens,association,3,0,0,0,9,0,0,0,3
+Arctostaphylos canescens – Arctostaphylos glandulosa – Adenostoma fasciculatum,association,1,0,0,0,5,0,0,0,1
+Arctostaphylos crustacea,association,13,2,0,0,19,2,0,0,15
+"Arctostaphylos crustacea – Adenostoma fasciculatum – Ceanothus (cuneatus, papillosus)",association,31,0,1,0,34,0,1,0,32
+Arctostaphylos crustacea – Arctostaphylos gabilanensis,association,0,1,0,0,4,1,0,0,1
+Arctostaphylos glandulosa,association,14,1,0,0,25,1,0,3,15
+Arctostaphylos glandulosa ssp. adamsii,association,0,0,0,0,1,0,0,0,0
+Arctostaphylos glandulosa – Adenostoma fasciculatum,association,10,3,0,0,56,4,5,17,13
+Arctostaphylos glandulosa – Adenostoma fasciculatum – Arctostaphylos glauca,association,0,0,0,0,2,1,1,0,0
+Arctostaphylos glandulosa – Adenostoma fasciculatum – Ceanothus crassifolius,association,0,0,0,0,3,0,0,0,0
+Arctostaphylos glandulosa – Adenostoma fasciculatum – Ceanothus cuneatus,association,0,0,0,0,0,0,1,0,0
+Arctostaphylos glandulosa – Adenostoma fasciculatum – Ceanothus leucodermis,association,0,0,0,0,7,0,0,0,0
+Arctostaphylos glandulosa – Adenostoma fasciculatum – Chamaebatia australis,association,0,0,0,0,1,21,1,0,0
+Arctostaphylos glandulosa – Adenostoma fasciculatum – Quercus berberidifolia,association,0,0,0,0,8,2,1,0,0
+Arctostaphylos glandulosa – Adenostoma fasciculatum – Quercus wislizeni,association,2,0,1,0,14,0,1,3,3
+Arctostaphylos glandulosa – Arctostaphylos pringlei,association,0,0,0,0,3,0,0,0,0
+Arctostaphylos glandulosa – Cercocarpus montanus,association,0,0,0,0,1,0,0,0,0
+Arctostaphylos glandulosa – Quercus wislizeni,association,0,0,0,0,4,0,0,0,0
+Arctostaphylos glauca,association,3,1,0,0,15,3,1,0,4
+Arctostaphylos glauca / Melica torreyana,association,0,1,0,0,0,1,0,0,1
+Arctostaphylos glauca – Adenostoma fasciculatum,association,6,0,0,2,34,2,8,8,8
+Arctostaphylos glauca – Adenostoma fasciculatum on serpentine,association,0,0,0,0,9,0,0,0,0
+Arctostaphylos glauca – Adenostoma fasciculatum – Quercus berberidifolia,association,0,0,0,0,9,0,0,0,0
+Arctostaphylos glauca – Adenostoma fasciculatum – Rhus ovata,association,0,0,0,0,1,0,0,5,0
+Arctostaphylos glauca – Adenostoma fasciculatum – Salvia mellifera,association,0,0,0,0,3,0,0,0,0
+Arctostaphylos glauca – Artemisia californica – Salvia mellifera,association,2,0,0,0,2,0,0,0,2
+Arctostaphylos glauca – Quercus durata / Pinus sabiniana,association,0,0,0,0,17,0,0,0,0
+Arctostaphylos glauca – Quercus john-tuckeri,association,0,0,0,1,6,0,0,1,1
+Arctostaphylos glutinosa,association,1,0,0,0,1,0,0,0,1
+Arctostaphylos hooveri,association,0,0,1,0,1,0,1,0,1
+Arctostaphylos manzanita,association,16,3,2,0,18,4,3,0,21
+Arctostaphylos montana,association,9,0,0,0,26,0,0,0,9
+Arctostaphylos montana – Adenostoma fasciculatum,association,4,0,0,0,7,0,0,0,4
+Arctostaphylos montaraensis – Arctostaphylos imbricata,association,1,1,0,0,4,2,0,5,2
+Arctostaphylos morroensis,association,0,0,0,0,1,0,0,0,0
+Arctostaphylos myrtifolia,association,0,0,0,0,10,0,2,0,0
+Arctostaphylos nevadensis,association,0,0,0,8,4,0,1,8,8
+Arctostaphylos nummularia,association,2,10,2,14,2,10,2,17,28
+Arctostaphylos parryana,association,11,2,0,0,11,2,6,0,13
+Arctostaphylos patula,association,4,2,1,7,8,4,2,7,14
+Arctostaphylos patula – Ceanothus velutinus – Ceanothus prostratus,association,2,1,3,13,3,1,3,13,19
+Arctostaphylos pringlei ssp. drupacea – Arctostaphylos pungens,association,0,0,0,0,1,0,0,0,0
+Arctostaphylos sensitiva,association,19,0,0,0,30,0,0,6,19
+Arctostaphylos silvicola,association,17,0,0,0,26,0,0,0,17
+Arctostaphylos spp. – Ceanothus fresnensis,association,0,0,0,0,1,0,0,0,0
+Arctostaphylos stanfordiana,association,3,1,1,0,5,4,1,0,5
+Arctostaphylos viscida,association,0,0,0,2,19,9,14,2,2
+"Arctostaphylos viscida / Salvia sonomensis – Carex (brainerdi, xerophilla)",association,0,0,0,0,6,0,1,0,0
+Arctostaphylos viscida – Adenostoma fasciculatum,association,0,0,0,2,13,17,13,2,2
+Arctostaphylos viscida – Ceanothus jepsonii,association,7,2,0,1,7,2,0,1,10
+Arctostaphylos viscida – Quercus wislizeni,association,0,0,0,0,1,0,2,0,0
+Argentina egedii – Distichlis spicata,association,2,0,0,0,2,0,0,0,2
+Armeria maritima – Plantago (maritima),association,2,0,1,0,2,0,1,0,3
+Arnica amplexicaulis – Carex congdonii,association,0,0,0,0,1,0,0,0,0
+Artemisia arbuscula (ssp. longiloba) / Stenotus acaulis,association,3,1,0,0,4,2,0,0,4
+Artemisia arbuscula / Bromus spp. – Elymus caput-medusae,association,6,4,3,0,8,7,4,0,13
+Artemisia arbuscula / Festuca idahoensis,association,0,0,0,0,4,5,3,0,0
+Artemisia arbuscula / Linanthus pungens,association,0,0,0,0,6,1,3,0,0
+Artemisia arbuscula / Poa secunda,association,22,7,10,5,69,35,28,5,44
+Artemisia arbuscula / Trifolium andersonii ssp. monoense,association,0,0,0,0,0,1,0,0,0
+"Artemisia arbuscula – Eriogonum (microthecum, sphaerocephalum)",association,2,2,2,0,9,8,6,0,6
+Artemisia californica,association,35,10,1,0,149,12,3,76,46
+Artemisia californica / Amsinckia menziesii,association,0,0,0,0,3,1,8,1,0
+Artemisia californica / Nassella (pulchra),association,13,0,1,0,16,0,1,3,14
+Artemisia californica – (Salvia leucophylla) / Leymus condensatus,association,0,0,1,0,15,0,1,12,1
+Artemisia californica – Diplacus aurantiacus,association,30,8,1,0,52,8,3,8,39
+Artemisia californica – Eriogonum cinereum,association,0,0,0,0,57,0,0,49,0
+Artemisia californica – Eriogonum fasciculatum,association,1,0,0,3,45,6,1,34,4
+Artemisia californica – Eriogonum fasciculatum – Ephedra californica,association,0,0,0,0,8,0,0,0,0
+Artemisia californica – Eriogonum fasciculatum – Opuntia littoralis / Dudleya (edulis),association,26,10,0,0,46,16,7,0,36
+Artemisia californica – Eriogonum fasciculatum – Salvia apiana,association,0,0,0,0,8,1,0,11,0
+Artemisia californica – Eriogonum fasciculatum – Salvia mellifera,association,1,0,0,0,9,0,0,15,1
+Artemisia californica – Eriogonum fasciculatum – Viguiera laciniata,association,0,1,0,0,4,15,8,0,1
+Artemisia californica – Lepidospartum squamatum,association,0,0,0,0,2,0,0,0,0
+Artemisia californica – Opuntia littoralis,association,0,0,0,0,9,0,0,0,0
+Artemisia californica – Salvia leucophylla – Eriogonum cinereum / Nassella spp.,association,0,0,0,0,65,0,0,11,0
+"Artemisia cana (ssp. bolanderi, ssp. viscidula) / Poa secunda",association,5,2,5,4,9,18,18,4,16
+Artemisia cana / Juncus arcticus var. balticus,association,0,0,0,0,2,0,2,0,0
+Artemisia cana – Muhlenbergia richardsonis,association,0,0,0,0,0,0,4,0,0
+Artemisia douglasiana,association,0,0,0,0,4,5,4,18,0
+Artemisia dracunculus,association,2,0,0,0,16,1,1,0,2
+Artemisia dracunculus – Pseudognaphalium canescens,association,0,0,0,0,7,0,0,0,0
+Artemisia nova,association,0,0,2,0,5,0,4,0,2
+Artemisia nova / Poa secunda,association,2,0,0,0,4,3,1,0,2
+Artemisia pycnocephala,association,23,0,1,0,23,0,1,7,24
+Artemisia pycnocephala – Cardionema ramosissimum,association,1,0,0,0,1,0,0,0,1
+Artemisia rothrockii / Monardella odoratissima,association,0,0,0,0,3,0,0,0,0
+Artemisia rothrockii / Penstemon heterodoxus,association,0,0,0,0,2,0,0,0,0
+Artemisia tridentata,association,14,3,6,4,83,32,21,5,27
+Artemisia tridentata (ssp. vaseyana) – Salvia dorrii – Chamaebatiaria millefolium,association,0,0,0,0,18,0,0,0,0
+Artemisia tridentata / Distichlis spicata,association,0,0,0,0,3,0,0,0,0
+Artemisia tridentata / Pleuraphis jamesii,association,0,0,0,0,0,1,0,0,0
+Artemisia tridentata ssp. parishii,association,1,1,1,0,25,12,3,0,3
+Artemisia tridentata ssp. spiciformis,association,3,0,0,0,3,0,0,0,3
+Artemisia tridentata ssp. vaseyana,association,0,0,0,9,0,0,3,9,9
+Artemisia tridentata ssp. vaseyana / Carex exserta,association,0,0,0,0,1,0,0,0,0
+Artemisia tridentata ssp. vaseyana / Festuca idahoensis,association,7,0,0,0,18,6,6,0,7
+Artemisia tridentata ssp. vaseyana – Ephedra viridis,association,0,0,0,0,3,2,3,0,0
+Artemisia tridentata ssp. vaseyana – Symphoricarpos oreophilus / Bromus carinatus,association,11,2,1,6,23,13,8,6,20
+Artemisia tridentata – (Ericameria nauseosa) / Bromus tectorum,association,9,3,3,4,25,9,7,4,19
+Artemisia tridentata – Ceanothus cuneatus,association,0,1,0,0,3,4,7,0,1
+Artemisia tridentata – Chrysothamnus viscidiflorus / (Poa secunda),association,0,0,1,0,7,7,23,0,1
+Artemisia tridentata – Ephedra nevadensis,association,0,0,0,0,13,1,0,0,0
+Artemisia tridentata – Ericameria nauseosa,association,2,0,2,1,11,1,15,1,5
+Artemisia tridentata – Ericameria teretifolia,association,0,0,0,0,0,1,0,0,0
+Artemisia tridentata – Eriogonum fasciculatum,association,1,0,0,0,19,0,0,0,1
+Artemisia tridentata – Eriogonum wrightii,association,0,1,0,0,2,4,2,1,1
+Artemisia tridentata – Symphoricarpos longiflorus,association,0,0,0,0,2,0,0,0,0
+Arthrocnemum subterminale,association,2,3,0,0,4,4,2,0,5
+Arthrocnemum subterminale – Sarcocornia pacifica,association,6,3,0,0,10,3,1,0,9
+Arundo donax,association,0,0,0,0,6,1,5,0,0
+Arundo donax – Salix exigua,association,0,0,0,0,1,0,2,0,0
+Astragalus didymocarpus – Lotus wrangelianus,association,3,0,0,0,37,0,0,0,3
+Atriplex canescens Desert Wash,association,0,0,0,0,1,0,0,0,0
+Atriplex canescens – Krascheninnikovia lanata,association,1,0,0,0,2,0,0,0,1
+Atriplex confertifolia Great Basin,association,1,0,0,2,3,1,0,2,3
+Atriplex confertifolia – Ambrosia dumosa,association,0,0,0,0,3,1,0,0,0
+Atriplex confertifolia – Atriplex canescens,association,0,0,0,0,1,0,0,0,0
+Atriplex confertifolia – Ephedra nevadensis,association,0,0,0,0,1,3,1,0,0
+Atriplex confertifolia – Krascheninnikovia lanata,association,0,0,0,0,25,1,0,0,0
+Atriplex confertifolia – Lepidium fremontii,association,0,0,0,0,1,0,1,0,0
+Atriplex confertifolia – Lycium andersonii,association,0,0,0,0,1,1,1,0,0
+Atriplex confertifolia – Picrothamnus desertorum,association,1,0,0,2,3,1,1,2,3
+Atriplex hymenelytra,association,0,0,0,0,3,4,3,1,0
+Atriplex hymenelytra Sparse,association,0,0,0,0,1,2,0,0,0
+Atriplex hymenelytra – Ambrosia dumosa,association,0,0,0,0,2,1,0,2,0
+Atriplex hymenelytra – Larrea tridentata,association,0,0,0,0,3,2,2,0,0
+Atriplex hymenelytra – Tidestromia oblongifolia,association,0,0,0,0,4,2,3,0,0
+Atriplex lentiformis,association,1,1,0,0,12,4,10,3,2
+Atriplex parryi,association,0,0,0,0,11,1,1,1,0
+Atriplex polycarpa,association,1,0,0,0,20,2,9,0,1
+Atriplex polycarpa / Annual herbaceous,association,2,1,1,0,82,2,8,26,4
+Atriplex prostrata,association,4,0,0,0,8,0,0,0,4
+Atriplex prostrata / Bolboschoenus maritimus,association,0,0,0,0,1,0,0,0,0
+Atriplex prostrata / Distichlis spicata,association,0,0,0,0,5,0,0,0,0
+Atriplex prostrata / annual grasses,association,1,0,0,0,5,0,0,0,1
+Atriplex torreyi,association,0,0,0,0,17,4,16,0,0
+Atriplex torreyi / Distichlis spicata – Sporobolus airoides,association,0,0,0,0,9,0,10,0,0
+Atriplex vallicola – Lasthenia ferrisiae – Lepidium jaredii,association,0,0,0,0,21,0,0,0,0
+Avena barbata – Avena fatua,association,18,6,3,0,47,23,16,1,27
+"Azolla (filiculoides, microphylla)",association,5,1,0,0,11,3,1,0,6
+Baccharis douglasii,association,4,0,0,0,5,0,0,0,4
+Baccharis emoryi,association,0,0,0,0,1,0,0,1,0
+Baccharis pilularis / Ammophila arenaria,association,2,0,0,0,3,0,0,9,2
+Baccharis pilularis / Annual grass – herb,association,10,6,5,1,33,6,5,29,22
+Baccharis pilularis / Carex obnupta – Juncus patens,association,3,0,1,0,5,0,1,14,4
+Baccharis pilularis / Danthonia californica,association,5,0,0,0,13,0,0,11,5
+Baccharis pilularis / Deschampsia cespitosa,association,4,0,0,0,9,0,0,8,4
+Baccharis pilularis / Eriophyllum staechadifolium,association,12,0,1,0,16,0,1,5,13
+Baccharis pilularis – (Frangula californica) – Rubus spp.,association,29,2,0,0,46,2,0,76,31
+Baccharis pilularis – Artemisia californica,association,26,1,1,0,70,1,3,71,28
+Baccharis pilularis – Ceanothus thyrsiflorus,association,0,0,0,0,2,0,0,9,0
+Baccharis pilularis – Lupinus arboreus,association,4,0,0,0,5,0,0,4,4
+Baccharis pilularis – Toxicodendron diversilobum,association,20,1,0,0,42,1,1,47,21
+Baccharis salicifolia,association,9,0,1,10,81,6,10,20,20
+Baccharis salicifolia – Arundo donax,association,0,0,0,0,4,0,0,0,0
+Baccharis salicifolia – Lepidospartum squamatum – Hazardia squarrosa,association,0,0,0,0,2,0,0,0,0
+Baccharis salicifolia – Pluchea sericea,association,0,0,0,0,2,0,0,0,0
+Baccharis salicifolia – Sambucus nigra,association,0,0,0,0,0,2,1,0,0
+Baccharis salicifolia – Tamarix ramosissima,association,0,0,0,0,1,0,0,0,0
+Bebbia juncea,association,0,0,0,1,4,2,3,1,1
+Betula occidentalis / Mesic graminoids,association,0,0,0,0,0,0,1,0,0
+Betula occidentalis / Salix spp.,association,0,0,0,0,3,2,1,0,0
+Bidens frondosa,association,2,0,0,0,2,0,0,0,2
+Bolboschoenus maritimus,association,14,0,1,0,17,0,1,0,15
+Bolboschoenus maritimus / Sesuvium verrucosum,association,0,0,0,0,1,0,0,0,0
+Bolboschoenus maritimus – Sarcocornia pacifica,association,4,1,0,0,13,1,0,0,5
+Bouteloua eriopoda – Pleuraphis jamesii,association,0,0,0,0,16,0,0,0,0
+Brachypodium distachyon,association,13,0,0,0,35,5,2,0,13
+Brachypodium distachyon – Bromus diandrus / Quercus douglasii,association,0,0,0,0,0,2,0,0,0
+Brassica nigra,association,1,0,0,0,17,0,1,1,1
+Brassica nigra – Bromus diandrus,association,2,0,0,0,21,0,0,8,2
+Briza maxima,association,6,2,0,0,6,2,0,1,8
+"Bromus (madritensis, rubens) – Erodium cicutarium",association,2,0,0,0,31,2,0,6,2
+Bromus carinatus,association,31,2,3,0,47,2,5,1,36
+Bromus diandrus,association,14,7,0,0,51,11,4,6,21
+Bromus diandrus – Avena spp.,association,3,2,0,0,12,2,6,1,5
+Bromus diandrus – Mixed herbs,association,0,1,0,0,19,5,7,1,1
+Bromus hordeaceus – (Vicia villosa – Lolium perenne) – Trifolium hirtum,association,0,0,0,0,3,9,5,0,0
+Bromus hordeaceus – Erodium botrys,association,8,1,0,0,26,15,18,0,9
+Bromus hordeaceus – Erodium botrys – Plagiobothrys fulvus,association,0,0,0,0,9,16,16,0,0
+Bromus hordeaceus – Hordeum spp. – Medicago polymorpha,association,0,0,0,0,12,5,3,0,0
+Bromus hordeaceus – Leontodon saxatilis,association,0,0,0,0,17,0,38,0,0
+Bromus hordeaceus – Lupinus nanus – Trifolium spp.,association,3,0,0,0,9,4,2,0,3
+Bromus hordeaceus – Taeniatherum caput-medusae,association,0,0,0,0,8,12,4,0,0
+Bromus inermis – (Pascopyrum smithii),association,2,0,0,0,2,0,0,0,2
+Bromus rubens – Erodium cicutarium – Chaenactis spp.,association,0,0,0,0,1,0,0,0,0
+Bromus rubens – mixed herbs,association,0,0,0,0,12,1,0,0,0
+Bromus tectorum,association,9,1,2,1,17,2,8,1,13
+"Cakile (edentula, maritima)",association,7,0,0,0,7,0,0,0,7
+Calamagrostis canadensis – (Carex utriculata),association,1,0,0,0,8,2,0,0,1
+Calamagrostis muiriana – Juncus drummondii,association,0,0,0,0,2,0,0,0,0
+Calamagrostis muiriana – Oreostemma alpigenum,association,0,0,0,0,3,2,0,0,0
+Calamagrostis muiriana – Trisetum spicatum,association,0,0,0,0,4,0,0,0,0
+Calamagrostis nutkaensis,association,2,0,2,0,3,0,2,3,4
+Calamagrostis nutkaensis / Baccharis pilularis,association,6,1,2,0,10,3,2,7,9
+Calamagrostis nutkaensis – Carex (obnupta) – Juncus (patens),association,6,0,1,1,10,0,1,26,8
+Calamagrostis purpurascens – Linanthus pungens,association,0,0,0,0,4,0,0,0,0
+Calocedrus decurrens – Abies concolor / Senecio triangularis,association,0,0,0,0,2,0,0,0,0
+Calocedrus decurrens – Alnus rhombifolia,association,0,0,0,0,0,2,0,0,0
+Calocedrus decurrens – Quercus chrysolepis – Quercus kelloggii,association,0,0,0,0,5,1,0,0,0
+Carduus pycnocephalus – Silybum marianum,association,1,1,0,0,7,1,0,0,2
+Carex aquatilis,association,1,0,0,0,1,0,0,0,1
+Carex aquatilis – Carex lenticularis,association,1,0,0,0,3,0,0,0,1
+Carex athrostachya,association,0,0,1,0,1,0,1,0,1
+Carex barbarae,association,3,0,0,0,6,2,2,0,3
+Carex breweri,association,0,0,0,0,4,0,0,0,0
+Carex capitata Fen,association,2,0,0,0,2,0,0,0,2
+Carex densa,association,3,0,0,0,6,0,0,0,3
+Carex douglasii,association,1,1,0,0,5,3,1,0,2
+Carex echinata / (Philonotis fontana – Sphagnum subsecundum),association,1,0,0,0,2,0,0,0,1
+Carex filifolia – Cistanthe monosperma,association,0,0,0,0,2,0,0,0,0
+Carex filifolia – Penstemon heterodoxus,association,0,0,0,0,6,0,0,0,0
+Carex filifolia – Trisetum spicatum,association,0,0,0,0,3,0,1,0,0
+Carex helleri – Eriogonum incanum – Raillardella argentea,association,0,0,0,0,2,0,0,0,0
+Carex helleri – Saxifraga tolmiei – Luzula divaricata,association,0,0,0,0,1,0,0,0,0
+Carex integra,association,0,0,0,0,2,0,0,0,0
+Carex luzulina – Philonotis fontana,association,0,0,0,0,1,0,0,0,0
+Carex microptera,association,1,0,0,0,1,0,0,0,1
+Carex nebrascensis,association,5,2,2,1,32,8,9,1,10
+Carex nigricans – Kalmia microphylla,association,0,0,0,0,1,0,0,0,0
+Carex nudata,association,2,1,1,0,5,3,1,0,4
+Carex obnupta,association,29,0,5,0,32,0,5,9,34
+Carex obnupta – Argentina egedii,association,3,0,0,0,3,0,0,2,3
+Carex obnupta – Juncus patens,association,3,0,0,0,3,0,0,8,3
+Carex pansa,association,1,0,0,0,1,0,0,0,1
+Carex praegracilis Lowland,association,9,1,2,0,14,3,3,0,12
+Carex praegracilis Montane,association,2,0,0,0,2,0,2,1,2
+Carex scopulorum,association,1,0,0,0,4,0,0,0,1
+Carex scopulorum – Pedicularis groenlandica,association,0,0,0,0,4,3,0,0,0
+Carex serratodens,association,10,2,0,2,16,3,0,2,14
+Carex simulata,association,4,0,2,0,5,0,3,0,6
+Carex simulata – Carex vesicaria,association,0,0,0,0,2,0,0,0,0
+Carex spectabilis – Senecio triangularis,association,0,0,0,0,1,0,0,0,0
+Carex spectabilis – Sibbaldia procumbens,association,3,0,0,0,4,1,0,0,3
+Carex subnigricans – Antennaria media,association,0,0,0,0,1,0,0,0,0
+Carex tumulicola,association,8,0,0,0,8,0,0,0,8
+Carpobrotus (edulis),association,7,0,0,0,7,0,0,9,7
+Ceanothus cordulatus,association,2,0,6,12,6,0,6,12,20
+Ceanothus crassifolius,association,1,0,0,0,12,0,0,13,1
+Ceanothus crassifolius – Adenostoma fasciculatum,association,0,0,0,0,8,0,0,0,0
+Ceanothus crassifolius – Adenostoma fasciculatum – Malosma laurina,association,2,0,0,0,24,0,0,20,2
+Ceanothus crassifolius – Adenostoma fasciculatum – Rhus ovata,association,0,0,0,0,13,0,0,4,0
+Ceanothus crassifolius – Adenostoma fasciculatum – Salvia mellifera,association,0,0,0,0,16,4,0,0,0
+Ceanothus crassifolius – Adenostoma fasciculatum – Xylococcus bicolor,association,0,0,0,0,9,0,0,0,0
+Ceanothus crassifolius – Cercocarpus montanus,association,0,0,0,0,4,0,0,1,0
+Ceanothus crassifolius – Malosma laurina,association,0,0,0,0,8,0,0,7,0
+Ceanothus cuneatus,association,5,0,0,13,41,39,36,14,18
+Ceanothus cuneatus / Plantago erecta,association,0,0,0,0,0,16,4,0,0
+Ceanothus cuneatus – (Arctostaphylos spp.) Maritime,association,6,0,0,0,8,0,0,0,6
+Ceanothus cuneatus – Adenostoma fasciculatum,association,6,5,1,4,21,6,7,9,16
+Ceanothus cuneatus – Adenostoma fasciculatum – Salvia mellifera – Malosma laurina,association,0,0,0,0,8,0,0,11,0
+Ceanothus cuneatus – Eriodictyon californicum – (Fremontodendron californicum),association,0,0,0,1,2,7,3,1,1
+Ceanothus cyaneus,association,0,0,0,0,1,0,1,0,0
+"Ceanothus greggii (var. vestitus, var. perplexans)",association,3,0,0,0,9,2,4,0,3
+Ceanothus greggii – Adenostoma fasciculatum,association,0,0,0,0,11,2,0,0,0
+Ceanothus incanus,association,3,0,3,0,3,0,3,0,6
+Ceanothus integerrimus,association,19,1,1,0,20,1,3,0,21
+Ceanothus integerrimus – Arctostaphylos viscida,association,0,0,0,0,0,2,1,2,0
+Ceanothus integerrimus – Quercus garryana var. fruticosa,association,0,0,0,0,1,8,0,0,0
+Ceanothus leucodermis,association,4,1,0,0,39,6,5,0,5
+Ceanothus megacarpus,association,2,0,1,0,39,0,1,73,3
+Ceanothus megacarpus – Adenostoma fasciculatum,association,0,0,0,0,19,0,0,54,0
+Ceanothus megacarpus – Adenostoma sparsifolium,association,0,0,0,0,17,0,0,17,0
+Ceanothus megacarpus – Cercocarpus montanus,association,0,0,0,0,13,0,0,8,0
+Ceanothus megacarpus – Malosma laurina,association,0,0,0,0,56,0,0,75,0
+Ceanothus megacarpus – Salvia mellifera,association,0,0,0,0,39,0,0,28,0
+Ceanothus oliganthus,association,3,1,1,1,19,1,1,3,6
+Ceanothus oliganthus – Adenostoma fasciculatum,association,0,0,0,0,3,0,0,0,0
+Ceanothus oliganthus – Adenostoma fasciculatum – Xylococcus bicolor,association,0,0,0,0,2,1,0,0,0
+Ceanothus oliganthus – Adenostoma sparsifolium,association,0,0,0,0,20,0,0,3,0
+Ceanothus oliganthus – Arctostaphylos glandulosa,association,0,0,0,0,3,0,0,0,0
+Ceanothus oliganthus – Eriodictyon crassifolium,association,0,0,0,0,0,0,3,0,0
+Ceanothus oliganthus – Heteromeles arbutifolia – Rhus ovata,association,0,0,0,0,4,0,0,3,0
+Ceanothus oliganthus – Quercus berberidifolia,association,0,0,0,0,11,0,0,3,0
+Ceanothus papillosus – Adenostoma fasciculatum,association,0,0,0,0,2,2,1,0,0
+Ceanothus papillosus – Eriodictyon californicum,association,4,0,0,0,4,0,0,0,4
+Ceanothus spinosus,association,0,0,0,0,93,0,0,86,0
+Ceanothus spinosus – Ceanothus megacarpus,association,0,0,0,0,38,0,0,31,0
+Ceanothus thyrsiflorus – (Rubus ursinus),association,8,0,0,0,12,2,1,24,8
+Ceanothus thyrsiflorus – Baccharis pilularis – Toxicodendron diversilobum,association,8,0,0,0,15,0,1,8,8
+Ceanothus tomentosus,association,6,0,0,4,20,11,2,5,10
+Ceanothus velutinus,association,11,0,2,12,14,4,8,12,25
+Ceanothus velutinus – Prunus emarginata – Artemisia tridentata,association,0,1,0,2,7,1,0,2,3
+Ceanothus verrucosus – Xylococcus bicolor,association,0,0,0,0,4,1,0,0,0
+Centaurea melitensis,association,0,0,0,0,9,0,0,3,0
+Centaurea solstitialis,association,5,0,0,0,15,9,11,0,5
+Centromadia pungens ssp. laevis,association,0,0,0,0,1,1,0,0,0
+Centromadia pungens – Lepidium dictyotum,association,0,0,0,0,31,8,9,0,0
+Cephalanthus occidentalis,association,0,0,0,1,5,8,6,1,1
+Ceratophyllum demersum Western,association,3,1,0,0,3,1,1,0,4
+Cercis occidentalis,association,0,0,0,0,2,2,2,0,0
+Cercocarpus intricatus,association,0,0,0,0,7,2,0,0,0
+Cercocarpus intricatus – Glossopetalon spinescens,association,0,0,0,0,2,0,0,0,0
+Cercocarpus ledifolius / Symphoricarpos rotundifolius,association,0,0,0,0,9,0,0,0,0
+Cercocarpus ledifolius – Artemisia tridentata,association,0,0,0,0,5,2,1,0,0
+Cercocarpus ledifolius – Artemisia tridentata ssp. vaseyana,association,2,1,2,0,9,3,4,0,5
+Cercocarpus montanus / Pseudoroegneria spicata,association,0,0,0,0,0,0,1,0,0
+Cercocarpus montanus var. glaber,association,6,0,0,2,65,12,7,37,8
+Cercocarpus montanus var. minutiflorus,association,1,0,0,0,4,1,1,0,1
+Cercocarpus montanus – Adenostoma fasciculatum,association,4,1,0,0,13,1,0,13,5
+Cercocarpus montanus – Arctostaphylos glauca,association,0,0,0,0,1,0,0,0,0
+Cercocarpus montanus – Ceanothus cuneatus,association,0,0,0,2,0,0,4,2,2
+Cercocarpus montanus – Ceanothus cuneatus – Quercus john-tuckeri,association,0,1,0,0,11,2,0,0,1
+Cercocarpus montanus – Ceanothus spinosus,association,0,0,0,0,8,0,0,11,0
+Cercocarpus montanus – Eriogonum fasciculatum,association,3,0,0,1,13,0,1,2,4
+Cercocarpus montanus – Eriogonum fasciculatum – Eriogonum wrightii,association,0,0,0,0,6,0,0,0,0
+Cercocarpus montanus – Fremontodendron californicum,association,0,0,0,0,1,2,1,0,0
+Cercocarpus montanus – Malosma laurina – Artemisia californica,association,0,0,0,0,12,0,0,7,0
+Cercocarpus montanus – Prunus ilicifolia,association,3,0,0,0,3,0,0,0,3
+Cercocarpus montanus – Prunus ilicifolia – Adenostoma sparsifolium,association,0,0,0,0,6,0,0,0,0
+Chenopodium album – Rumex spp.,association,1,0,0,0,1,0,0,0,1
+Chilopsis linearis / Ambrosia salsola,association,0,0,0,0,5,0,1,0,0
+Chilopsis linearis / Ericameria paniculata,association,0,0,0,0,9,0,1,0,0
+Chilopsis linearis / Prunus fasciculata,association,0,0,0,0,6,0,0,0,0
+Chorizanthe pungens – Eriogonum nudum var. decurrens – Heterotheca sessiliflora,association,8,0,0,0,35,0,0,0,8
+Chorizanthe rigida – Geraea canescens Desert Pavement,association,0,0,0,0,2,0,1,0,0
+Chrysolepis chrysophylla / Vaccinium ovatum,association,12,0,1,4,22,0,1,9,17
+Chrysolepis chrysophylla – Arctostaphylos glandulosa,association,1,0,0,0,6,0,0,1,1
+Chrysolepis sempervirens,association,2,0,1,0,5,2,1,0,3
+Chrysothamnus albidus,association,0,0,0,0,28,1,0,0,0
+Chrysothamnus viscidiflorus,association,1,0,2,0,10,3,6,0,3
+Cladium californicum,association,0,0,0,0,1,0,0,0,0
+Cleome isomeris,association,1,0,0,0,36,1,1,3,1
+Cleomella obtusifolia – Cleome sparsifolia – Psathyrotes spp.,association,0,0,0,0,2,0,0,6,0
+Coleogyne ramosissima,association,2,0,0,0,10,8,1,0,2
+Coleogyne ramosissima – Ephedra spp.,association,1,0,0,0,8,5,3,0,1
+Coleogyne ramosissima – Ericameria teretifolia,association,0,0,0,0,7,1,0,0,0
+Coleogyne ramosissima – Eriogonum fasciculatum,association,2,0,1,0,5,2,1,0,3
+Coleogyne ramosissima – Larrea tridentata,association,0,0,0,0,1,2,0,0,0
+Coleogyne ramosissima – Lycium andersonii,association,0,0,0,0,1,1,0,0,0
+Coleogyne ramosissima – Purshia stansburiana,association,0,0,0,0,1,1,0,0,0
+Conium maculatum,association,0,0,0,0,4,0,0,0,0
+Coreopsis bigelovii – Layia glandulosa – Mentzelia spp. / Ephedra nevadensis,association,0,0,0,0,3,2,0,0,0
+Coreopsis calliopsidea – Mentzelia pectinata,association,0,1,0,0,11,1,1,0,1
+Coreopsis gigantea – Artemisia californica – Eriogonum cinereum,association,0,0,0,0,17,0,0,6,0
+Coreopsis gigantea – Ericameria ericoides – Encelia californica,association,0,0,0,0,16,0,0,0,0
+Corethrogyne filaginifolia,association,4,2,0,0,16,5,2,0,6
+Cornus sericea,association,3,0,2,0,4,1,2,0,5
+"Cornus sericea – Salix (lasiolepis, exigua)",association,10,0,0,0,25,0,0,1,10
+"Cortaderia (jubata, selloana)",association,2,0,0,0,4,0,0,0,2
+Corylus cornuta / Polystichum munitum,association,11,0,0,0,18,0,0,12,11
+"Cotoneaster (lacteus, pannosus)",association,1,0,0,0,1,0,0,0,1
+Cotula coronopifolia,association,1,0,0,0,5,0,0,0,1
+Cressa truxillensis,association,0,0,0,0,2,0,0,0,0
+Cressa truxillensis – Distichlis spicata,association,0,0,0,0,4,0,2,0,0
+Croton setigerus – (Trichostema lanceolatum),association,0,0,0,0,4,0,0,0,0
+"Crypsis (schoenoides, vaginiflora)",association,1,0,0,0,4,2,1,0,1
+Cylindropuntia acanthocarpa var. coloradensis,association,0,0,0,0,1,0,0,0,0
+Cylindropuntia prolifera – Mixed Coastal Scrub,association,0,0,0,0,3,0,0,0,0
+Cynara cardunculus,association,6,1,0,3,6,1,0,3,10
+Cynodon dactylon,association,0,0,0,0,4,1,0,3,0
+Cynosurus echinatus – (Danthonia pilosa – Nassella manicata),association,11,0,0,0,11,0,1,0,11
+Cyperus erythrorhizos – Gnaphalium palustre,association,5,1,0,0,5,1,0,0,6
+Cytisus scoparius,association,0,0,0,0,0,1,0,0,0
+Danthonia californica,association,1,0,0,0,1,0,0,0,1
+Danthonia californica Coastal,association,22,1,1,0,36,1,1,2,24
+Danthonia californica – Muhlenbergia filiformis,association,0,0,0,0,2,1,3,0,0
+Danthonia californica – Nassella pulchra,association,47,5,1,0,70,5,1,2,53
+Danthonia intermedia – Antennaria rosea,association,0,0,0,0,3,0,0,0,0
+Danthonia unispicata – Poa secunda,association,6,3,4,0,17,6,6,0,13
+Dasiphora fruticosa,association,0,0,0,0,1,0,0,0,0
+Dasiphora fruticosa / Danthonia intermedia,association,0,0,0,0,3,0,1,0,0
+Deinandra fasciculata – Hordeum depressum – Atriplex coronata var. notatior,association,0,0,0,0,0,3,0,0,0
+Deinandra fasciculata – annual grass-herb,association,1,0,0,0,10,3,10,0,1
+Dendromecon rigida,association,2,0,0,0,7,1,0,0,2
+"Deschampsia (cespitosa, holciformis)",association,5,2,1,0,7,2,1,1,8
+Deschampsia cespitosa / Rosa nutkana,association,1,0,0,0,1,0,0,0,1
+Deschampsia cespitosa – Bistorta bistortoides,association,0,0,0,0,7,4,1,0,0
+Deschampsia cespitosa – Danthonia californica,association,31,0,2,0,43,0,2,0,33
+Deschampsia cespitosa – Eryngium armatum,association,17,4,2,0,20,4,2,4,23
+Deschampsia cespitosa – Horkelia marinensis,association,6,0,0,0,7,0,0,0,6
+Deschampsia cespitosa – Iris douglasiana,association,15,2,4,0,21,2,4,3,21
+Deschampsia cespitosa – Lilaeopsis masonii,association,0,0,0,0,3,1,1,0,0
+Descurainia pinnata,association,0,0,0,0,2,0,0,0,0
+Dicoria canescens,association,0,0,0,0,4,0,0,0,0
+"Diplacus (aurantiacus, puniceus)",association,2,0,0,0,37,0,1,10,2
+"Dipsacus (fullonum, sativus)",association,0,1,0,0,3,1,0,0,1
+Distichlis spicata Interior,association,5,0,0,0,17,0,0,0,5
+Distichlis spicata – Ambrosia chamissonis,association,3,0,0,0,10,0,0,0,3
+Distichlis spicata – Cotula coronopifolia,association,0,0,0,0,2,0,0,1,0
+Distichlis spicata – Frankenia salina – Jaumea carnosa,association,14,1,0,0,28,1,0,4,15
+Distichlis spicata – Juncus arcticus var. balticus (J. mexicanus) Interior,association,6,0,0,0,8,0,0,0,6
+Distichlis spicata – Sarcocornia pacifica,association,8,0,0,0,21,0,0,6,8
+Dittrichia graveolens – Pseudognaphalium luteoalbum,association,6,2,0,0,6,2,0,0,8
+"Downingia (bicornuta, cuspidata)",association,0,0,0,0,1,9,0,0,0
+Downingia insignis – Psilocarphus brevissimus,association,0,0,0,0,1,0,0,0,0
+Downingia pulchella – Cressa truxillensis,association,0,0,0,0,0,0,1,0,0
+Dudleya cymosa / Lichen – Moss,association,1,0,0,0,1,0,0,0,1
+Dudleya farinosa / Lichen – Moss,association,7,0,0,0,7,0,0,0,7
+Eastwoodia elegans,association,5,1,1,0,51,1,3,0,7
+Eastwoodia elegans – Krascheninnikovia lanata,association,0,0,0,0,19,0,0,0,0
+Eichhornia crassipes,association,0,0,0,0,0,3,1,0,0
+Eleocharis acicularis Montane,association,2,0,0,0,2,0,0,0,2
+Eleocharis acicularis – Eryngium castrense,association,0,0,0,0,3,1,0,0,0
+Eleocharis macrostachya Lowland,association,12,5,6,0,28,5,7,3,23
+Eleocharis macrostachya Montane,association,5,0,2,0,20,9,7,0,7
+Eleocharis macrostachya Vernal Pool,association,0,0,0,0,2,1,1,0,0
+Eleocharis macrostachya – (Pleuropogon californicus),association,1,1,0,0,1,1,0,0,2
+Eleocharis macrostachya – Lasthenia glaberrima,association,1,0,0,0,1,0,0,0,1
+Eleocharis macrostachya – Marsilea vestita,association,0,0,1,0,0,0,1,0,1
+Eleocharis quinqueflora,association,0,0,0,0,4,3,1,0,0
+Eleocharis rostellata,association,1,0,0,0,22,0,2,0,1
+Elymus caput-medusae,association,3,0,3,0,10,2,3,0,6
+Elymus elymoides,association,1,0,0,0,3,0,1,0,1
+Elymus glaucus,association,7,0,0,0,15,0,0,1,7
+Elymus glaucus – Carex feta,association,0,0,0,0,2,1,0,0,0
+Elymus glaucus – Carex pellita,association,0,0,0,0,3,0,0,0,0
+Elymus multisetus – (Eschscholzia californica – Plantago erecta),association,4,2,2,0,14,2,3,0,8
+Encelia actonii,association,1,0,0,0,12,0,0,0,1
+Encelia californica,association,1,1,1,0,40,1,1,13,3
+Encelia californica – Artemisia californica,association,3,3,0,0,32,4,2,7,6
+Encelia californica – Eriogonum cinereum,association,0,0,0,0,9,0,0,11,0
+Encelia californica – Malosma laurina – Salvia mellifera,association,0,0,0,0,24,0,0,19,0
+Encelia californica – Rhus integrifolia,association,0,0,0,0,9,0,0,5,0
+Encelia farinosa,association,0,0,0,0,11,6,9,8,0
+Encelia farinosa – Ambrosia dumosa,association,0,0,0,0,1,0,1,0,0
+Encelia farinosa – Artemisia californica,association,0,0,0,0,0,2,4,0,0
+Encelia farinosa – Eriogonum fasciculatum – Agave deserti,association,0,0,0,0,1,4,3,0,0
+Encelia farinosa – Peucephyllum schottii,association,0,0,0,0,4,0,0,0,0
+Encelia virginensis,association,0,0,0,0,1,7,1,0,0
+Ephedra californica / annual – perennial herb,association,2,0,0,0,36,2,0,9,2
+Ephedra californica – Ambrosia salsola,association,0,0,0,0,5,0,1,0,0
+Ephedra californica – Gutierrezia californica / Eriastrum pluriflorum,association,3,0,0,0,18,6,0,2,3
+Ephedra funerea,association,0,0,0,0,5,2,7,0,0
+Ephedra nevadensis – Ericameria cooperi,association,0,0,0,0,9,4,3,0,0
+Ephedra nevadensis – Lycium andersonii,association,2,0,0,0,3,1,4,0,2
+Ephedra trifurca,association,0,0,0,0,0,0,1,0,0
+Ephedra viridis,association,1,1,0,0,7,2,3,0,2
+Ephedra viridis – Ericameria linearifolia / (Poa secunda),association,0,0,0,0,7,0,0,0,0
+Ephedra viridis – Purshia glandulosa,association,0,0,0,0,1,0,2,0,0
+Equisetum hyemale,association,0,0,0,0,1,0,0,0,0
+Ericameria cooperi disturbance,association,0,0,0,0,3,0,0,0,0
+Ericameria discoidea – Minuartia nuttallii,association,0,0,0,0,1,0,0,0,0
+Ericameria discoidea – Phacelia hastata,association,4,0,0,0,5,0,0,0,4
+Ericameria ericoides,association,14,0,1,0,14,0,1,2,15
+Ericameria linearifolia,association,7,1,2,0,66,3,4,20,10
+Ericameria nauseosa,association,7,2,5,1,52,10,15,2,15
+Ericameria nauseosa / Bromus tectorum,association,8,2,1,2,14,3,4,2,13
+Ericameria nauseosa / Sporobolus airoides,association,0,0,0,0,29,1,13,0,0
+Ericameria nauseosa – Atriplex torreyi,association,0,0,0,0,8,0,5,0,0
+Ericameria nauseosa – Juniperus californica / herb,association,0,0,0,0,12,0,0,0,0
+Ericameria palmeri,association,3,1,0,0,4,1,0,0,4
+Ericameria paniculata,association,0,0,0,0,11,4,7,0,0
+Ericameria paniculata – Ambrosia salsola,association,0,0,0,0,3,0,2,0,0
+Ericameria teretifolia,association,1,0,0,0,10,1,2,0,1
+Erigeron glaucus – Fragaria chiloensis,association,34,3,6,0,34,3,6,1,43
+Erigeron glaucus – Lasthenia californica,association,6,0,0,0,6,0,1,0,6
+Eriodictyon californicum / herbaceous,association,6,1,0,0,25,18,13,0,7
+Eriodictyon crassifolium,association,1,1,0,0,7,3,1,0,2
+Eriodictyon parryi,association,5,0,1,0,6,0,1,0,6
+"Eriogonum (angulosum, gracillimum) – Amsinckia tessellata",association,1,0,0,0,7,0,0,0,1
+Eriogonum cinereum,association,0,0,0,0,38,0,0,31,0
+Eriogonum douglasii / Poa secunda,association,2,0,3,7,2,0,3,7,12
+Eriogonum elongatum,association,0,0,0,0,12,1,0,0,0
+Eriogonum fasciculatum / Salvia columbariae – Mirabilis laevis,association,1,0,0,0,5,0,1,0,1
+Eriogonum fasciculatum rock outcrop,association,0,0,0,0,6,2,2,0,0
+Eriogonum fasciculatum var. foliolosum – Hesperoyucca whipplei,association,6,0,2,0,77,2,11,8,8
+Eriogonum fasciculatum var. foliolosum – Juniperus californica,association,0,0,0,0,17,0,0,0,0
+Eriogonum fasciculatum var. polifolium / Eriastrum pluriflorum,association,0,0,0,0,0,4,0,0,0
+Eriogonum fasciculatum – Ambrosia dumosa,association,0,0,0,0,0,1,0,0,0
+Eriogonum fasciculatum – Bebbia juncea,association,0,0,0,0,8,2,0,0,0
+Eriogonum fasciculatum – Cylindropuntia californica,association,0,0,0,0,6,0,0,0,0
+Eriogonum fasciculatum – Encelia farinosa,association,0,0,0,0,21,0,4,5,0
+Eriogonum fasciculatum – Ephedra californica,association,3,0,0,0,12,0,0,8,3
+"Eriogonum fasciculatum – Ericameria (laricifolia, linearifolia)",association,0,0,0,0,4,3,1,0,0
+Eriogonum fasciculatum – Gutierrezia sarothrae,association,0,0,0,0,2,0,0,1,0
+Eriogonum fasciculatum – Rhus ovata,association,0,0,0,0,24,1,1,2,0
+Eriogonum fasciculatum – Salvia apiana,association,4,1,0,0,20,4,2,0,5
+Eriogonum fasciculatum – Salvia mellifera,association,0,0,0,0,5,3,0,1,0
+Eriogonum fasciculatum – Salvia mellifera – Malosma laurina,association,0,0,0,0,21,0,0,35,0
+Eriogonum fasciculatum – Simmondsia chinensis – Cylindropuntia californica,association,0,0,0,0,18,0,0,0,0
+Eriogonum heermannii,association,0,0,0,0,1,0,0,0,0
+Eriogonum latifolium – (Camissonia cheranthifolia),association,1,0,0,0,1,0,0,0,1
+Eriogonum nudum,association,4,0,0,0,10,2,1,0,4
+Eriogonum nudum var. indictum – Eriogonum vestitum,association,3,2,0,0,8,8,0,0,5
+Eriogonum parvifolium,association,7,1,1,0,8,1,1,0,9
+Eriogonum sphaerocephalum / Poa secunda,association,2,3,8,0,5,11,10,0,13
+Eriogonum strictum / Poa secunda,association,0,1,0,2,0,1,0,2,3
+"Eriogonum wrightii (ssp. subscaposum, ssp. wrightii)",association,3,1,1,0,12,3,4,0,5
+Eriogonum wrightii – Corethrogyne filaginifolia,association,0,0,0,0,4,0,1,0,0
+Eriogonum wrightii – Eriophyllum confertiflorum / Monardella antonina ssp. benitensis,association,0,0,0,0,4,0,0,0,0
+Eriogonum wrightii – Juniperus californica,association,0,0,0,0,5,0,0,0,0
+Eriophyllum staechadifolium – Eriogonum latifolium,association,47,2,1,0,50,2,1,3,50
+Erodium cicutarium – Vulpia microstachys,association,1,0,0,0,16,0,0,0,1
+"Eryngium (vaseyi, castrense)",association,1,0,0,0,18,4,4,0,1
+Eschscholzia californica,association,7,0,0,0,45,4,6,0,7
+"Eucalyptus (globulus, camaldulensis)",association,8,0,0,0,9,0,0,4,8
+Euphorbia terracina,association,0,0,0,0,4,0,0,2,0
+Euthamia occidentalis,association,2,0,0,0,2,0,0,0,2
+Fallugia paradoxa Desert Wash,association,0,0,0,0,4,0,0,0,0
+Festuca arundinacea,association,3,1,0,0,6,1,0,2,4
+Festuca californica,association,3,0,0,0,7,1,1,0,3
+Festuca idahoensis Ultramafic,association,3,2,0,0,4,2,0,0,5
+Festuca idahoensis – (Danthonia californica – Koeleria macrantha),association,49,0,0,0,59,4,0,2,49
+Festuca idahoensis – Nassella pulchra,association,15,0,2,0,16,0,2,3,17
+Festuca idahoensis – Pseudoroegneria spicata,association,0,0,0,0,1,1,4,0,0
+Festuca minutiflora – Penstemon davidsonii,association,0,0,0,0,2,0,0,0,0
+Ficus carica,association,0,1,0,0,0,1,0,0,1
+Foeniculum vulgare,association,1,0,0,0,7,0,0,2,1
+Forestiera pubescens,association,1,0,0,0,8,0,1,0,1
+Forestiera pubescens – Sambucus nigra,association,0,0,0,0,2,0,5,0,0
+Frangula californica ssp. californica,association,1,0,0,0,1,0,0,0,1
+Frangula californica ssp. californica – Baccharis pilularis / Scrophularia californica,association,15,1,2,0,25,1,2,6,18
+Frangula californica ssp. tomentella / Cirsium fontinale var. campylon – Mimulus guttatus,association,3,0,0,0,3,0,0,0,3
+Frangula californica ssp. tomentella / Hoita macrostachya,association,0,0,0,0,1,0,0,0,0
+Frankenia salina Coastal,association,1,0,0,0,10,0,0,0,1
+Frankenia salina Interior,association,3,0,0,0,23,2,5,2,3
+Frankenia salina – Limonium californicum – Monanthochloe littoralis – Sarcocornia pacifica,association,8,0,0,0,25,1,0,0,8
+Frankenia salina – Psilocarphus brevissimus,association,0,0,0,0,10,0,0,0,0
+Fraxinus latifolia,association,2,1,2,0,9,7,5,0,5
+Fraxinus latifolia – Alnus rhombifolia,association,1,1,0,0,4,7,6,0,2
+Fraxinus latifolia – Salix laevigata,association,3,0,0,0,4,1,4,0,3
+Fremontodendron californicum,association,8,1,5,1,15,8,8,1,15
+Garrya elliptica,association,1,0,0,0,3,0,0,3,1
+Gaultheria shallon – Vaccinium ovatum / Pteridium aquilinum,association,3,0,3,0,3,0,3,0,6
+Genista monspessulana,association,9,0,0,0,13,0,1,8,9
+Glyceria striata,association,0,0,0,0,6,0,0,0,0
+Grayia spinosa,association,0,0,0,0,1,0,0,0,0
+Grayia spinosa – Ephedra viridis,association,0,0,0,0,0,1,0,0,0
+Grayia spinosa – Larrea tridentata,association,0,0,0,0,1,0,1,0,0
+Grayia spinosa – Lycium andersonii,association,0,0,0,0,5,2,2,0,0
+Grayia spinosa – Lycium pallidum,association,0,0,0,0,1,0,0,0,0
+Grayia spinosa – Picrothamnus desertorum,association,0,0,0,0,18,1,0,0,0
+"Grayia spinosa – Tetradymia (axillaris, glabrata)",association,0,0,0,0,0,0,1,0,0
+Grindelia camporum,association,0,0,0,0,6,4,4,0,0
+Grindelia stricta,association,13,0,0,0,17,0,2,0,13
+"Gutierrezia (microcephala, sarothrae)",association,1,0,0,0,3,0,1,0,1
+Gutierrezia californica / Poa secunda,association,1,0,1,0,27,4,1,8,2
+Gutierrezia sarothrae / Pleuraphis rigida – Sphaeralcea ambigua,association,0,0,0,0,5,1,0,0,0
+Hazardia squarrosa / Nassella pulchra – Deinandra fasciculata,association,0,0,0,0,10,0,0,4,0
+Hazardia squarrosa – Artemisia californica,association,0,0,0,0,25,0,0,10,0
+Hecastocleis shockleyi,association,0,0,0,0,6,4,0,0,0
+Helianthus annuus,association,0,0,0,0,2,0,1,0,0
+Hemizonia congesta,association,0,0,0,0,10,0,0,0,0
+Hemizonia congesta – Lolium perenne,association,25,5,2,1,39,5,2,1,33
+Hesperocyparis abramsiana / Arctostaphylos spp. – Adenostoma fasciculatum,association,4,0,0,0,5,0,0,0,4
+Hesperocyparis bakeri / Arctostaphylos patula,association,0,0,1,0,0,0,1,0,1
+Hesperocyparis forbesii,association,0,0,0,0,2,5,0,0,0
+Hesperocyparis goveniana,association,1,0,0,0,1,0,0,0,1
+Hesperocyparis macnabiana / Arctostaphylos viscida,association,5,1,0,7,8,1,0,7,13
+Hesperocyparis macrocarpa,association,5,0,0,0,5,0,0,0,5
+Hesperocyparis nevadensis,association,0,0,0,0,0,1,1,0,0
+Hesperocyparis pigmaea – Pinus contorta ssp. bolanderi / Rhododendron columbianum,association,6,0,0,34,6,0,0,34,40
+Hesperocyparis pigmaea – Pinus contorta ssp. bolanderi – Pinus muricata / Rhododendron macrophyllum,association,7,0,0,44,9,0,0,44,51
+Hesperocyparis pigmaea – Pinus muricata / Arctostaphylos nummularia,association,3,1,0,13,4,1,2,13,17
+Hesperocyparis sargentii,association,5,1,0,0,7,1,0,0,6
+Hesperocyparis sargentii / Ceanothus jepsonii – Arctostaphylos spp.,association,22,0,0,0,40,0,0,0,22
+Hesperocyparis sargentii / Quercus durata (Mesic),association,10,1,0,0,17,1,0,0,11
+Hesperocyparis sargentii / Rhododendron occidentale,association,0,0,0,0,2,0,0,0,0
+Hesperoyucca whipplei,association,0,0,0,0,12,4,0,0,0
+Heteromeles arbutifolia,association,1,1,0,0,1,1,0,1,2
+Heteromeles arbutifolia Serpentine,association,4,0,0,4,4,3,3,4,8
+Heteromeles arbutifolia – Artemisia californica,association,0,0,0,0,9,1,0,12,0
+Heteromeles arbutifolia – Fraxinus dipetala,association,1,1,0,0,8,1,0,0,2
+Heteromeles arbutifolia – Malosma laurina,association,0,0,0,0,38,0,0,17,0
+Heterotheca oregona,association,2,2,1,0,4,13,8,19,5
+Heterotheca sessiliflora,association,0,1,0,0,1,3,1,0,1
+Heterotheca sessiliflora – Danthonia californica,association,6,0,0,0,6,0,0,0,6
+Hirschfeldia incana,association,0,0,0,0,1,0,1,0,0
+Holcus lanatus,association,15,2,1,0,17,2,1,11,18
+Holcus lanatus – Anthoxanthum odoratum,association,11,0,1,0,11,0,1,0,12
+Holodiscus discolor,association,2,0,0,4,5,0,1,4,6
+Holodiscus discolor / Sedum obtusatum ssp. boreale – Cryptogramma acrostichoides,association,0,0,0,0,2,2,0,0,0
+Holodiscus discolor – Baccharis pilularis – Rubus ursinus,association,6,0,0,0,9,0,0,3,6
+Holodiscus discolor – Sambucus racemosa,association,0,0,0,0,0,1,1,0,0
+Hordeum brachyantherum Lowland,association,18,1,0,1,30,1,0,3,20
+Hordeum brachyantherum Montane,association,0,1,0,0,1,4,0,0,1
+Hordeum depressum – Spergularia (marina),association,1,0,0,0,3,0,1,0,1
+Hulsea algida,association,0,0,0,0,1,1,0,0,0
+Hydrocotyle ranunculoides,association,2,0,2,0,3,0,2,1,4
+Hypericum canariense,association,1,0,0,0,1,0,0,0,1
+Hypochaeris glabra – Vulpia bromoides,association,0,0,0,0,59,21,8,0,0
+Hyptis emoryi,association,0,0,0,0,1,0,0,0,0
+Isocoma acradenia Alkaline Wet,association,6,0,0,0,22,0,3,5,6
+Isocoma acradenia – Suaeda moquinii,association,0,0,0,0,2,7,4,0,0
+Ivesia kingii – Spartina gracilis,association,0,0,0,0,17,0,0,0,0
+Juglans californica / Artemisia californica / Leymus condensatus,association,0,1,0,0,18,1,0,19,1
+Juglans californica / Ceanothus spinosus,association,0,0,0,0,11,0,0,12,0
+Juglans californica / Heteromeles arbutifolia,association,0,0,0,0,12,0,0,18,0
+Juglans californica / Malosma laurina,association,2,0,0,0,12,0,0,3,2
+Juglans californica / annual herbaceous,association,5,0,1,0,14,0,1,17,6
+Juglans californica – Quercus agrifolia,association,4,0,1,0,19,0,1,20,5
+Juglans hindsii,association,0,0,0,0,1,0,2,0,0
+Juglans hindsii / Sambucus nigra,association,1,0,0,0,1,0,1,0,1
+Juncus acutus,association,0,0,0,0,0,1,0,0,0
+Juncus arcticus var. balticus – (var. mexicanus),association,18,4,10,0,72,19,25,0,32
+Juncus arcticus var. balticus – Conium maculatum,association,2,0,0,0,7,0,0,0,2
+Juncus arcticus var. balticus – Lepidium latifolium,association,0,0,0,0,3,0,1,0,0
+Juncus cooperi,association,0,0,0,0,7,0,0,0,0
+Juncus covillei,association,2,0,0,0,3,0,0,0,2
+Juncus effusus,association,25,0,0,0,33,0,2,24,25
+Juncus lescurii,association,15,0,0,0,15,0,0,0,15
+Juncus occidentalis – Juncus patens,association,11,0,1,0,11,0,1,1,12
+Juncus oxymeris,association,0,0,0,0,1,0,1,0,0
+Juncus parryi – Eriogonum incanum,association,0,0,0,0,6,1,0,0,0
+Juncus patens,association,6,2,1,0,8,2,1,5,9
+Juncus patens – Holcus lanatus,association,9,0,1,0,12,0,1,3,10
+Juncus phaeocephalus,association,17,0,4,0,20,0,4,3,21
+Juncus xiphioides,association,1,2,0,0,2,2,0,0,3
+Juniperus californica / Adenostoma fasciculatum – Eriogonum fasciculatum,association,21,0,0,2,28,0,5,2,23
+Juniperus californica / Agave deserti,association,0,0,0,0,4,7,4,0,0
+Juniperus californica / Coleogyne ramosissima,association,0,0,0,0,2,1,0,0,0
+Juniperus californica / Ericameria linearifolia / annual – perennial herb,association,8,1,0,0,71,1,0,5,9
+Juniperus californica / Eriogonum fasciculatum – Artemisia californica,association,6,0,1,0,9,0,2,0,7
+Juniperus californica / Prunus ilicifolia / moss,association,0,0,0,2,7,0,0,2,2
+Juniperus californica / Salvia leucophylla,association,0,0,0,0,22,0,0,0,0
+Juniperus californica / Yucca schidigera / Pleuraphis rigida,association,0,0,0,0,2,0,0,0,0
+Juniperus grandis / (Arctostaphylos nevadensis – Quercus vacciniifolia),association,0,1,1,3,4,7,1,22,5
+Juniperus grandis / Artemisia tridentata,association,1,0,1,5,5,0,1,5,7
+Juniperus grandis – Cercocarpus ledifolius / Artemisia tridentata,association,0,0,0,0,6,0,2,3,0
+Juniperus occidentalis / Artemisia arbuscula / Poa secunda,association,7,4,13,2,26,37,40,2,26
+Juniperus occidentalis / Artemisia tridentata – Purshia tridentata,association,9,4,6,5,30,27,25,6,24
+Juniperus occidentalis – (Pinus jeffreyi – Pinus ponderosa) / Cercocarpus ledifolius,association,14,1,7,9,59,26,23,9,31
+Juniperus osteosperma / Artemisia tridentata ssp. tridentata,association,3,1,0,6,7,3,0,6,10
+Juniperus osteosperma / Coleogyne ramosissima,association,0,0,0,0,7,1,0,0,0
+Juniperus osteosperma / Eriogonum fasciculatum – Yucca baccata,association,2,0,0,0,16,1,0,0,2
+Juniperus osteosperma – Yucca brevifolia / Bouteloua eriopoda,association,1,0,0,0,16,0,0,0,1
+Keckiella antirrhinoides,association,0,0,0,0,2,0,1,0,0
+Keckiella antirrhinoides – Artemisia californica,association,1,0,0,0,15,6,5,3,1
+Keckiella antirrhinoides – Eriogonum fasciculatum,association,0,0,0,0,8,2,0,2,0
+Keckiella antirrhinoides – Mixed Chaparral,association,0,0,0,0,5,0,2,2,0
+Keckiella antirrhinoides – Prunus fasciculata,association,0,0,0,0,1,0,0,0,0
+Krascheninnikovia lanata,association,2,0,0,2,19,1,1,2,4
+Larrea tridentata / wash,association,0,0,0,0,1,1,2,0,0
+Larrea tridentata – Ambrosia dumosa / Cryptogamic crust,association,0,0,0,0,4,0,3,0,0
+Larrea tridentata – Ambrosia dumosa / Pleuraphis rigida,association,0,0,0,0,14,0,3,0,0
+Larrea tridentata – Ambrosia dumosa – Ambrosia salsola,association,0,0,0,0,6,1,6,0,0
+Larrea tridentata – Ambrosia dumosa – Atriplex confertifolia,association,0,0,0,0,6,3,2,0,0
+Larrea tridentata – Ambrosia dumosa – Atriplex hymenelytra,association,0,0,0,0,4,2,3,0,0
+"Larrea tridentata – Ambrosia dumosa – Cylindropuntia (acanthocarpa, ramosissima)",association,0,0,0,0,4,0,2,0,0
+Larrea tridentata – Ambrosia dumosa – Ephedra funerea,association,0,0,0,0,4,3,5,0,0
+Larrea tridentata – Ambrosia dumosa – Eriogonum fasciculatum,association,0,0,0,0,8,5,2,0,0
+Larrea tridentata – Ambrosia dumosa – Fagonia laevis,association,0,0,0,0,2,0,3,0,0
+Larrea tridentata – Ambrosia dumosa – Fouquieria splendens,association,0,0,0,0,6,6,0,0,0
+Larrea tridentata – Ambrosia dumosa – Galium angustifolium – Lyrocarpa coulteri,association,0,0,0,0,0,1,0,0,0
+"Larrea tridentata – Ambrosia dumosa – Krameria (erecta, grayi)",association,0,0,0,0,21,10,11,0,0
+"Larrea tridentata – Ambrosia dumosa – Psorothamnus (arborescens, fremontii)",association,0,0,0,0,1,3,1,0,0
+Larrea tridentata – Ambrosia dumosa – Psorothamnus emoryi – sandy,association,0,0,0,0,1,2,0,0,0
+Larrea tridentata – Ambrosia dumosa – Psorothamnus schottii,association,0,0,0,0,5,2,2,0,0
+Larrea tridentata – Ambrosia dumosa – Senna armata,association,0,0,0,0,2,0,0,0,0
+Larrea tridentata – Ambrosia dumosa – Yucca schidigera,association,0,0,0,0,7,2,6,0,0
+Larrea tridentata – Atriplex confertifolia,association,0,0,0,0,4,0,0,0,0
+Larrea tridentata – Atriplex polycarpa,association,0,0,0,0,4,2,1,0,0
+Larrea tridentata – Encelia farinosa,association,0,0,0,0,10,8,4,0,0
+Larrea tridentata – Encelia farinosa – Ambrosia dumosa,association,0,0,0,0,1,1,1,0,0
+Larrea tridentata – Encelia farinosa – Bebbia juncea,association,0,0,0,0,1,0,0,0,0
+Larrea tridentata – Encelia farinosa – Pleurocoronis pluriseta,association,0,0,0,0,4,1,3,0,0
+Larrea tridentata – Ephedra nevadensis,association,0,0,0,0,1,0,2,0,0
+Larrea tridentata – Krameria grayi – Pleuraphis rigida,association,0,0,0,0,0,3,0,0,0
+Larrea tridentata – Pleuraphis rigida,association,0,0,0,0,2,0,1,0,0
+"Lasthenia (californica, gracilis)",association,3,0,0,0,40,18,7,0,3
+Lasthenia californica – Atriplex coronata var. notatior,association,0,0,0,0,1,2,0,0,0
+Lasthenia californica – Plagiobothrys acanthocarpa – Medicago polymorpha,association,0,0,0,0,0,1,5,0,0
+Lasthenia californica – Plantago erecta – Hesperevax sparsiflora,association,41,0,0,0,57,0,0,0,41
+Lasthenia fremontii,association,0,0,0,0,2,1,4,0,0
+Lasthenia fremontii – Downingia bicornuta,association,0,0,0,0,2,0,0,0,0
+Lasthenia fremontii – Downingia ornatissima,association,0,0,0,0,22,0,5,0,0
+Lasthenia glaberrima – Downingia insignis,association,0,0,0,0,1,0,0,0,0
+Lasthenia glaberrima – Lupinus bicolor,association,0,0,0,0,1,0,0,0,0
+Lasthenia glaberrima – Pleuropogon californicus,association,1,0,0,0,1,0,0,0,1
+Lasthenia gracilis – Plantago erecta – Plagiobothrys canescens,association,5,0,0,0,19,0,0,0,5
+Lasthenia minor,association,0,0,0,0,5,1,0,0,0
+"Layia (platyglossa, munzii)",association,0,0,0,0,8,0,0,0,0
+Layia fremontii – Achyrachaena mollis,association,0,0,0,0,19,11,15,0,0
+Layia fremontii – Leontodon saxatilis – Plagiobothrys greenei,association,0,0,0,0,0,0,10,0,0
+Layia pentachaeta – Plagiobothrys (canescens),association,0,0,0,0,0,0,8,0,0
+Lemna (minor),association,0,0,0,0,1,0,0,3,0
+Lepidium latifolium,association,3,0,0,0,5,2,2,0,3
+Lepidium latifolium – Distichlis spicata,association,2,0,0,0,7,0,0,0,2
+Lepidium nitidum – Trifolium gracilentum – Vulpia microstachys,association,7,0,0,0,61,3,2,3,7
+Lepidospartum latisquamum,association,0,0,0,0,2,1,0,0,0
+Lepidospartum squamatum / Amsinckia menziesii,association,0,0,0,0,7,0,0,0,0
+Lepidospartum squamatum / desert ephemeral annuals,association,3,0,0,0,7,0,0,0,3
+Lepidospartum squamatum / ephemeral annuals,association,2,1,2,0,16,2,9,0,5
+Lepidospartum squamatum – Artemisia californica,association,1,0,0,0,3,0,2,0,1
+Lepidospartum squamatum – Atriplex canescens,association,0,0,0,0,3,0,0,0,0
+Lepidospartum squamatum – Baccharis salicifolia,association,2,0,1,0,5,4,4,0,3
+Lepidospartum squamatum – Eriodictyon trichocalyx – Hesperoyucca whipplei,association,4,3,4,0,19,22,13,0,11
+Lepidospartum squamatum – Eriogonum fasciculatum,association,14,2,5,0,37,9,10,0,21
+Leymus cinereus,association,3,0,0,0,11,6,6,0,3
+Leymus condensatus,association,2,0,1,0,27,0,1,5,3
+Leymus mollis – Abronia latifolia – (Cakile sp.),association,15,0,0,0,16,0,0,0,15
+Leymus triticoides,association,9,1,1,0,46,5,17,11,11
+Leymus triticoides – Anemopsis californica,association,0,0,0,0,1,0,0,0,0
+Leymus triticoides – Bromus spp. – Avena spp.,association,0,0,1,0,11,1,3,0,1
+Leymus triticoides – Lolium perenne,association,2,1,0,0,2,1,0,0,3
+Leymus triticoides – Poa secunda,association,1,0,0,0,1,0,2,0,1
+Leymus triticoides – Sporobolus airoides,association,0,0,0,0,11,1,0,0,0
+Limnanthes douglasii ssp. rosea – Pleuropogon californicus,association,0,0,0,0,2,0,0,0,0
+Lolium perenne – Bromus hordeaceus,association,2,0,0,1,7,0,0,1,3
+Lolium perenne – Hordeum marinum – Ranunculus californicus,association,3,0,0,0,4,2,3,0,3
+Lolium perenne – Lepidium latifolium,association,0,0,0,0,3,0,0,0,0
+Lolium perenne – Lotus corniculatus,association,3,0,0,0,5,0,0,0,3
+Lotus humistratus – Plantago erecta – Lomatium spp.,association,6,0,0,0,6,0,0,0,6
+Lotus scoparius,association,15,0,0,1,56,9,4,6,16
+Lotus unifoliolatus,association,0,0,0,0,6,7,3,0,0
+"Ludwigia (hexapetala, peploides)",association,1,0,0,0,3,0,0,0,1
+"Lupinus (microcarpus, succulentus)",association,0,0,0,0,5,0,0,0,0
+Lupinus albifrons,association,4,0,0,3,26,8,10,3,7
+Lupinus albifrons – Lotus scoparius / Chorizanthe pungens,association,6,0,0,0,15,0,0,0,6
+Lupinus albifrons – Senecio flaccidus var. douglasii,association,0,0,0,3,10,0,4,3,3
+Lupinus arboreus,association,13,2,7,0,19,2,7,20,22
+Lupinus benthamii – Chorizanthe membranacea,association,2,2,0,0,16,7,9,1,4
+Lupinus bicolor,association,0,0,0,0,14,3,1,0,0
+Lupinus chamissonis,association,1,0,0,0,1,0,0,1,1
+Lupinus chamissonis – Ericameria ericoides,association,14,0,0,0,18,0,0,9,14
+Lupinus excubitus – Mentzelia albicaulis – Eriogonum spp.,association,5,3,2,0,13,4,4,0,10
+Lycium andersonii,association,1,0,0,0,6,2,4,0,1
+Lycium californicum – Encelia californica,association,0,0,0,0,11,0,0,0,0
+Lycium cooperi,association,1,0,0,0,2,2,0,0,1
+Madia elegans – Plagiobothrys nothofulvus,association,0,1,0,0,8,4,3,0,1
+"Malacothamnus (aboriginum, arcuatus, fremontii)",association,0,0,2,0,0,0,3,0,2
+Malacothamnus fasciculatus,association,11,1,1,0,27,4,1,20,13
+Malacothamnus fasciculatus – Ceanothus megacarpus,association,0,0,0,0,6,0,0,10,0
+Malacothamnus fasciculatus – Ceanothus spinosus,association,0,0,0,0,11,0,0,6,0
+Malacothamnus fasciculatus – Malosma laurina,association,0,0,0,0,20,0,0,18,0
+Malacothamnus fasciculatus – Salvia leucophylla,association,0,0,0,0,25,0,0,20,0
+Malosma laurina,association,1,0,0,0,46,0,1,59,1
+Malosma laurina – Artemisia californica – Eriogonum fasciculatum,association,15,4,0,0,119,9,9,68,19
+Malosma laurina – Eriogonum cinereum,association,0,0,0,0,58,0,0,69,0
+Malosma laurina – Eriogonum fasciculatum – Salvia apiana,association,0,0,0,0,3,0,0,1,0
+Malosma laurina – Eriogonum fasciculatum – Salvia mellifera,association,0,0,0,0,2,0,0,1,0
+Malosma laurina – Lotus scoparius,association,5,0,0,0,40,8,4,0,5
+Malosma laurina – Rhus ovata,association,0,0,0,0,10,0,0,10,0
+Malosma laurina – Tetracoccus dioicus,association,0,0,0,0,2,0,0,0,0
+"Marsilea oligospora – Eleocharis (acicularis, bella)",association,2,2,1,0,2,5,1,0,5
+Melica californica,association,18,1,2,0,37,4,3,2,21
+Melica torreyana,association,13,0,2,0,20,0,2,0,15
+Menodora spinescens – (Ephedra nevadensis),association,0,0,0,0,17,4,7,0,0
+Menodora spinescens – Atriplex confertifolia,association,0,0,0,0,4,1,1,0,0
+Micropus californicus,association,2,0,0,0,3,0,0,0,2
+Mimulus guttatus – Vulpia microstachys,association,0,0,0,0,2,4,1,0,0
+Mimulus primuloides,association,0,1,0,0,1,1,0,0,1
+Mixed oak – Quercus kelloggii / grass,association,1,0,0,0,1,0,0,0,1
+Monolopia lanceolata,association,0,0,0,0,38,4,1,0,0
+Monolopia major,association,0,0,0,0,0,0,0,1,0
+Monolopia stricta,association,1,0,0,0,10,1,1,0,1
+Monolopia stricta – Poa secunda,association,0,0,0,0,29,3,2,0,0
+Montia fontana – Sidalcea calycosa,association,0,0,0,0,3,0,0,0,0
+Morella californica – Rubus spp.,association,0,0,1,0,7,0,1,7,1
+Mortonia utahensis,association,0,0,0,0,0,3,0,0,0
+Muhlenbergia asperifolia,association,0,0,0,0,5,0,0,0,0
+Muhlenbergia richardsonis,association,0,0,0,0,1,0,0,0,0
+Muhlenbergia rigens,association,0,0,0,0,7,1,4,0,0
+Myriophyllum spp. – Egeria densa,association,0,0,0,0,4,1,0,0,0
+Nassella cernua,association,1,0,0,0,18,3,5,0,1
+Nassella lepida,association,2,2,0,0,12,2,0,0,4
+Nassella pulchra,association,28,5,2,0,65,13,11,1,35
+Nassella pulchra / Hazardia squarrosa,association,0,0,0,0,11,0,0,1,0
+Nassella pulchra – Achnatherum lemmonii,association,0,2,0,0,0,2,0,0,2
+Nassella pulchra – Avena spp. – Bromus spp.,association,32,6,3,0,83,9,4,2,41
+Nassella pulchra – Corethrogyne filaginifolia,association,0,1,0,0,0,1,0,0,1
+Nassella pulchra – Erodium spp. – Avena barbata,association,1,0,0,0,8,0,0,0,1
+Nassella pulchra – Hemizonia congesta,association,16,0,0,1,23,0,1,1,17
+Nassella pulchra – Leontodon saxatilis,association,0,0,0,0,0,0,11,0,0
+Nassella pulchra – Lolium perenne – (Trifolium spp.),association,7,0,4,0,12,0,4,0,11
+Nassella pulchra – Lolium perenne – Plantago erecta Serpentine,association,30,1,0,0,56,1,0,1,31
+Nassella pulchra – Melica californica – annual grass,association,1,1,0,0,1,1,1,0,2
+Notholithocarpus densiflorus,association,8,1,1,0,8,1,1,0,10
+Notholithocarpus densiflorus / Vaccinium ovatum,association,2,0,1,0,4,0,1,0,3
+Notholithocarpus densiflorus – Arbutus menziesii,association,13,3,9,0,24,3,9,1,25
+Notholithocarpus densiflorus – Quercus chrysolepis,association,3,0,1,0,5,0,1,0,4
+Nuphar lutea ssp. polysepala,association,4,0,1,0,5,0,3,1,5
+Oenanthe sarmentosa,association,8,0,0,0,8,0,0,0,8
+Oenothera deltoides – Cryptantha spp.,association,0,0,0,0,0,0,3,0,0
+Olneya tesota,association,0,0,0,0,0,3,1,0,0
+Opuntia littoralis,association,2,0,0,0,40,0,0,24,2
+Opuntia littoralis – Eriogonum fasciculatum – Malosma laurina,association,5,3,0,0,6,3,0,0,8
+Opuntia oricola,association,0,0,0,0,1,0,0,1,0
+Parkinsonia florida,association,0,0,0,0,5,0,0,0,0
+"Pectocarya (linearis, penicillata)",association,0,0,0,0,21,0,0,0,0
+Pennisetum setaceum,association,0,0,0,0,8,0,0,1,0
+Penstemon newberryi,association,2,1,1,0,2,1,1,0,4
+Penstemon newberryi – Streptanthus tortuosus / Selaginella watsonii,association,0,0,0,0,1,2,0,0,0
+Penstemon newberryi – Streptanthus tortuosus / Spiraea splendens,association,0,0,0,0,1,1,0,0,0
+Penstemon rydbergii – (Muhlenbergia filiformis),association,1,0,0,0,4,0,0,0,1
+Perideridia kelloggii – Danthonia californica,association,4,2,0,0,9,2,0,0,6
+Petalonyx thurberi,association,0,0,0,0,3,0,0,0,0
+Phacelia cicutaria,association,0,0,0,0,4,1,3,0,0
+Phacelia ciliata,association,1,0,0,0,10,0,0,0,1
+Phacelia tanacetifolia,association,0,0,0,0,14,6,2,0,0
+Phalaris aquatica,association,5,0,0,0,15,1,0,7,5
+Phalaris arundinacea,association,1,0,1,0,1,3,1,0,2
+Philadelphus microphyllus,association,0,0,0,0,2,1,1,0,0
+Phlox covillei – Elymus elymoides – Podistera nevadensis,association,0,0,0,0,4,0,0,0,0
+Phragmites australis Western Ruderal,association,3,2,0,0,11,5,0,0,5
+Phragmites australis ssp. americanus,association,0,0,0,0,4,1,0,0,0
+Phragmites australis – Scirpus spp.,association,0,0,0,0,4,0,0,0,0
+Phyllodoce breweri – Cassiope mertensiana – Juncus parryi,association,2,0,0,1,3,0,0,1,3
+Phyllodoce breweri – Juncus parryi,association,0,0,0,0,2,0,1,0,0
+Phyllodoce breweri – Vaccinium cespitosum,association,0,0,0,0,3,0,0,0,0
+"Pinus (jeffreyi, ponderosa) / (Ceanothus prostratus – Purshia tridentata)",association,14,1,7,9,42,40,44,9,31
+Pinus albicaulis / Carex filifolia,association,0,0,0,0,5,0,1,6,0
+Pinus albicaulis / Carex rossii,association,0,0,0,0,0,0,1,0,0
+Pinus albicaulis / Holodiscus discolor,association,0,0,0,0,5,0,0,1,0
+Pinus albicaulis / Juniperus communis,association,0,0,0,0,1,0,0,0,0
+Pinus albicaulis / Penstemon davidsonii,association,0,0,0,0,1,0,0,0,0
+Pinus albicaulis / Poa wheeleri,association,0,0,0,0,0,1,0,0,0
+Pinus albicaulis – Tsuga mertensiana,association,0,0,0,0,5,0,4,0,0
+Pinus attenuata / Adenostoma fasciculatum,association,1,0,0,0,1,0,0,0,1
+Pinus attenuata / Arctostaphylos glandulosa,association,0,0,0,0,4,0,0,0,0
+Pinus attenuata / Arctostaphylos viscida,association,0,0,0,0,1,0,2,0,0
+Pinus attenuata – mixed oak / Arctostaphylos viscida,association,2,0,0,1,2,2,0,1,3
+Pinus balfouriana,association,0,0,0,0,3,1,1,53,0
+Pinus balfouriana / Chrysolepis sempervirens,association,0,0,0,0,0,0,0,20,0
+Pinus balfouriana – Pinus albicaulis,association,0,0,0,0,1,0,0,10,0
+Pinus balfouriana – Pinus monticola,association,0,0,0,0,0,0,0,14,0
+Pinus contorta ssp. contorta,association,6,0,0,0,8,1,0,0,6
+Pinus contorta ssp. murrayana,association,5,0,1,8,14,3,4,8,14
+Pinus contorta ssp. murrayana / Artemisia tridentata,association,0,0,0,0,1,1,0,3,0
+Pinus contorta ssp. murrayana / Carex filifolia,association,0,0,0,0,6,1,1,22,0
+Pinus contorta ssp. murrayana / Carex rossii,association,0,0,0,0,0,0,0,21,0
+Pinus contorta ssp. murrayana / Carex spp.,association,0,0,2,1,2,1,2,1,3
+Pinus contorta ssp. murrayana / Ligusticum grayi,association,1,0,0,1,6,1,2,1,2
+Pinus contorta ssp. murrayana / Rhododendron columbianum – Phyllodoce breweri,association,0,0,0,0,1,1,0,1,0
+Pinus contorta ssp. murrayana / Vaccinium uliginosum,association,2,0,0,0,3,3,1,0,2
+"Pinus contorta ssp. murrayana – Pinus albicaulis / Carex (filifollia, rossii)",association,0,0,0,0,9,1,3,1,0
+Pinus coulteri / Arctostaphylos glandulosa – Quercus wislizeni,association,0,0,0,0,7,0,0,0,0
+Pinus coulteri / Arctostaphylos glauca,association,0,0,0,0,4,0,0,0,0
+Pinus coulteri / Quercus durata,association,0,0,0,0,7,0,0,0,0
+Pinus coulteri – Calocedrus decurrens / Frangula californica ssp. tomentella / Aquilegia eximia,association,0,0,0,0,5,0,0,0,0
+Pinus coulteri – Calocedrus decurrens / Quercus durata – Arctostaphylos glauca,association,0,0,0,0,14,0,0,0,0
+Pinus coulteri – Calocedrus decurrens – Pinus jeffreyi / Quercus durata,association,0,0,0,0,6,0,0,0,0
+Pinus coulteri – Pinus sabiniana / Quercus durata – Arctostaphylos pungens,association,0,0,0,0,20,0,0,0,0
+Pinus coulteri – Pinus sabiniana Barren,association,0,0,0,0,6,0,0,0,0
+Pinus coulteri – Quercus chrysolepis,association,8,0,0,0,13,0,0,0,8
+Pinus coulteri – Quercus chrysolepis / Arctostaphylos pringlei,association,0,0,0,0,14,0,0,1,0
+Pinus coulteri – Quercus kelloggii,association,0,0,0,0,6,0,0,0,0
+Pinus coulteri – Quercus wislizeni,association,0,0,0,0,4,0,0,1,0
+Pinus edulis – Juniperus osteosperma / Quercus turbinella,association,0,0,0,0,8,0,0,0,0
+Pinus flexilis / Artemisia tridentata,association,0,0,0,0,4,1,2,0,0
+Pinus flexilis / Cercocarpus ledifolius,association,0,0,0,0,2,1,0,0,0
+Pinus flexilis – Pinus contorta / Chrysolepis sempervirens,association,0,0,0,0,2,0,0,0,0
+Pinus flexilis – Pinus contorta ssp. murrayana,association,0,0,0,0,0,2,1,0,0
+Pinus jeffreyi,association,0,1,1,2,12,12,6,2,4
+Pinus jeffreyi / Arctostaphylos patula,association,4,0,0,4,9,2,3,44,8
+Pinus jeffreyi / Artemisia tridentata / Penstemon centranthifolius,association,0,0,0,0,4,0,0,0,0
+Pinus jeffreyi / Artemisia tridentata ssp. vaseyana / Festuca idahoensis,association,1,0,0,0,2,3,0,0,1
+Pinus jeffreyi / Ceanothus cordulatus,association,0,0,1,1,5,1,1,3,2
+Pinus jeffreyi / Ceanothus prostratus,association,0,0,0,1,4,5,4,1,1
+Pinus jeffreyi / Cercocarpus ledifolius,association,0,0,0,0,8,0,0,0,0
+Pinus jeffreyi / Chrysolepis sempervirens,association,0,0,0,0,1,0,0,0,0
+Pinus jeffreyi / Purshia tridentata var. tridentata,association,3,0,0,1,10,2,3,1,4
+Pinus jeffreyi / Quercus palmeri,association,0,0,0,0,3,0,0,0,0
+Pinus jeffreyi / Quercus vacciniifolia,association,1,0,0,1,2,1,1,1,2
+Pinus jeffreyi / Quercus wislizeni,association,0,0,0,0,4,0,0,0,0
+Pinus jeffreyi / Wyethia mollis,association,2,0,0,0,6,0,2,0,2
+Pinus jeffreyi – Abies concolor,association,2,0,1,11,25,1,9,11,14
+Pinus jeffreyi – Abies concolor / Symphoricarpos rotundifolius / Elymus elymoides,association,0,0,0,1,10,3,0,1,1
+Pinus jeffreyi – Abies concolor – Abies magnifica,association,0,0,0,0,1,0,0,0,0
+Pinus jeffreyi – Abies magnifica,association,0,2,0,2,1,2,0,9,4
+Pinus jeffreyi – Pinus monophylla,association,0,0,0,0,4,3,14,0,0
+Pinus jeffreyi – Pinus sabiniana Barren,association,0,0,0,0,6,0,0,0,0
+Pinus jeffreyi – Quercus kelloggii,association,1,0,0,0,8,0,0,0,1
+Pinus longaeva / Cercocarpus intricatus,association,0,0,0,0,0,0,1,0,0
+Pinus monophylla / Artemisia tridentata / Elymus elymoides,association,2,0,1,0,6,0,1,0,3
+Pinus monophylla / Eriogonum fasciculatum,association,0,1,0,0,13,2,0,0,1
+Pinus monophylla / Garrya flavescens,association,0,0,0,0,6,5,0,0,0
+Pinus monophylla / Prunus fasciculata – Rhus trilobata,association,0,0,0,0,19,5,0,0,0
+Pinus monophylla / Quercus john-tuckeri,association,0,0,0,0,6,2,8,0,0
+Pinus monophylla / Ribes velutinum,association,0,0,0,0,9,2,3,0,0
+Pinus monophylla – (Juniperus osteosperma) / Artemisia tridentata,association,0,0,0,0,9,8,10,0,0
+Pinus monophylla – (Juniperus osteosperma) / Cercocarpus intricatus,association,0,0,0,0,1,7,0,0,0
+Pinus monophylla – (Juniperus osteosperma) / Cercocarpus ledifolius,association,0,0,0,0,5,4,6,0,0
+Pinus monophylla – (Juniperus osteosperma) / Quercus turbinella,association,0,0,0,0,12,0,0,0,0
+Pinus monophylla – (Juniperus osteosperma) / Sparse Understory,association,0,2,0,0,2,4,3,0,2
+Pinus monophylla – Juniperus osteosperma / Artemisia nova,association,0,0,0,0,2,5,2,0,0
+Pinus monophylla – Juniperus osteosperma / Coleogyne ramosissima,association,0,0,0,0,11,2,0,0,0
+Pinus monophylla – Juniperus osteosperma / Purshia stansburiana,association,0,0,0,0,3,3,0,0,0
+Pinus monticola / Achnatherum occidentale,association,0,0,0,0,0,0,0,1,0
+Pinus monticola / Arctostaphylos nevadensis,association,2,1,1,2,6,1,2,2,6
+Pinus monticola – Pinus contorta ssp. murrayana,association,0,0,0,0,4,1,2,19,0
+Pinus muricata,association,2,1,3,0,3,1,3,5,6
+Pinus muricata / Arctostaphylos glandulosa,association,0,0,0,0,3,1,0,1,0
+Pinus muricata / Ceanothus thyrsiflorus – Baccharis pilularis,association,1,0,0,0,1,0,0,20,1
+Pinus muricata – (Arbutus menziesii – Notholithocarpus densiflorus) / Vaccinium ovatum,association,3,0,4,5,11,0,4,22,12
+Pinus muricata – Chrysolepis chrysophylla / Arctostaphylos nummularia,association,1,1,0,30,1,1,1,32,32
+Pinus ponderosa / Arctostaphylos patula – Purshia tridentata,association,0,0,5,0,4,7,21,0,5
+Pinus ponderosa / Arctostaphylos viscida,association,0,0,0,0,3,0,0,0,0
+Pinus ponderosa / Chorizanthe pungens,association,11,0,0,0,16,0,0,0,11
+Pinus ponderosa var. washoensis / Arctostaphylos nevadensis,association,0,0,0,0,0,0,1,0,0
+Pinus ponderosa var. washoensis / Symphoricarpos spp. / Pseudostellaria jamesiana,association,0,0,0,0,0,3,3,0,0
+Pinus ponderosa – (Calocedrus decurrens) stream terrace,association,0,0,0,0,2,0,2,0,0
+Pinus ponderosa – (Quercus agrifolia – Arbutus menziesii),association,3,0,0,0,3,0,0,0,3
+Pinus ponderosa – Calocedrus decurrens (mixed conifer) – Quercus chrysolepis / Chamaebatia foliolosa,association,0,0,0,0,1,4,1,4,0
+Pinus ponderosa – Calocedrus decurrens / Ceanothus prostratus,association,9,0,2,0,16,4,8,0,11
+Pinus ponderosa – Calocedrus decurrens / Chamaebatia foliolosa,association,0,0,0,0,0,2,1,10,0
+Pinus ponderosa – Calocedrus decurrens – Quercus kelloggii,association,0,0,0,0,7,13,7,21,0
+Pinus ponderosa – Juniperus occidentalis / Artemisia tridentata – Purshia tridentata,association,1,1,1,0,5,10,7,0,3
+Pinus ponderosa – Pseudotsuga menziesii,association,0,1,0,0,0,1,0,0,1
+Pinus ponderosa – Pseudotsuga menziesii / Purshia tridentata var. tridentata / Wyethia mollis,association,0,0,1,0,1,0,1,0,1
+Pinus ponderosa – Pseudotsuga menziesii – Calocedrus decurrens,association,1,1,4,2,4,4,6,2,8
+Pinus ponderosa – Pseudotsuga menziesii – Quercus chrysolepis / Galium bolanderi,association,0,0,1,2,1,2,2,2,3
+Pinus quadrifolia / Quercus cornelius-mulleri,association,0,0,0,0,2,0,0,0,0
+Pinus radiata / Toxicodendron diversilobum,association,4,0,1,0,4,0,1,0,5
+Pinus radiata – Pinus muricata / Arctostaphylos tomentosa – Arctostaphylos hookeri,association,0,0,0,0,1,0,0,0,0
+Pinus radiata – Quercus agrifolia / Toxicodendron diversilobum,association,6,0,0,0,6,0,0,0,6
+Pinus sabiniana / Adenostoma fasciculatum,association,1,0,0,0,2,3,2,0,1
+Pinus sabiniana / Arctostaphylos viscida,association,0,0,0,0,2,2,3,0,0
+Pinus sabiniana / Ceanothus cuneatus / Plantago erecta,association,0,0,0,0,0,1,1,0,0
+Pinus sabiniana / Ceanothus cuneatus – (Rhamnus ilicifolia),association,4,0,0,7,13,6,8,7,11
+Pinus sabiniana / Eriogonum fasciculatum,association,0,0,0,1,5,0,0,1,1
+Pinus sabiniana / Quercus durata,association,2,7,0,4,2,9,0,4,13
+Pinus sabiniana / herbaceous,association,0,0,1,1,3,5,4,2,2
+Pinus sabiniana – Juniperus californica / grass,association,1,0,0,0,8,0,0,0,1
+Pinus torreyana / Artemisia californica – Rhus integrifolia,association,1,0,0,0,2,0,0,0,1
+Plagiobothrys austiniae – Achyrachaena mollis,association,1,0,0,0,2,0,4,0,1
+Plagiobothrys mollis – (Eleocharis acicularis – Eryngium mathiasiae),association,0,0,0,0,0,1,0,0,0
+Plagiobothrys nothofulvus – Castilleja exserta – (Lupinus nanus),association,1,0,0,0,2,7,2,0,1
+Plagiobothrys nothofulvus – Daucus pusillus – Trifolium microcephalum,association,3,0,0,0,21,11,24,0,3
+Plantago erecta – Lolium perenne lichen-rocky,association,12,1,1,0,19,1,1,0,14
+Platanus racemosa / Baccharis salicifolia,association,0,0,0,0,6,0,0,0,0
+Platanus racemosa / Toxicodendron diversilobum,association,5,0,0,0,5,0,0,0,5
+Platanus racemosa / annual grass,association,2,1,0,0,21,6,4,5,3
+Platanus racemosa – Aesculus californica,association,0,0,0,0,11,1,2,0,0
+Platanus racemosa – Populus fremontii / Salix lasiolepis,association,0,0,0,0,24,6,5,2,0
+Platanus racemosa – Quercus agrifolia,association,16,0,0,4,86,7,6,35,20
+Platanus racemosa – Quercus lobata,association,3,0,0,0,9,19,10,0,3
+Platanus racemosa – Salix laevigata / Salix lasiolepis – Baccharis salicifolia,association,6,0,1,0,15,5,4,2,7
+Pleuraphis jamesii,association,3,0,0,0,10,3,0,0,3
+Pleuraphis rigida / Ambrosia dumosa,association,0,0,0,0,2,0,1,0,0
+Pluchea sericea Seasonally Flooded,association,1,0,0,0,10,1,2,0,1
+Poa pratensis,association,0,0,0,0,2,2,0,0,0
+"Poa pratensis – Carex (nebrascensis, pellita)",association,0,0,0,0,2,0,1,0,0
+Poa secunda Moist,association,0,0,0,0,2,1,0,0,0
+Poa secunda Shrub post-burn,association,0,0,0,0,3,1,0,0,0
+Poa secunda ssp. secunda,association,0,0,0,0,0,1,0,0,0
+Poa secunda – (Elymus sp.) – Clarkia cylindrica,association,0,4,0,0,5,9,6,0,4
+"Poa secunda – (Trifolium gracilentum, willdenovii)",association,0,0,0,2,0,1,0,2,2
+Poa secunda – Bromus rubens,association,1,0,0,0,30,0,1,1,1
+"Polygonum (amphibium, lapathifolium)",association,14,1,1,0,23,1,2,0,16
+Polygonum douglasii – Gayophytum diffusum,association,4,0,0,1,6,0,1,1,5
+Polygonum polygaloides – Downingia bacigalupii,association,3,0,0,0,3,0,0,0,3
+Populus fremontii,association,0,0,1,0,5,1,1,0,1
+Populus fremontii / Acer negundo,association,4,0,3,0,5,9,16,0,7
+Populus fremontii / Baccharis salicifolia,association,1,0,0,0,12,2,1,3,1
+Populus fremontii / Baccharis sergiloides,association,0,0,0,0,2,0,0,0,0
+Populus fremontii / Rubus ursinus,association,1,0,0,0,1,0,0,0,1
+Populus fremontii / Salix exigua,association,2,0,3,0,4,4,4,0,5
+Populus fremontii / Vitis californica,association,0,0,0,0,3,9,8,0,0
+Populus fremontii Great Valley,association,0,0,0,0,7,12,10,0,0
+Populus fremontii – Fraxinus velutina,association,0,0,0,0,1,0,0,0,0
+Populus fremontii – Juglans californica,association,0,0,0,0,1,0,0,0,0
+Populus fremontii – Prosopis spp.,association,0,0,0,0,5,0,1,0,0
+Populus fremontii – Quercus agrifolia,association,0,0,0,0,3,0,0,0,0
+Populus fremontii – Salix gooddingii,association,0,0,1,0,17,5,12,0,1
+Populus fremontii – Salix gooddingii / Baccharis salicifolia,association,0,0,0,0,6,0,3,2,0
+Populus fremontii – Salix laevigata,association,5,0,0,2,57,11,13,6,7
+Populus fremontii – Salix laevigata / Salix lasiolepis / Vitis girdiana,association,0,0,0,0,0,1,3,0,0
+Populus fremontii – Salix laevigata / Salix lasiolepis – Baccharis salicifolia,association,5,0,0,0,12,1,0,3,5
+Populus fremontii – Salix lasiolepis,association,0,0,0,1,9,2,6,1,1
+Populus fremontii – Salix lucida ssp. lasiandra,association,1,0,0,0,1,0,0,0,1
+Populus fremontii – Sambucus nigra,association,0,0,0,0,1,0,0,0,0
+Populus spp. / Salix spp.,association,1,0,2,8,5,0,2,8,11
+Populus tremuloides / Artemisia tridentata,association,0,0,0,0,7,0,3,2,0
+Populus tremuloides / Artemisia tridentata / Monardella odoratissima – Kelloggia galioides,association,0,0,0,0,4,0,1,0,0
+Populus tremuloides / Monardella odoratissima,association,0,0,0,0,1,1,0,0,0
+Populus tremuloides / Pinus jeffreyi,association,0,0,0,0,5,0,0,0,0
+Populus tremuloides / Poa pratensis,association,0,0,0,0,1,0,0,0,0
+Populus tremuloides / Rosa woodsii,association,1,1,1,0,8,1,1,0,3
+Populus tremuloides / Symphoricarpos rotundifolius,association,7,4,0,5,14,10,4,5,16
+Populus tremuloides / Veratrum californicum,association,2,0,1,0,5,2,3,0,3
+Populus tremuloides / mesic forb,association,0,0,0,0,1,0,0,0,0
+Populus tremuloides – Pinus contorta / Artemisia tridentata / Poa pratensis,association,0,0,0,0,6,0,2,0,0
+Populus trichocarpa,association,2,0,0,0,2,0,0,0,2
+Populus trichocarpa / Cornus sericea / Carex obnupta,association,2,1,0,0,3,1,0,0,3
+Populus trichocarpa / Rhododendron occidentale,association,0,0,0,0,2,0,0,0,0
+Populus trichocarpa / Salix lasiolepis,association,8,0,0,0,16,0,0,0,8
+Populus trichocarpa – Alnus rubra,association,2,0,0,0,5,0,0,0,2
+Populus trichocarpa – Pinus jeffreyi,association,0,0,0,1,3,0,0,1,1
+Populus trichocarpa – Quercus agrifolia,association,2,1,0,0,3,1,0,0,3
+Populus trichocarpa – Salix laevigata,association,2,0,0,0,15,0,0,0,2
+Potamogeton spp.,association,4,1,1,0,7,1,1,0,6
+Prosopis / Bebbia juncea – Petalonyx thurberi (wash),association,0,0,0,0,1,0,0,0,0
+Prosopis glandulosa / Pluchea sericea,association,0,0,0,0,0,0,1,0,0
+Prosopis glandulosa / Rhus ovata (upper desert spring),association,0,0,0,0,3,0,0,0,0
+Prosopis glandulosa var. torreyana,association,0,0,0,0,2,0,1,0,0
+Prosopis glandulosa – Sambucus nigra,association,0,0,0,0,2,1,0,0,0
+Prunus emarginata Sierran,association,2,4,4,4,7,8,6,4,14
+Prunus eremophila,association,0,0,0,0,1,0,0,0,0
+Prunus fasciculata – Ambrosia eriocentra,association,0,0,0,0,3,0,0,0,0
+Prunus fasciculata – Rhus trilobata,association,0,0,0,0,0,1,0,0,0
+Prunus fremontii,association,0,0,0,0,8,0,0,0,0
+Prunus ilicifolia ssp. Ilicifolia / Sanicula crassicaulis,association,2,0,0,0,4,0,0,0,2
+Prunus ilicifolia ssp. ilicifolia,association,3,0,0,2,4,0,0,2,5
+Prunus ilicifolia ssp. ilicifolia – Ceanothus cuneatus,association,0,0,0,6,10,0,0,6,6
+Prunus ilicifolia ssp. ilicifolia – Fraxinus dipetala,association,0,0,0,9,15,0,0,9,9
+Prunus ilicifolia ssp. ilicifolia – Heteromeles arbutifolia,association,1,0,0,2,15,0,1,3,3
+"Prunus ilicifolia – Rhamnus (crocea, ilicifolia)",association,1,0,1,0,1,0,1,0,2
+Prunus subcordata,association,1,0,0,0,4,0,0,0,1
+Prunus virginiana Foothills,association,1,0,0,0,3,0,0,0,1
+Prunus virginiana – Symphoricarpos rotundifolius,association,3,0,2,0,6,4,5,0,5
+Pseudoroegneria spicata – Poa secunda,association,17,0,4,5,69,21,35,5,26
+Pseudotsuga macrocarpa – Quercus agrifolia,association,3,0,0,0,5,0,0,0,3
+Pseudotsuga macrocarpa – Quercus chrysolepis,association,52,18,5,0,63,18,5,0,75
+Pseudotsuga macrocarpa – Quercus chrysolepis – Abies concolor – Pinus spp.,association,17,0,0,0,17,0,0,0,17
+Pseudotsuga macrocarpa – Quercus chrysolepis – Acer macrophyllum,association,11,1,2,0,11,1,2,0,14
+Pseudotsuga menziesii / Baccharis pilularis,association,0,0,0,0,3,0,0,34,0
+Pseudotsuga menziesii / Corylus cornuta / Polystichum munitum,association,2,0,0,0,3,0,0,2,2
+Pseudotsuga menziesii / Gaultheria shallon,association,0,0,1,0,0,0,1,0,1
+Pseudotsuga menziesii – (Umbellularia californica) / Frangula californica,association,1,0,0,0,6,0,0,12,1
+Pseudotsuga menziesii – Abies concolor / Sparse understory,association,0,0,1,2,0,2,2,2,3
+Pseudotsuga menziesii – Arbutus menziesii,association,8,4,1,0,10,5,1,1,13
+Pseudotsuga menziesii – Chrysolepis chrysophylla – Notholithocarpus densiflorus,association,3,0,0,0,9,0,0,0,3
+Pseudotsuga menziesii – Notholithocarpus densiflorus / Rhododendron macrophyllum,association,3,0,0,0,3,0,0,0,3
+Pseudotsuga menziesii – Notholithocarpus densiflorus – Umbellularia californica / Toxicodendron diversilobum,association,8,0,0,0,13,1,0,4,8
+Pseudotsuga menziesii – Quercus agrifolia,association,24,1,3,0,34,1,3,13,28
+Pseudotsuga menziesii – Quercus chrysolepis,association,5,5,3,0,13,5,4,2,13
+Pseudotsuga menziesii – Quercus kelloggii,association,2,1,0,0,2,1,0,0,3
+Pseudotsuga menziesii – Umbellularia californica / (Toxicodendron diversilobum),association,32,2,3,0,49,2,3,5,37
+Pseudotsuga menziesii – Umbellularia californica / Polystichum munitum,association,11,0,0,0,18,0,0,8,11
+Psorothamnus arborescens,association,0,0,0,0,2,1,1,0,0
+Psorothamnus arborescens – Atriplex confertifolia – Tetradymia spp.,association,0,0,0,0,7,2,3,0,0
+Psorothamnus polydenius var. polydenius / Achnatherum hymenoides,association,0,0,0,0,1,1,1,0,0
+Psorothamnus polydenius – (Psorothamnus arborescens),association,0,0,0,0,22,1,0,0,0
+Psorothamnus spinosus / Ambrosia salsola – (Bebbia juncea – Ephedra californica),association,0,0,0,0,5,1,1,0,0
+Psorothamnus spinosus /Senegalia greggii – (Hyptis emoryi),association,0,0,0,0,1,1,1,0,0
+Pteridium aquilinum – Grass,association,30,8,3,1,34,10,4,3,42
+Ptilagrostis kingii,association,0,0,0,0,2,1,0,0,0
+Puccinellia nuttalliana,association,0,0,0,0,1,0,0,0,0
+Purshia glandulosa,association,0,0,0,0,6,0,2,0,0
+Purshia glandulosa – Artemisia tridentata,association,0,0,0,0,7,0,0,0,0
+Purshia stansburiana,association,0,0,0,0,1,1,0,0,0
+Purshia stansburiana – Agave utahensis,association,0,0,0,0,3,5,0,0,0
+Purshia tridentata,association,8,1,0,6,8,1,0,6,15
+Purshia tridentata – Artemisia tridentata / Achnatherum hymenoides,association,2,0,3,0,10,4,13,0,5
+Purshia tridentata – Artemisia tridentata – Symphoricarpos rotundifolius,association,3,2,0,0,7,2,0,0,5
+"Quercus (berberidifolia, ×acutidens) – Adenostoma fasciculatum",association,13,0,0,0,30,1,1,0,13
+"Quercus (parvula, wislizeni) – Arbutus menziesii / Toxicodendron diversilobum",association,12,2,1,0,16,6,2,0,15
+"Quercus (parvula, wislizeni) – Arctostaphylos glandulosa",association,5,0,1,0,15,1,1,2,6
+Quercus agrifolia,association,3,0,0,0,23,1,0,59,3
+Quercus agrifolia / Adenostoma fasciculatum – (Salvia mellifera),association,2,0,0,0,10,0,1,4,2
+Quercus agrifolia / Artemisia californica,association,2,0,0,0,23,0,1,21,2
+"Quercus agrifolia / Ceanothus (oliganthus, spinosus)",association,0,0,0,0,17,0,0,29,0
+Quercus agrifolia / Eriogonum wrightii,association,0,0,0,0,2,0,0,0,0
+Quercus agrifolia / Frangula californica – Heteromeles arbutifolia,association,6,0,0,0,8,0,0,0,6
+Quercus agrifolia / Heteromeles arbutifolia,association,0,0,0,0,8,0,0,20,0
+"Quercus agrifolia / Quercus (berberidifolia, xacutidens)",association,2,1,0,0,11,2,1,7,3
+Quercus agrifolia / Salix lasiolepis,association,11,1,2,5,43,2,4,26,19
+Quercus agrifolia / Toxicodendron diversilobum,association,50,5,0,0,119,7,4,35,55
+Quercus agrifolia / grass,association,27,5,6,7,66,6,6,31,45
+Quercus agrifolia – Aesculus californica,association,1,0,1,5,5,0,1,5,7
+Quercus agrifolia – Arbutus menziesii / Corylus cornuta – Rubus spp.,association,9,0,0,0,9,0,0,5,9
+Quercus agrifolia – Arbutus menziesii – Umbellularia californica,association,31,4,4,0,49,4,4,9,39
+Quercus agrifolia – Pinus coulteri,association,0,0,0,0,1,0,0,0,0
+Quercus agrifolia – Quercus chrysolepis – Quercus parvula (shrub),association,3,0,0,0,4,0,0,0,3
+Quercus agrifolia – Quercus engelmannii / Eriogonum fasciculatum,association,1,0,0,0,4,0,0,0,1
+Quercus agrifolia – Quercus garryana – Quercus kelloggii,association,4,0,0,0,4,0,0,0,4
+Quercus agrifolia – Quercus kelloggii,association,4,0,0,0,10,0,0,0,4
+Quercus agrifolia – Umbellularia californica,association,1,1,1,0,21,1,1,17,3
+Quercus agrifolia – Umbellularia californica / Heteromeles arbutifolia – Quercus berberidifolia,association,10,3,0,0,12,3,0,2,13
+Quercus berberidifolia,association,11,4,0,2,72,11,2,36,17
+Quercus berberidifolia / Aesculus californica,association,0,0,0,0,1,0,0,0,0
+Quercus berberidifolia – Adenostoma fasciculatum,association,14,1,0,2,45,3,1,20,17
+Quercus berberidifolia – Adenostoma fasciculatum – Ceanothus crassifolius,association,0,0,0,0,9,0,0,0,0
+Quercus berberidifolia – Arctostaphylos glauca,association,0,0,0,1,0,0,0,1,1
+"Quercus berberidifolia – Ceanothus (oliganthus, tomentosus)",association,0,0,0,0,14,0,1,1,0
+Quercus berberidifolia – Ceanothus cuneatus,association,1,0,0,0,11,5,5,6,1
+Quercus berberidifolia – Ceanothus leucodermis,association,0,0,0,0,4,0,0,0,0
+Quercus berberidifolia – Ceanothus spinosus,association,0,0,0,0,10,0,0,5,0
+Quercus berberidifolia – Cercocarpus montanus,association,1,0,1,2,42,0,2,11,4
+Quercus berberidifolia – Heteromeles arbutifolia,association,1,0,0,2,15,2,1,5,3
+Quercus chrysolepis / Arctostaphylos crustacea,association,3,0,0,0,3,0,0,0,3
+Quercus chrysolepis / Arctostaphylos patula,association,0,0,0,0,3,0,0,3,0
+Quercus chrysolepis / Arctostaphylos viscida,association,0,0,0,0,7,6,13,0,0
+Quercus chrysolepis / Calycanthus occidentalis – Vitis californica,association,0,0,0,0,7,11,8,1,0
+"Quercus chrysolepis / Quercus (wislizeni, parvula)",association,5,1,0,8,7,8,5,8,14
+Quercus chrysolepis / Rhamnus ilicifolia,association,0,0,0,0,9,1,0,0,0
+Quercus chrysolepis shrub,association,5,1,0,0,5,1,0,0,6
+Quercus chrysolepis tree,association,5,5,1,2,39,19,18,5,13
+Quercus chrysolepis – Arbutus menziesii – Notholithocarpus densiflorus var. densiflorus,association,9,1,0,0,11,1,0,0,10
+Quercus chrysolepis – Pinus jeffreyi,association,0,0,0,0,2,0,2,1,0
+Quercus chrysolepis – Pinus lambertiana,association,1,0,0,0,1,0,0,0,1
+Quercus chrysolepis – Pinus ponderosa,association,0,0,0,0,0,2,5,0,0
+Quercus chrysolepis – Pinus sabiniana,association,2,0,0,0,2,2,2,0,2
+Quercus chrysolepis – Quercus kelloggii,association,0,0,0,0,3,5,1,0,0
+Quercus chrysolepis – Umbellularia californica,association,15,0,0,0,29,7,11,27,15
+Quercus cornelius-mulleri – Adenostoma sparsifolium – Ceanothus greggii,association,0,0,0,0,9,0,0,1,0
+Quercus cornelius-mulleri – Adenostoma sparsifolium – Cercocarpus montanus,association,0,0,0,0,4,0,0,6,0
+Quercus cornelius-mulleri – Cercocarpus montanus,association,0,0,0,0,1,0,4,0,0
+Quercus cornelius-mulleri – Eriogonum fasciculatum – Ericameria linearifolia,association,0,0,0,0,2,0,15,0,0
+Quercus cornelius-mulleri – Rhus ovata,association,0,0,0,0,2,0,8,0,0
+Quercus douglasii / (Achnatherum lemmonii – Nassella pulchra),association,0,0,0,2,4,10,2,2,2
+"Quercus douglasii / Amsinckia (intermedia, menziesii) – Plagiobothrys nothofulvus",association,0,0,0,0,6,0,5,1,0
+Quercus douglasii / Arctostaphylos manzanita / herbaceous,association,2,1,0,0,7,6,2,0,3
+Quercus douglasii / Bromus spp. – (Daucus pusillus),association,0,0,0,2,34,72,65,15,2
+Quercus douglasii / Ceanothus cuneatus,association,0,0,0,0,13,8,6,1,0
+Quercus douglasii / Ericameria linearifolia,association,3,0,0,1,24,0,0,7,4
+Quercus douglasii / Eriogonum fasciculatum / herbaceous,association,2,0,0,0,14,1,2,0,2
+Quercus douglasii / Mixed herbaceous,association,15,1,2,40,58,1,10,40,58
+Quercus douglasii / Selaginella hansenii – Navarretia pubescens,association,0,0,0,0,1,0,7,0,0
+Quercus douglasii / Toxicodendron diversilobum / grass,association,1,0,0,0,3,9,1,0,1
+Quercus douglasii / understory oak,association,0,0,0,1,0,0,0,1,1
+Quercus douglasii – Aesculus californica / grass,association,0,0,1,1,10,3,6,4,2
+Quercus douglasii – Juniperus californica / Ceanothus cuneatus – Cercocarpus montanus,association,0,0,0,10,21,1,1,10,10
+Quercus douglasii – Juniperus californica / Ericameria linearifolia,association,4,0,0,1,46,0,1,6,5
+Quercus douglasii – Juniperus californica / Quercus john-tuckeri,association,2,0,0,0,13,0,0,0,2
+Quercus douglasii – Pinus sabiniana / Arctostaphylos viscida,association,0,0,0,0,1,6,5,0,0
+Quercus douglasii – Pinus sabiniana / Ceanothus cuneatus – Cercocarpus montanus,association,1,0,0,7,14,1,1,7,8
+Quercus douglasii – Pinus sabiniana / grass,association,0,0,0,2,13,3,7,2,2
+Quercus douglasii – Quercus agrifolia,association,3,0,2,0,6,1,2,0,5
+Quercus douglasii – Quercus lobata – Quercus agrifolia / Toxicodendron diversilobum,association,0,0,0,0,2,1,0,0,0
+Quercus douglasii – Quercus wislizeni,association,0,0,0,0,2,0,0,0,0
+Quercus dumosa,association,7,0,0,0,17,0,1,0,7
+Quercus durata,association,2,0,0,2,5,0,0,2,4
+Quercus durata / Pinus sabiniana,association,0,0,0,0,8,0,0,0,0
+Quercus durata – Adenostoma fasciculatum,association,9,1,2,0,19,2,4,0,12
+Quercus durata – Adenostoma fasciculatum / Salvia sonomensis,association,0,0,0,0,0,0,4,0,0
+Quercus durata – Adenostoma fasciculatum – Quercus wislizeni,association,0,0,0,0,4,0,0,0,0
+Quercus durata – Arctostaphylos glandulosa,association,0,0,0,0,2,0,0,0,0
+Quercus durata – Arctostaphylos glauca / Pinus sabiniana,association,0,0,0,0,29,0,0,0,0
+Quercus durata – Arctostaphylos glauca – Garrya congdonii / Melica torreyana,association,1,0,0,0,2,0,0,0,1
+Quercus durata – Arctostaphylos pungens / Pinus sabiniana,association,0,0,0,0,11,0,0,0,0
+Quercus durata – Ceanothus jepsonii,association,5,8,1,9,7,10,1,9,23
+Quercus durata – Cercocarpus montanus,association,0,0,0,0,4,0,0,0,0
+Quercus durata – Heteromeles arbutifolia – Umbellularia californica,association,6,0,1,0,6,0,1,0,7
+Quercus engelmannii / Adenostoma fasciculatum – Arctostaphylos glauca,association,0,0,0,0,3,0,0,0,0
+Quercus engelmannii / Quercus berberidifolia,association,0,0,0,0,4,0,0,0,0
+Quercus engelmannii / Salvia apiana / grass – herb,association,0,0,0,0,6,2,0,0,0
+Quercus engelmannii / Toxicodendron diversilobum / grass,association,0,0,0,0,3,0,0,3,0
+Quercus engelmannii / annual grass – herb,association,0,0,0,0,3,0,0,0,0
+Quercus engelmannii – Quercus agrifolia / Artemisia californica,association,0,0,0,0,6,0,0,1,0
+Quercus engelmannii – Quercus agrifolia / Toxicodendron diversilobum / annual grass,association,2,0,0,0,10,6,0,0,2
+Quercus engelmannii – Quercus agrifolia / chaparral (Adenostoma fasciculatum – Quercus berberidifolia – Rhamnus ilicifolia),association,0,0,0,0,10,0,0,0,0
+Quercus garryana / (Cynosurus echinatus – Festuca californica),association,7,3,1,1,9,3,1,1,12
+Quercus garryana / Festuca californica,association,0,0,1,0,0,0,1,0,1
+Quercus garryana / Toxicodendron diversilobum,association,1,0,0,0,1,0,0,0,1
+Quercus garryana shrub,association,0,1,0,0,1,7,7,0,1
+Quercus garryana – Cercocarpus montanus,association,1,1,0,0,4,5,1,0,2
+Quercus garryana – Quercus kelloggii / Dichelostemma ida-maia,association,0,1,3,0,0,1,3,0,4
+Quercus garryana – Quercus kelloggii / Toxicodendron diversilobum,association,0,1,0,0,0,1,0,0,1
+"Quercus garryana – Umbellularia californica – Quercus (agrifolia, kelloggii)",association,18,3,4,0,18,3,4,0,25
+Quercus john-tuckeri,association,1,1,0,0,9,4,7,0,2
+Quercus john-tuckeri – Adenostoma fasciculatum,association,4,0,0,2,9,0,0,2,6
+Quercus john-tuckeri – Juniperus californica – Ericameria linearifolia,association,11,0,0,0,65,0,0,0,11
+Quercus john-tuckeri – Juniperus californica – Fraxinus dipetala,association,0,0,0,0,5,0,0,0,0
+Quercus john-tuckeri – Quercus wislizeni – Garrya flavescens,association,0,0,0,0,6,0,0,0,0
+Quercus kelloggii / Arctostaphylos mewukka / Chamaebatia foliolosa,association,0,0,0,0,1,1,2,6,0
+Quercus kelloggii / Arctostaphylos patula,association,0,0,0,0,3,2,0,7,0
+Quercus kelloggii / Ceanothus integerrimus,association,0,0,0,0,0,12,2,0,0
+Quercus kelloggii / Ribes roezlii,association,0,0,0,0,0,6,0,0,0
+Quercus kelloggii / Toxicodendron diversilobum,association,1,0,0,0,4,12,7,0,1
+Quercus kelloggii / Toxicodendron diversilobum – Styrax redivivus / Triteleia laxa,association,0,0,0,0,0,0,3,0,0
+Quercus kelloggii / grass – herb,association,4,2,2,0,11,7,7,3,8
+Quercus kelloggii – Arbutus menziesii – Quercus agrifolia,association,8,9,0,0,12,9,0,0,17
+Quercus kelloggii – Calocedrus decurrens,association,0,0,0,0,2,2,3,0,0
+Quercus kelloggii – Pinus coulteri / Arctostaphylos glandulosa,association,0,0,0,0,3,0,0,0,0
+Quercus kelloggii – Pinus coulteri / Arctostaphylos pringlei,association,0,0,0,0,5,0,0,0,0
+Quercus kelloggii – Pinus ponderosa,association,1,0,1,2,3,4,2,2,4
+Quercus kelloggii – Pinus ponderosa / Arctostaphylos viscida,association,0,0,0,0,8,6,15,0,0
+Quercus kelloggii – Pseudotsuga menziesii – Acer macrophyllum,association,1,0,0,0,1,0,0,0,1
+Quercus kelloggii – Pseudotsuga menziesii – Umbellularia californica,association,12,4,2,0,14,7,4,0,18
+Quercus kelloggii – Quercus chrysolepis,association,4,0,0,0,6,0,0,0,4
+Quercus kelloggii – Quercus chrysolepis / Toxicodendron diversilobum,association,0,1,0,0,1,6,0,0,1
+Quercus lobata / Baccharis pilularis – Diplacus aurantiacus,association,0,1,0,0,0,1,0,0,1
+Quercus lobata / Carex barbarae,association,0,0,0,0,3,6,5,0,0
+Quercus lobata / Rubus armeniacus,association,0,0,0,0,14,19,17,0,0
+Quercus lobata / Rubus ursinus – Rosa californica,association,5,1,0,0,10,15,10,0,6
+Quercus lobata / grass,association,6,1,1,0,24,5,4,10,8
+Quercus lobata / herbaceous semi-riparian,association,0,2,0,0,19,26,23,0,2
+Quercus lobata – Alnus rhombifolia,association,0,0,0,0,24,6,2,0,0
+Quercus lobata – Fraxinus latifolia / Vitis californica,association,1,1,1,0,21,8,9,0,3
+Quercus lobata – Quercus agrifolia / Toxicodendron diversilobum – (Symphoricarpos spp.),association,6,1,1,0,6,1,1,0,8
+Quercus lobata – Quercus agrifolia / grass,association,20,2,2,2,41,2,2,15,26
+Quercus lobata – Quercus chrysolepis / Vitis californica,association,0,0,0,0,0,4,4,0,0
+Quercus lobata – Quercus douglasii,association,1,0,0,0,2,2,0,0,1
+Quercus lobata – Quercus kelloggii,association,0,1,1,0,1,4,2,0,2
+Quercus lobata – Quercus wislizeni,association,0,0,0,0,9,4,9,0,0
+Quercus lobata – Salix lasiolepis,association,0,0,0,0,5,2,3,3,0
+Quercus palmeri – Eriogonum fasciculatum,association,0,0,0,0,3,0,0,0,0
+Quercus palmeri – Eriogonum wrightii,association,0,0,0,0,3,0,0,0,0
+Quercus parvula (shrub),association,3,3,1,0,4,3,1,2,7
+Quercus parvula var. shrevei,association,10,0,0,0,14,0,0,0,10
+Quercus turbinella – Baccharis sergiloides,association,0,0,0,0,8,0,0,0,0
+Quercus vacciniifolia,association,7,0,0,7,13,2,0,7,14
+Quercus vacciniifolia – Arctostaphylos patula,association,0,0,0,7,2,1,2,7,7
+Quercus vacciniifolia – Chrysolepis sempervirens,association,0,0,0,0,1,0,0,0,0
+Quercus wislizeni / Eriodictyon californicum,association,0,0,0,0,3,4,2,0,0
+Quercus wislizeni / Heteromeles arbutifolia,association,0,0,0,0,9,22,25,0,0
+Quercus wislizeni / Toxicodendron diversilobum,association,2,0,0,0,19,35,23,0,2
+Quercus wislizeni var. frutescens,association,5,6,0,1,11,10,4,1,12
+Quercus wislizeni – (Pinus sabiniana) / Arctostaphylos viscida,association,0,0,0,0,9,9,6,0,0
+Quercus wislizeni – Aesculus californica,association,0,0,0,0,21,24,31,9,0
+Quercus wislizeni – Carpenteria californica,association,0,0,0,0,0,0,4,0,0
+Quercus wislizeni – Ceanothus leucodermis,association,0,0,0,0,12,6,0,0,0
+Quercus wislizeni – Ceanothus oliganthus,association,0,3,0,0,8,3,0,0,3
+Quercus wislizeni – Cercocarpus montanus,association,0,2,0,0,7,9,5,0,2
+Quercus wislizeni – Cercocarpus montanus – Adenostoma sparsifolium,association,0,0,0,0,5,0,0,1,0
+Quercus wislizeni – Pinus ponderosa,association,0,0,0,0,0,2,2,0,0
+Quercus wislizeni – Pinus sabiniana / Arctostaphylos manzanita,association,0,0,0,0,6,7,0,0,0
+Quercus wislizeni – Pinus sabiniana / annual grass – herb,association,0,0,0,0,18,15,12,0,0
+Quercus wislizeni – Quercus berberidifolia,association,0,0,0,4,10,4,0,5,4
+Quercus wislizeni – Quercus chrysolepis shrub,association,0,0,0,0,8,0,0,0,0
+Quercus wislizeni – Quercus chrysolepis tree,association,0,0,0,0,6,2,3,13,0
+Quercus wislizeni – Quercus chrysolepis – Pinus coulteri,association,0,0,0,0,7,0,0,0,0
+Quercus wislizeni – Quercus douglasii / herbaceous,association,0,0,0,0,14,20,18,7,0
+Quercus wislizeni – Quercus douglasii – Pinus sabiniana,association,0,0,0,0,7,1,3,0,0
+Quercus wislizeni – Quercus kelloggii / Heteromeles arbutifolia – Toxicodendron diversilobum,association,0,0,0,0,3,8,3,0,0
+Quercus wislizeni – Salix laevigata / Frangula californica,association,0,0,0,0,17,13,14,1,0
+Quercus ×eplingii / Grass,association,11,1,1,0,11,1,1,0,13
+Raphanus sativus,association,7,1,0,0,10,1,0,0,8
+Rhamnus crocea,association,1,0,0,0,3,3,0,0,1
+Rhodiola integrifolia – Selaginella watsonii,association,0,0,0,0,1,0,0,0,0
+Rhododendron columbianum / Pinus contorta ssp. murrayana,association,0,0,0,0,2,2,0,0,0
+Rhododendron columbianum – Gaultheria shallon / Carex obnupta,association,1,0,0,0,1,0,0,1,1
+Rhododendron occidentale – Frangula californica ssp. tomentella,association,0,0,1,0,0,0,1,0,1
+Rhus integrifolia,association,8,4,0,0,57,4,2,25,12
+Rhus integrifolia – Adenostoma fasciculatum – Artemisia californica,association,1,0,0,0,1,0,0,0,1
+Rhus integrifolia – Artemisia californica – Eriogonum cinereum,association,1,0,0,0,20,0,0,26,1
+Rhus integrifolia – Heteromeles arbutifolia,association,0,0,0,0,1,0,0,0,0
+Rhus integrifolia – Malosma laurina,association,0,0,0,0,1,0,0,0,0
+Rhus integrifolia – Opuntia spp. – Eriogonum cinereum,association,0,0,0,0,10,0,0,6,0
+Rhus ovata,association,1,0,0,0,11,0,0,2,1
+Rhus ovata – Salvia leucophylla – Artemisia californica,association,1,0,0,0,8,0,0,7,1
+Rhus ovata – Ziziphus parryi,association,0,0,0,0,12,0,0,0,0
+Rhus trilobata,association,1,0,0,0,3,0,0,0,1
+Rhus trilobata Upland,association,0,0,0,0,2,5,3,0,0
+Ribes quercetorum,association,2,3,0,0,15,7,10,0,5
+Ribes velutinum,association,0,0,0,0,2,1,0,0,0
+Robinia pseudoacacia,association,1,1,0,0,5,2,2,8,2
+Rosa californica,association,3,0,0,0,14,3,2,0,3
+Rosa woodsii,association,1,0,0,0,1,1,1,0,1
+Rubus armeniacus,association,3,4,1,1,6,7,2,32,9
+Rubus parviflorus,association,6,0,0,0,10,0,0,0,6
+Rubus spectabilis,association,9,0,0,0,12,0,0,8,9
+Rubus ursinus,association,34,2,2,0,38,2,2,7,38
+Rumex hymenosepalus,association,0,0,0,0,0,1,0,0,0
+Salazaria mexicana,association,2,0,0,0,9,3,0,0,2
+Salicornia bigelovii,association,0,1,0,0,0,1,6,0,1
+Salix breweri,association,4,0,0,0,5,0,0,0,4
+Salix breweri / Muhlenbergia asperifolia,association,0,0,0,0,12,0,0,0,0
+Salix eastwoodiae / Senecio triangularis,association,6,0,0,0,7,0,0,0,6
+Salix exigua,association,9,1,0,1,25,31,29,1,11
+Salix exigua / Baccharis sergiloides,association,0,0,0,0,2,0,0,0,0
+Salix exigua / Mesic graminoids,association,3,2,0,6,6,3,0,6,11
+Salix exigua – (Salix lasiolepis) – Rubus armeniacus,association,0,0,0,0,26,5,12,0,0
+Salix exigua – Arundo donax,association,0,0,0,0,9,0,0,0,0
+Salix exigua – Salix melanopsis,association,1,0,1,0,2,11,5,0,2
+Salix geyeriana / mesic graminoid,association,1,0,0,0,1,0,0,0,1
+Salix gooddingii,association,1,0,0,0,43,25,24,2,1
+Salix gooddingii / Baccharis salicifolia,association,0,0,0,0,2,0,1,5,0
+Salix gooddingii / Lepidium latifolium,association,0,0,0,0,1,0,2,0,0
+Salix gooddingii / Salix exigua,association,0,0,0,0,5,1,5,0,0
+Salix gooddingii – Fraxinus latifolia,association,0,0,0,0,0,3,0,0,0
+Salix gooddingii – Quercus lobata / wetland herb,association,0,0,0,0,5,1,3,0,0
+Salix gooddingii – Salix lucida – Populus fremontii,association,0,0,0,0,0,0,5,1,0
+Salix hookeriana,association,9,0,0,2,9,0,0,2,11
+Salix jepsonii / Senecio triangularis,association,0,0,0,0,1,0,0,0,0
+Salix laevigata,association,9,4,0,1,31,22,14,3,14
+Salix laevigata / (Cornus sericea – Ribes spp.) / Scirpus microcarpus – Carex spp.,association,8,0,0,0,13,0,0,0,8
+Salix laevigata / Salix lasiolepis,association,13,2,1,4,74,2,5,10,20
+Salix lasiolepis,association,16,2,0,1,34,7,5,10,19
+Salix lasiolepis / Artemisia douglasiana,association,0,0,0,0,0,0,1,0,0
+Salix lasiolepis / Barren Ground,association,1,0,0,0,2,0,0,0,1
+Salix lasiolepis / Rosa woodsii / Mixed Herbs,association,2,0,0,0,8,1,1,0,2
+Salix lasiolepis – Baccharis salicifolia,association,2,2,0,1,40,2,0,5,5
+Salix lasiolepis – Malosma laurina,association,0,0,0,0,6,0,0,3,0
+Salix lasiolepis – Rosa californica,association,0,0,0,3,1,0,0,3,3
+Salix lasiolepis – Rubus spp.,association,32,5,4,0,50,9,9,35,41
+Salix lasiolepis – Salix lucida,association,2,1,0,0,6,1,0,6,3
+Salix lemmonii,association,0,0,0,0,4,0,0,0,0
+Salix lemmonii / mesic forb,association,2,0,0,2,3,0,0,2,4
+Salix lemmonii / mesic graminoid,association,2,2,2,10,5,2,2,10,16
+Salix lucida / Mesic forb,association,0,0,1,0,0,0,1,0,1
+Salix lucida / Mesic graminoid,association,7,0,0,0,10,1,0,0,7
+Salix lucida ssp. lasiandra,association,13,1,4,1,30,2,7,4,19
+Salix orestera / Allium validum,association,0,0,0,0,2,0,0,7,0
+Salix orestera / Calamagrostis muiriana,association,0,0,0,0,1,0,0,0,0
+Salix orestera / Senecio triangularis,association,0,0,0,0,2,0,1,0,0
+Salix petrophila – Calamagrostis muiriana – Vaccinium cespitosum – Antennaria media,association,0,0,0,0,9,0,0,0,0
+Salix planifolia,association,0,0,0,0,2,0,0,0,0
+Salix planifolia/Carex scopulorum,association,0,0,0,0,1,0,0,0,0
+Salix sitchensis,association,8,1,4,0,8,1,4,0,13
+Salvia apiana,association,2,0,0,0,7,1,1,0,2
+Salvia apiana – Artemisia californica,association,1,0,0,0,27,2,1,2,1
+Salvia apiana – Artemisia californica – Ericameria spp.,association,4,0,1,0,7,0,1,0,5
+Salvia apiana – Hesperoyucca whipplei,association,0,0,0,0,3,0,0,0,0
+Salvia carduacea,association,1,1,0,0,15,1,0,0,2
+"Salvia columbariae – Chaenactis (fremontii, stevioides)",association,1,0,0,0,8,1,0,1,1
+Salvia dorrii Wash,association,0,0,0,0,1,3,0,0,0
+Salvia funerea,association,0,0,0,0,6,6,2,0,0
+Salvia leucophylla,association,1,0,1,0,62,0,1,57,2
+Salvia leucophylla – Artemisia californica,association,7,0,0,0,58,0,0,103,7
+Salvia leucophylla – Eriogonum cinereum / annual herb,association,0,0,0,0,13,0,0,3,0
+Salvia mellifera,association,9,0,0,3,64,0,0,57,12
+Salvia mellifera – Artemisia californica,association,15,9,0,1,16,9,0,3,25
+Salvia mellifera – Artemisia californica – Malosma laurina,association,20,1,0,0,150,14,9,96,21
+Salvia mellifera – Eriogonum cinereum,association,0,0,0,0,16,0,0,22,0
+Salvia mellifera – Eriogonum fasciculatum,association,5,7,0,0,11,9,0,0,12
+Salvia mellifera – Eriogonum fasciculatum / Bromus rubens,association,0,0,0,3,20,0,0,3,3
+Salvia mellifera – Eriogonum fasciculatum var. foliolosum – Eriodictyon tomentosum,association,0,0,0,0,5,0,0,0,0
+Salvia mellifera – Malacothamnus fasciculatus,association,1,0,0,0,11,0,0,4,1
+Salvia mellifera – Rhus ovata,association,0,0,0,0,8,1,2,13,0
+Sambucus racemosa – (Rubus ursinus),association,2,0,0,0,2,2,0,5,2
+Sarcobatus vermiculatus,association,0,0,0,0,4,0,0,0,0
+Sarcobatus vermiculatus / Distichlis spicata,association,0,0,0,0,2,0,0,0,0
+Sarcobatus vermiculatus / Sporobolus airoides,association,0,0,0,0,5,1,2,0,0
+Sarcobatus vermiculatus Disturbed,association,0,0,0,0,4,0,1,0,0
+Sarcobatus vermiculatus – Artemisia tridentata,association,1,2,0,4,9,5,3,4,7
+"Sarcobatus vermiculatus – Atriplex confertifolia – (Picrothamnus desertorum, Suaeda moquinii)",association,2,0,0,1,31,4,3,1,3
+Sarcobatus vermiculatus – Suaeda moquinii,association,0,0,0,0,3,1,0,2,0
+Sarcocornia pacifica / (Lolium perenne – Polypogon monspeliensis),association,0,0,0,0,9,1,0,0,0
+Sarcocornia pacifica / algae,association,0,0,0,0,5,0,0,0,0
+Sarcocornia pacifica Tidal,association,66,3,1,0,146,7,2,6,70
+Sarcocornia pacifica – Atriplex prostrata,association,4,0,0,0,11,0,0,0,4
+Sarcocornia pacifica – Brassica nigra,association,0,0,0,0,6,0,0,0,0
+Sarcocornia pacifica – Cotula coronopifolia,association,2,0,0,0,8,0,0,0,2
+Sarcocornia pacifica – Crypsis schoenoides,association,0,0,0,0,1,0,0,0,0
+Sarcocornia pacifica – Distichlis spicata,association,2,0,0,0,25,1,0,0,2
+Sarcocornia pacifica – Frankenia salina,association,4,1,0,0,11,1,0,0,5
+Sarcocornia pacifica – Frankenia salina – Suaeda taxifolia,association,0,0,0,0,18,0,0,0,0
+Sarcocornia pacifica – Jaumea carnosa,association,3,2,0,0,8,2,0,0,5
+Sarcocornia pacifica – Jaumea carnosa – Batis maritima,association,0,3,0,0,2,3,3,0,3
+Sarcocornia pacifica – Jaumea carnosa – Distichlis spicata,association,39,0,0,0,76,0,1,28,39
+Sarcocornia pacifica – Lepidium latifolium,association,2,0,1,0,2,0,1,0,3
+Sarcocornia pacifica – Schoenoplectus americanus,association,7,0,0,0,7,0,0,0,7
+Sarcocornia pacifica – Sesuvium verrucosum,association,2,0,0,0,7,0,1,0,2
+Schinus molle,association,0,0,0,0,2,0,0,0,0
+"Schismus (arabicus, barbatus)",association,0,0,0,0,5,0,2,0,0
+Schismus playa,association,0,0,0,0,0,1,0,0,0
+"Schoenoplectus (acutus, californicus) – Typha (angustifolia, latifolia)",association,0,0,0,0,1,0,0,0,0
+"Schoenoplectus (acutus, californicus) – Wetland herbs",association,1,2,0,0,9,5,0,0,3
+Schoenoplectus acutus,association,9,7,2,3,34,19,11,6,21
+Schoenoplectus acutus – Phragmites australis,association,0,0,0,0,3,2,5,0,0
+Schoenoplectus acutus – Typha domingensis,association,0,0,0,0,2,1,0,0,0
+Schoenoplectus americanus,association,11,2,0,0,28,3,1,0,13
+Schoenoplectus americanus – Argentina egedii,association,0,0,0,0,3,0,1,0,0
+Schoenoplectus americanus – Lepidium latifolium,association,0,0,0,0,2,0,0,0,0
+Schoenoplectus americanus – Schoenoplectus californicus – Schoenoplectus acutus,association,0,0,0,0,9,0,0,0,0
+Schoenoplectus californicus,association,11,2,0,10,22,4,4,14,23
+Schoenoplectus californicus – Schoenoplectus acutus,association,1,0,0,0,4,6,1,0,1
+Schoenoplectus californicus – Schoenoplectus acutus / Rosa californica,association,0,0,0,0,1,0,0,0,0
+Schoenoplectus pungens,association,0,0,0,0,1,0,0,0,0
+Schoenoplectus pungens – Argentina egedii,association,3,0,2,0,3,0,2,0,5
+Scirpus microcarpus Pacific Coast,association,7,0,0,0,12,0,0,3,7
+Scleropogon brevifolius – Pleuraphis jamesii – Bouteloua eriopoda,association,1,0,0,0,1,0,0,0,1
+Sedum spathulifolium – Polypodium californicum / Lichen – Moss,association,4,0,0,0,5,1,0,0,4
+Selaginella bigelovii / Eriogonum fasciculatum,association,6,4,1,6,63,4,1,19,17
+Selaginella wallacei / Lichen – Moss,association,2,0,0,0,2,0,0,0,2
+Senecio triangularis – Lupinus latifolius,association,0,0,0,0,2,1,0,0,0
+Senegalia greggii / Eriogonum davidsonii,association,0,0,0,0,4,0,0,0,0
+Senegalia greggii Wash,association,0,0,0,0,2,3,1,0,0
+Senegalia greggii – Ambrosia salsola,association,0,0,0,0,9,0,3,0,0
+Senegalia greggii – Eriogonum fasciculatum,association,0,0,0,0,2,0,5,0,0
+Senegalia greggii – Prunus fasciculata,association,0,0,0,0,1,4,0,0,0
+Senegalia greggii – Viguiera parishii,association,0,0,0,0,4,0,0,0,0
+Senegalia greggii – annual herbs (Bromus rubens),association,0,0,0,0,27,0,0,0,0
+Senna armata – Ambrosia salsola,association,0,0,0,0,2,0,6,0,0
+Sequoia sempervirens,association,1,0,0,0,1,0,0,0,1
+Sequoia sempervirens / (Pteridium aquilinum) – Woodwardia fimbriata,association,7,2,1,0,16,2,1,1,10
+Sequoia sempervirens / Oxalis oregana,association,7,5,1,0,7,5,1,0,13
+Sequoia sempervirens / Polystichum munitum,association,10,3,0,0,10,3,0,5,13
+Sequoia sempervirens – Acer macrophyllum – Umbellularia californica,association,40,1,3,0,52,1,3,1,44
+Sequoia sempervirens – Arbutus menziesii / Vaccinium ovatum,association,13,1,1,0,20,1,1,4,15
+Sequoia sempervirens – Chrysolepis chrysophylla / Arctostaphylos glandulosa,association,2,0,0,0,5,0,0,1,2
+Sequoia sempervirens – Hesperocyparis pigmaea,association,6,0,0,1,6,0,0,1,7
+Sequoia sempervirens – Notholithocarpus densiflorus / Vaccinium ovatum,association,41,0,7,0,58,0,7,4,48
+Sequoia sempervirens – Pinus muricata,association,1,1,2,4,1,1,2,4,8
+Sequoia sempervirens – Pseudotsuga menziesii – Notholithocarpus densiflorus,association,27,4,16,0,40,5,16,1,47
+Sequoia sempervirens – Pseudotsuga menziesii – Umbellularia californica,association,13,0,1,0,16,0,1,2,14
+Sequoia sempervirens – Umbellularia californica,association,20,3,3,0,29,3,3,5,26
+Sequoiadendron giganteum – Pinus lambertiana / Cornus nuttallii,association,0,0,0,0,3,0,0,7,0
+Sesbania punicea,association,0,0,0,0,0,0,0,1,0
+Sesuvium verrucosum,association,0,0,0,0,7,0,1,0,0
+Sesuvium verrucosum – Cotula coronopifolia,association,0,0,0,0,2,0,0,0,0
+Sesuvium verrucosum – Distichlis spicata,association,0,0,0,0,1,1,0,0,0
+Sesuvium verrucosum – Lolium perenne,association,0,0,0,0,1,0,0,0,0
+Simmondsia chinensis – Eriogonum fasciculatum – Cylindropuntia californica,association,0,0,0,0,4,0,0,0,0
+"Solidago (confinis, spectabilis)",association,0,0,0,0,1,2,1,0,0
+Solidago canadensis – Achillea millefolium,association,0,0,0,0,1,1,1,0,0
+Sparganium angustifolium,association,0,0,0,0,3,2,1,0,0
+Sparganium eurycarpum,association,6,0,0,0,8,0,0,0,6
+Spartina foliosa,association,9,1,0,0,20,3,2,2,10
+Spartina foliosa – Sarcocornia pacifica,association,15,0,0,0,36,0,1,0,15
+Spartina gracilis,association,0,0,0,0,4,0,0,0,0
+Spartium junceum,association,1,0,0,0,2,0,1,0,1
+Sphaeralcea ambigua,association,0,0,0,0,0,1,1,0,0
+Sporobolus airoides,association,0,0,0,0,28,1,10,1,0
+Sporobolus airoides / Allenrolfea occidentalis,association,0,0,0,0,23,0,0,0,0
+Sporobolus airoides / Ericameria nauseosa,association,0,0,0,0,15,0,13,0,0
+Sporobolus airoides – Distichlis spicata,association,0,0,0,0,6,0,5,0,0
+Streptanthus glandulosus – Dudleya abramsii / Lichen – Moss,association,5,0,1,0,6,0,1,0,6
+Stuckenia pectinata,association,1,1,0,0,2,1,0,0,2
+Suaeda moquinii,association,0,0,0,0,8,0,0,0,0
+Suaeda moquinii / Lepidium dictyotum,association,1,0,0,0,26,20,7,0,1
+Symphoricarpos oreophilus,association,1,0,0,12,6,3,3,12,13
+Tamarix spp.,association,2,0,0,1,7,0,0,2,3
+Taraxia tanacetifolia – Iva axillaris,association,1,1,0,0,7,8,4,0,2
+Tetradymia canescens,association,1,1,0,1,4,1,6,1,3
+Thermopsis californica – Bromus carinatus – Annual Brome,association,3,0,0,0,9,0,0,0,3
+"Thinopyrum (ponticum, intermedium)",association,1,1,1,1,4,1,1,1,4
+Torreyochloa pallida var. pauciflora,association,1,0,0,0,1,0,0,0,1
+Torreyochloa pallida var. pauciflora – Isoetes bolanderi,association,0,0,0,0,1,0,0,0,0
+Toxicodendron diversilobum / Pteridium aquilinum,association,0,0,0,0,2,0,0,0,0
+Toxicodendron diversilobum – Artemisia californica / Leymus condensatus,association,1,1,0,0,11,1,1,9,2
+Toxicodendron diversilobum – Diplacus aurantiacus,association,0,0,0,0,5,0,0,4,0
+Trifolium gracilentum – Hesperevax caulescens,association,0,0,0,0,2,1,2,0,0
+Trifolium variegatum,association,2,0,2,0,8,9,8,0,4
+Trifolium variegatum – Juncus bufonius,association,0,0,1,0,14,6,43,0,1
+Trifolium variegatum – Lolium perenne – Leontodon saxatilis,association,0,0,0,0,0,0,11,0,0
+Tsuga mertensiana,association,7,1,0,4,16,5,0,4,12
+Tsuga mertensiana / Phyllodoce empetriformis,association,0,0,0,0,1,0,0,0,0
+Tsuga mertensiana – Pinus contorta ssp. murrayana,association,0,0,0,0,0,0,4,0,0
+Tsuga mertensiana – Pinus contorta ssp. murrayana – Pinus monticola,association,0,0,0,0,3,0,2,0,0
+Tsuga mertensiana – Pinus monticola,association,1,0,0,6,15,5,2,6,7
+"Typha (latifolia, angustifolia)",association,9,0,0,0,30,9,5,4,9
+Typha angustifolia – Typha latifolia – Typha domingensis,association,0,1,0,0,18,3,1,0,1
+Typha angustifolia – Typha latifolia – Typha domingensis / Distichlis spicata,association,0,0,0,0,2,0,0,0,0
+Typha angustifolia – Typha latifolia – Typha domingensis / Echinochloa crus-galli,association,0,0,0,0,2,0,0,0,0
+Typha angustifolia – Typha latifolia – Typha domingensis / Phragmites australis,association,0,0,0,0,2,0,0,0,0
+Typha angustifolia – Typha latifolia – Typha domingensis / Schoenoplectus americanus,association,0,0,0,0,3,0,0,0,0
+Typha domingensis,association,3,1,0,0,21,1,3,1,4
+Ulex europaeus,association,0,0,0,0,2,1,0,3,0
+Umbellularia californica,association,33,2,1,0,47,4,3,3,36
+Umbellularia californica / Ceanothus oliganthus,association,0,0,0,0,4,0,0,1,0
+Umbellularia californica / Polystichum munitum,association,12,1,0,0,26,1,0,26,13
+Umbellularia californica / Rhododendron occidentale,association,3,0,0,0,6,0,0,0,3
+Umbellularia californica / Toxicodendron diversilobum,association,6,1,0,0,6,1,0,0,7
+Umbellularia californica – Acer macrophyllum,association,28,0,1,0,37,0,1,2,29
+Umbellularia californica – Juglans californica / Ceanothus spinosus,association,0,0,0,0,13,0,0,17,0
+Umbellularia californica – Notholithocarpus densiflorus,association,4,0,0,0,9,0,0,5,4
+Umbellularia californica – Platanus racemosa,association,4,0,1,0,15,0,2,6,5
+Umbellularia californica – Quercus agrifolia / Toxicodendron diversilobum,association,55,0,1,0,81,0,4,29,56
+Umbellularia californica – Quercus wislizeni,association,8,0,0,1,12,4,4,5,9
+Vaccinium cespitosum – Carex filifolia,association,0,0,0,0,3,0,0,0,0
+Vaccinium cespitosum – Carex nigricans,association,0,0,0,0,3,1,0,0,0
+Venegasia carpesioides,association,0,0,0,0,1,0,0,0,0
+Ventenata dubia,association,1,6,5,0,2,12,6,0,12
+Veratrum californicum,association,2,0,0,1,2,0,0,1,3
+Veratrum californicum – Senecio triangularis,association,4,0,0,0,6,0,3,0,4
+Viguiera parishii,association,0,0,0,0,3,1,0,0,0
+Viguiera parishii – Agave deserti,association,0,0,0,0,1,1,0,0,0
+Viguiera parishii – Eriogonum fasciculatum,association,0,0,0,0,8,2,1,0,0
+Viguiera reticulata,association,0,0,0,0,0,1,0,0,0
+Viola pedunculata – (Eschscholzia californica – Nassella pulchra),association,3,1,0,0,10,1,0,0,4
+Vitis californica,association,1,0,0,0,10,7,7,23,1
+Vitis girdiana,association,0,0,0,0,1,0,0,0,0
+Vulpia microstachys,association,0,0,0,0,7,5,3,0,0
+Vulpia microstachys – Elymus elymoides – Achnatherum lemmonii,association,0,0,0,0,1,7,0,0,0
+Vulpia microstachys – Lasthenia californica – Agrostis elliottiana,association,0,0,0,0,0,0,7,0,0
+Vulpia microstachys – Navarretia tagetina,association,1,0,0,0,7,21,15,0,1
+Vulpia microstachys – Plantago erecta,association,4,0,0,0,20,11,11,1,4
+"Vulpia microstachys – Plantago erecta – Calycadenia (truncata, multiglandulosa)",association,15,2,0,0,21,2,0,0,17
+Vulpia microstachys – Sedella pumila – Lasthenia californica,association,0,0,0,0,8,11,4,0,0
+Vulpia microstachys – Selaginella hansenii,association,0,0,0,0,9,28,29,1,0
+Vulpia microstachys – Selaginella hansenii – Lupinus nanus,association,0,0,0,0,0,1,0,0,0
+Washingtonia filifera – Platanus racemosa / Salix spp.,association,0,0,0,0,0,0,2,0,0
+Wyethia mollis – Balsamorhiza sagittata,association,1,1,2,17,1,2,5,17,21
+Xanthium strumarium,association,8,1,0,0,15,8,6,0,9
+Yucca brevifolia / (Yucca baccata) / Pleuraphis jamesii – Bouteloua eriopoda,association,1,0,0,0,29,0,0,0,1
+Yucca brevifolia / Coleogyne ramosissima,association,0,0,1,0,9,10,2,0,1
+Yucca brevifolia / Cylindropuntia acanthocarpa,association,0,0,0,0,10,0,2,0,0
+Yucca brevifolia / Juniperus californica / Ephedra nevadensis,association,1,0,0,0,1,0,0,0,1
+Yucca brevifolia / Larrea tridentata – Yucca schidigera / Pleuraphis rigida,association,2,0,0,0,10,4,1,0,2
+Yucca brevifolia / Lycium andersonii – Ephedra nevadensis,association,0,0,0,0,11,3,4,0,0
+Yucca schidigera – Coleogyne ramosissima,association,0,0,0,0,7,3,0,0,0
+Yucca schidigera – Cylindropuntia acanthocarpa,association,0,0,0,0,0,1,0,0,0
+Yucca schidigera – Eriogonum fasciculatum,association,1,0,0,0,3,0,4,0,1
+Yucca schidigera – Larrea tridentata – Agave deserti,association,0,0,0,0,0,1,0,0,0
+Yucca schidigera – Larrea tridentata – Ambrosia dumosa,association,0,0,0,0,2,1,5,0,0
+Yucca schidigera – Larrea tridentata – Ephedra nevadensis,association,3,0,0,0,3,3,9,0,3
+Zigadenus fremontii – Lolium perenne,association,0,0,0,0,0,5,2,0,0

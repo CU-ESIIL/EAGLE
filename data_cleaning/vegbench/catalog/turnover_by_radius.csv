@@ -1,0 +1,4 @@
+radius_m,n_pairs,n_surveys,formation_class,formation_subclass,formation,division,macrogroup,group,alliance,association
+1.000,243,410,0.967,0.909,0.864,0.864,0.856,0.786,0.765,0.733
+5.000,549,747,0.974,0.896,0.858,0.854,0.847,0.766,0.729,0.645
+10.000,661,865,0.970,0.888,0.848,0.844,0.836,0.764,0.720,0.640

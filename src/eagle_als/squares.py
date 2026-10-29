@@ -35,6 +35,7 @@ EVAL_SITES = [
     ("datasets/butterflies/species_observations_als_available.parquet", "lat", "lon"),
     ("datasets/OFO_trees/plots_w_als_als_available.parquet", "plot_lat", "plot_lon"),
     ("datasets/NLCD_eval/nlcd_lidar_eval.parquet", "lat", "lon"),  # in-training validation task (since 2026-10-08)
+    ("datasets/SATBIRD_eval/location_occupancy.parquet", "lat", "lon"),
 ]
 
 

@@ -1,0 +1,9 @@
+level,n_rows_labeled,n_classes_full_benchmark,n_classes,classes_in_train,classes_in_val,classes_in_test/strat,classes_in_test/acc,test_classes_not_in_train,rows_of_those,classes_ge20_train_and_each_test,rows_in_those,classes_ge20_train_and_ge20_test_total,rows_in_those_loose
+formation_class,10372,6,6,6,5,5,5,0,0,3,10277,3,10277
+formation_subclass,10372,10,10,9,9,8,7,0,0,4,10104,5,10277
+formation,10372,17,17,16,16,15,14,0,0,9,9665,11,10252
+division,10372,22,22,21,21,20,19,0,0,12,9596,16,10252
+macrogroup,10372,41,40,39,37,34,35,0,0,14,8081,27,10053
+group,10372,86,82,80,67,65,70,1,1,7,3438,41,9300
+alliance,10455,387,297,282,180,169,185,13,35,2,332,33,4296
+association,6772,1598,831,728,304,265,187,71,174,0,0,0,0

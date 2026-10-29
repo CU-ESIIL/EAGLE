@@ -41,6 +41,7 @@ leafmap = ">=0.63.1,<0.64"
 
 [pypi-dependencies]
 waxwing = ">=0.1.1, <0.2"
+birdnames = ">=0.1.3, <0.2"
 
 [environments.goldendoodle.dependencies]
 pystac-client = ">=0.9.0,<0.10"

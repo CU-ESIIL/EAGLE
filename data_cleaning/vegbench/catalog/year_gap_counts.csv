@@ -1,0 +1,9 @@
+step,n_surveys
+all surveys,42393
+covered by a 3DEP footprint with a collection year,37380
+|collection year - survey year| <= 0,2477
+|collection year - survey year| <= 1,6721
+|collection year - survey year| <= 2,8723
+|collection year - survey year| <= 3,10455
+|collection year - survey year| <= 4,11687
+|collection year - survey year| <= 5,13462

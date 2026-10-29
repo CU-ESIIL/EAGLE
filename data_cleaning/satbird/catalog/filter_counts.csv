@@ -1,0 +1,7 @@
+step,n_hotspots,dropped
+1. hotspots with SatBird targets,122593,0
+2. still a public eBird hotspot (coordinates from the eBird API),55399,67194
+3. valid coordinates,55399,0
+4. not moved > 100 m since 2023 (where checkable),54142,1257
+5. covered by a 3DEP footprint with a collection year,48256,5886
+6. 3DEP collection year inside the label years 2010-2023,48048,208
