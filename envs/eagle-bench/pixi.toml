@@ -1,0 +1,27 @@
+# CPU environment for the benchmark suite on CyVerse: lidar cookie fetching (PDAL), AlphaEarth extraction,
+# probes and lidar metrics. GPU work (ForPT embeddings) uses the uv venv described in CLAUDE.md.
+#   pixi install --manifest-path envs/eagle-bench/pixi.toml
+#   pixi run --manifest-path envs/eagle-bench/pixi.toml python ...      (or: .pixi/envs/default/bin/python)
+[workspace]
+channels = ["conda-forge"]
+name = "eagle-bench"
+platforms = ["linux-64", "osx-arm64"]
+
+[dependencies]
+python = "3.12.*"
+python-pdal = ">=3.5,<4"
+pdal = "*"
+gdal = "*"
+rasterio = "*"
+pyproj = "*"
+shapely = "*"
+geopandas = "*"
+pandas = "*"
+pyarrow = "*"
+numpy = "*"
+scipy = "*"
+scikit-learn = "*"
+joblib = "*"
+tabulate = "*"
+pyyaml = "*"
+earthengine-api = "*"
