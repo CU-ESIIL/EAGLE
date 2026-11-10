@@ -4,8 +4,23 @@ Scores frozen embeddings with a linear probe on the whole benchmark suite, as a 
 encoder. First baseline: **AlphaEarth Foundations (AEF) annual embeddings** (64-d, 10 m, 2017-2025). Reusable
 code is in `src/eagle_bench/` (see its README); scripts here only wire it together.
 
-**Status (2026-10-29): code written and tested locally on synthetic embeddings and a 2-point real extraction; the
-full extraction has NOT been run.** It reads about 1 TB, so it is handed off to Bridges-2.
+**Status (2026-11-10): done for all 15 tasks, centre pixel, through Google Earth Engine** (results in
+`results/alphaearth_center/`). The COG route below was only run for NLCD (`results/alphaearth/`, disc and centre).
+
+### Earth Engine route (recommended)
+
+The COGs are band-interleaved: each of the 64 bands is a separate ~0.5 MB zstd block of 1024 x 1024 px, so one
+pixel's vector costs ~32 MB and the whole suite ~1.07 TB (33,464 blocks, ~5 h at the 2 blocks/s measured on
+CyVerse). Earth Engine returns only the sampled pixels: all 95,410 points in ~7 min.
+
+    earthengine authenticate --auth_mode=notebook        # once per machine
+    python scripts/baseline_eval/01_extract_aef_ee.py --project eagle-lidar
+    python scripts/baseline_eval/02_linear_probe.py --points datasets/raw/aef/points_ee --pooling center \
+        --model alphaearth_center --n-jobs 4
+
+Validated against the COG extraction: cosine similarity median 1.000 over the 892 NLCD points (5th percentile
+0.988), same image year for every point, which also settles the orientation check below. No point was masked
+and none needed a year other than its (clipped) survey year.
 
 ## Tasks (16 entries, 10 datasets)
 

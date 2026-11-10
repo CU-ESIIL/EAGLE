@@ -1,0 +1,47 @@
+task,pooling,min_count,target,n_train,n_test,f1
+nlcd,disc,20,Cultivated Crops,46,46,0.7755102040816326
+nlcd,disc,20,Deciduous Forest,36,29,0.7692307692307693
+nlcd,disc,20,"Developed, Open Space",49,40,0.7692307692307693
+nlcd,disc,20,Emergent Herbaceous Wetlands,21,31,0.7666666666666667
+nlcd,disc,20,Evergreen Forest,47,53,0.7962962962962963
+nlcd,disc,20,Grassland/Herbaceous,43,57,0.6542056074766355
+nlcd,disc,20,Pasture/Hay,23,24,0.4482758620689655
+nlcd,disc,20,Shrub/Scrub,54,46,0.6593406593406593
+nlcd,disc,1,Barren Land,24,8,0.26666666666666666
+nlcd,disc,1,Cultivated Crops,46,46,0.8041237113402062
+nlcd,disc,1,Deciduous Forest,36,29,0.5245901639344263
+nlcd,disc,1,"Developed, High Intensity",18,11,0.5517241379310345
+nlcd,disc,1,"Developed, Low Intensity",14,19,0.3333333333333333
+nlcd,disc,1,"Developed, Medium Intensity",19,20,0.5581395348837209
+nlcd,disc,1,"Developed, Open Space",49,40,0.2127659574468085
+nlcd,disc,1,Emergent Herbaceous Wetlands,21,31,0.39215686274509803
+nlcd,disc,1,Evergreen Forest,47,53,0.7636363636363637
+nlcd,disc,1,Grassland/Herbaceous,43,57,0.5510204081632653
+nlcd,disc,1,Mixed Forest,16,27,0.37735849056603776
+nlcd,disc,1,Open Water,14,19,0.7441860465116279
+nlcd,disc,1,Pasture/Hay,23,24,0.49122807017543857
+nlcd,disc,1,Shrub/Scrub,54,46,0.5609756097560976
+nlcd,disc,1,Woody Wetlands,19,18,0.4745762711864407
+nlcd,center,20,Cultivated Crops,46,46,0.8247422680412371
+nlcd,center,20,Deciduous Forest,36,29,0.8070175438596491
+nlcd,center,20,"Developed, Open Space",49,40,0.7792207792207793
+nlcd,center,20,Emergent Herbaceous Wetlands,21,31,0.7878787878787878
+nlcd,center,20,Evergreen Forest,47,53,0.8376068376068376
+nlcd,center,20,Grassland/Herbaceous,43,57,0.6538461538461539
+nlcd,center,20,Pasture/Hay,23,24,0.6415094339622641
+nlcd,center,20,Shrub/Scrub,54,46,0.6419753086419753
+nlcd,center,1,Barren Land,24,8,0.3888888888888889
+nlcd,center,1,Cultivated Crops,46,46,0.8210526315789474
+nlcd,center,1,Deciduous Forest,36,29,0.5538461538461539
+nlcd,center,1,"Developed, High Intensity",18,11,0.5517241379310345
+nlcd,center,1,"Developed, Low Intensity",14,19,0.3333333333333333
+nlcd,center,1,"Developed, Medium Intensity",19,20,0.5
+nlcd,center,1,"Developed, Open Space",49,40,0.2127659574468085
+nlcd,center,1,Emergent Herbaceous Wetlands,21,31,0.44
+nlcd,center,1,Evergreen Forest,47,53,0.7678571428571429
+nlcd,center,1,Grassland/Herbaceous,43,57,0.5510204081632653
+nlcd,center,1,Mixed Forest,16,27,0.36363636363636365
+nlcd,center,1,Open Water,14,19,0.7619047619047619
+nlcd,center,1,Pasture/Hay,23,24,0.5454545454545454
+nlcd,center,1,Shrub/Scrub,54,46,0.5121951219512195
+nlcd,center,1,Woody Wetlands,19,18,0.4642857142857143

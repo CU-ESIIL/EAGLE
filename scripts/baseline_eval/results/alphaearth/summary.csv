@@ -1,0 +1,5 @@
+n_classes,n_classes_total,C,chance,bal_acc,macro_f1,acc,test_rows_scored_frac,task,min_count,kind,n_train,n_test,n_no_embedding,n_dim,pooling,frac_year_clipped,description
+8,15,0.1,0.125,0.7033592543691156,0.7048446042990493,0.7116564417177914,0.7260579064587973,nlcd,20,multiclass,443,449,0,64,disc,0.18721973094170405,"NLCD 2021 reference land cover (Level II), class-balanced subset"
+15,15,0.01,0.06666666666666667,0.5553277904240104,0.5070987752184376,0.5491071428571429,0.9977728285077951,nlcd,1,multiclass,443,449,0,64,disc,0.18721973094170405,"NLCD 2021 reference land cover (Level II), class-balanced subset"
+8,15,0.01,0.125,0.7557435747101463,0.7467246391322105,0.7515337423312883,0.7260579064587973,nlcd,20,multiclass,443,449,0,64,center,0.18721973094170405,"NLCD 2021 reference land cover (Level II), class-balanced subset"
+15,15,0.01,0.06666666666666667,0.5776673089293428,0.517864344085212,0.5558035714285714,0.9977728285077951,nlcd,1,multiclass,443,449,0,64,center,0.18721973094170405,"NLCD 2021 reference land cover (Level II), class-balanced subset"

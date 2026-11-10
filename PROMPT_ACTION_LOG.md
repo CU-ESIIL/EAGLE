@@ -761,3 +761,18 @@ Remove the ingestion workflow that matched eBird hotspots from partial data; use
 - Output `datasets/SATBIRD_USA_winter_eval/`; registry entry `satbird_winter`; task `satbird_occupancy` renamed `satbird_winter_occupancy` (train + test only). READMEs updated (satbird, dataset, baseline_eval, ingestion doc example).
 - Removed the stale SatBird files: `datasets/SATBIRD_eval/` (old summer table, recoverable from git), the old raw eBird/pickle/companion-split files, and `view_satbird.ipynb`.
 - Not done: summer run pending the HF upload; cookie cache not built.
+
+## 2026-11-10 - AlphaEarth baseline via Earth Engine (centre pixel), all tasks
+
+### Prompt
+
+Check the status of the baseline-evaluation machinery and run the AlphaEarth baseline; cache data under the shared benchmarking folder; use the centre pixel only; use Earth Engine (project `eagle-lidar`) instead of downloading COG blocks.
+
+### Actions
+
+- Environment (CyVerse, 4-CPU cgroup quota): uv venv `/home/jovyan/envs/eagle-bench` (rasterio, pyproj, geopandas, scikit-learn, tabulate, earthengine-api). `datasets/raw/aef` is a symlink to `/home/jovyan/data-store/data/iplant/home/shared/esiil/als/benchmarking/aef`.
+- COG route checked on NLCD (892 points, 7.5 min at ~2 blocks/s). The COGs are band-interleaved 1024x1024 zstd blocks (~0.5 MB per band), so one pixel's 64-d vector costs ~32 MB; the full suite is 33,464 blocks (~1.07 TB, est. 4.5-5 h), the same for centre or disc.
+- New `src/eagle_bench/aef_ee.py` and `scripts/baseline_eval/01_extract_aef_ee.py`: centre-pixel sampling through Earth Engine (`GOOGLE/SATELLITE_EMBEDDING/V1/ANNUAL`, year mosaic, `sampleRegions` at 10 m, nearest-year fallback), same shard format (c00..c63). All 95,410 points in ~7 min; none missing, none needed another year.
+- Orientation check (open item in the baseline README) done: EE vs COG centre pixel cosine 1.000 median over 892 NLCD points (5th percentile 0.988); same year for all.
+- Probes: `02_linear_probe.py --points datasets/raw/aef/points_ee --pooling center --model alphaearth_center --n-jobs 4`; results in `scripts/baseline_eval/results/alphaearth_center/`. Headlines (min_count=20): NLCD bal. acc. 0.751; VegBench formation 0.517, group 0.351; LFRDB ecosys 0.564; NPS VMI group 0.566; BBS AUROC 0.884; SatBird AUROC 0.932; SnapShot 0.803; butterflies 0.662; BLM AIM mean R2 0.511; OFO 0.266.
+- Partial COG-route results (NLCD, disc and centre) are in `results/alphaearth/`.
