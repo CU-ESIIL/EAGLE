@@ -1,0 +1,124 @@
+# Registry of evaluation tables: one entry per table, the single place that says where it is and what its
+# columns are called. Read by eagle_als.registry, which feeds
+#   - eagle_als.squares.EVAL_SITES (pre-training never samples within 500 m of any table listed here),
+#   - eagle_bench.tasks (benchmark loaders take paths and column names from here),
+#   - scripts/validate_datasets.py (health report; warns, never blocks).
+# A new dataset is added by adding one entry. Paths are relative to the repo root.
+#
+# Fields
+#   path        evaluation table (.parquet or .gpkg)
+#   lat, lon    WGS84 decimal-degree columns (the protocol name is lat / lon; list the real name until renamed)
+#   year        survey year column (omit if the table has none)
+#   id          the dataset's own row id (omit if none)
+#   als_id      cookie id column, default als_site_id
+#   split       how the train/test split is stored:
+#                 {col: test_split, test: true}                     bool column, True = test
+#                 {col: split, test: test}                          string column, value (or list of values) = test
+#   source_crs  CRS of the raw coordinates, and crs_status:
+#                 verified = read from the file or the data provider's documentation (cite it in the dataset README)
+#                 assumed  = plain lat/lon columns taken to be WGS84 without a documented datum; confirm and update
+#   notes       anything a user of the table must know
+
+nlcd:
+  path: datasets/NLCD_eval/nlcd_lidar_eval.parquet
+  lat: lat
+  lon: lon
+  year: year
+  id: point_id
+  split: {col: test_split, test: true}
+  source_crs: "EPSG:5070 (Albers, WGS84 datum), read from AA2021F.prj"
+  crs_status: verified
+  notes: use balanced_subset == True for the benchmark task
+
+lfrdb:
+  path: datasets/LFRDB_eval/lfrdb_eval.parquet
+  lat: lat
+  lon: lon
+  year: year
+  id: plot_id
+  split: {col: test_split, test: true}
+  source_crs: "lat/lon columns of the regional Access databases"
+  crs_status: assumed
+
+nps_vmi:
+  path: datasets/NPS_VMI/vmi_classification_task.parquet
+  lat: latitude
+  lon: longitude
+  year: year
+  id: event_key
+  split: {col: test_split, test: true}
+  source_crs: "UTM zone + datum recorded per plot (NAD83 or WGS84), converted in data_cleaning/nps_vmi/coords.py"
+  crs_status: verified
+  notes: plots whose coordinates were repaired are flagged in vmi_core_events.parquet (location_accuracy_flag)
+
+vegbench:
+  path: datasets/VegBench_eval/vegbench_eval.parquet
+  lat: lat
+  lon: lon
+  year: year
+  id: survey_point_id
+  split: {col: test_split, test: true}
+  source_crs: "EPSG:4326 per VegBench DATACARD (also EPSG:3310 x/y)"
+  crs_status: verified
+  notes: published split kept in split / test_type (train, val, test acc / strat); test_split is True for both test sets, False for train and val
+
+snapshot_usa:
+  path: datasets/SNAPSHOT_USA_eval/location_occupancy.parquet
+  lat: lat
+  lon: lon
+  year: first_year
+  id: location_id
+  split: {col: test_split, test: true}
+  source_crs: "lat/lon columns of the SnapShot USA deployment table"
+  crs_status: assumed
+  notes: place-level table; year is the first deployment year, year_diff_AWS_max is the largest gap
+
+satbird:
+  path: datasets/SATBIRD_eval/location_occupancy.parquet
+  lat: lat
+  lon: lon
+  year: year
+  id: hotspot_id
+  split: {col: test_split, test: true}
+  source_crs: "eBird hotspot lat/lon (eBird API)"
+  crs_status: assumed
+  notes: labels pool 2010-2023 checklists; year is a reference only
+
+bbs:
+  path: datasets/BBS/BBS_train_test_als_available.parquet
+  lat: Latitude
+  lon: Longitude
+  year: Year
+  id: RouteDataID
+  split: {col: test_split, test: true}
+  source_crs: "Latitude/Longitude of Routes.csv (BBS route start)"
+  crs_status: assumed
+
+butterflies:
+  path: datasets/butterflies/species_observations_als_available.parquet
+  lat: lat
+  lon: lon
+  year: year
+  split: {col: test_split, test: true}
+  source_crs: "lat/lon of the butterfly data paper tables"
+  crs_status: assumed
+  notes: long table (one row per site visit and species); site key is EAGLE_site_index
+
+ofo_trees:
+  path: datasets/OFO_trees/plots_w_als.parquet
+  lat: plot_lat
+  lon: plot_lon
+  year: survey_year
+  id: plot_id
+  split: {col: test_split, test: true}
+  source_crs: "EPSG:4326, read from ofo_ground-reference_plots.gpkg"
+  crs_status: verified
+
+blm_aim:
+  path: datasets/BLM_AIM/BLM_AIM_plots.gpkg
+  lat: Latitude_WGS84
+  lon: Longitude_WGS84
+  year: Year
+  split: {col: test_split, test: true}
+  source_crs: "EPSG:4269 (NAD83) geometry of I_Indicators, reprojected to EPSG:4326"
+  crs_status: verified

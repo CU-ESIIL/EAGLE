@@ -358,3 +358,11 @@ column). The per-cell features from step 2 can also be used directly for maps at
   `LabeledCookieDataset`, and add its site table to `squares.EVAL_SITES` so pre-training avoids it.
 - **A new data source for pre-training:** produce the cookie dict above, and the transforms, model
   and trainer work unchanged.
+
+## Dataset ingestion helpers
+
+Used by `data_cleaning/` (protocol: `data_cleaning/DATASET_INGESTION.md`): `crs.py` (read the source CRS, convert to
+WGS84, coordinate sanity checks), `match.py` (`match_3dep`: closest-in-time 3DEP product, year-gap table, cookie id),
+`splits.py` (`spatial_split`: stable hash-of-block train/test split), `registry.py` (reads `datasets/registry.yaml`:
+table paths and column names, shared by `squares.EVAL_SITES` and `eagle_bench.tasks`). Health report:
+`python scripts/validate_datasets.py`.

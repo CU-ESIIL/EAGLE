@@ -4,15 +4,14 @@ Primary evaluation column: `ecosys` (LANDFIRE/NatureServe Ecological System). Ro
 null or an 'Unclassified ...' fallback (a lifeform bucket, not a habitat type) are dropped.
 Structure columns (cover, height) are NOT used to drop rows; they stay null where not recorded.
 
-Split: ~50% of rows held out, assigned by 0.1-degree lat/lon blocks (spatial hold-out; plots
-from one survey sit close together, so a random plot split would leak). Blocks are shuffled with
-SEED (same seed as the BBS and butterfly splits) and added to the test set while that moves the
-test share closer to 50%.
+Split: eagle_als.splits.spatial_split (protocol defaults: 0.25-degree lat/lon blocks, about 50% test, stable;
+plots from one survey sit close together, so a random plot split would leak).
 
 Reads datasets/raw/LFRDB/derived/lfrdb_gps_als_matched.parquet (stage 3).
 Writes datasets/LFRDB_eval/lfrdb_eval.parquet, figures/05_split_*.png,
 catalog/filter_counts.csv and ecosys_split_counts.csv (plots per class and split).
 """
+import sys
 from pathlib import Path
 
 import matplotlib
@@ -23,11 +22,11 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "src"))
+from eagle_als.splits import spatial_split  # noqa: E402
 SRC = ROOT / "datasets/raw/LFRDB/derived/lfrdb_gps_als_matched.parquet"
 OUT = ROOT / "datasets/LFRDB_eval"
 CAT = Path(__file__).parent / "catalog"
-SEED = 20260909
-TEST_FRACTION = 0.5
 MIN_PER_SPLIT = 20  # for the "usable classes" count in the summary only
 
 COLUMNS = [
@@ -40,19 +39,6 @@ COLUMNS = [
     "product_name_AWS", "collection_year_AWS", "year_diff_AWS", "als_site_id", "test_split",
 ]
 
-
-def spatial_split(d):
-    block = (np.floor(d.lat)*10).astype(int) * 1000 + (np.floor(d.lon)*10).astype(int)
-    sizes = block.value_counts()
-    order = np.sort(sizes.index.to_numpy())  # sorted, writable, so the shuffle depends only on SEED
-    np.random.default_rng(SEED).shuffle(order)
-    target = TEST_FRACTION * len(d)
-    test, n = set(), 0
-    for b in order:
-        if abs(n + sizes[b] - target) < abs(n - target):
-            test.add(b)
-            n += sizes[b]
-    return block.isin(test)
 
 
 def main():
@@ -69,7 +55,8 @@ def main():
     fc.to_csv(CAT / "filter_counts.csv", index=False)
 
     d = d.copy()
-    d["test_split"] = spatial_split(d).values
+    d["test_split"], _ = spatial_split(d)
+    d["test_split"] = d["test_split"].to_numpy()
     d = d[COLUMNS].sort_values("plot_id").reset_index(drop=True)
     OUT.mkdir(exist_ok=True)
     d.to_parquet(OUT / "lfrdb_eval.parquet", index=False)
@@ -92,7 +79,7 @@ def main():
     for flag, color, name in [(False, "#1565c0", "train"), (True, "#c62828", "test")]:
         g = d[(d.test_split == flag) & d.lon.between(-126, -66) & d.lat.between(24, 50)]
         ax.scatter(g.lon, g.lat, s=4, alpha=0.6, color=color, label=f"{name} ({int((d.test_split == flag).sum())} total)")
-    ax.set_title("Train/test split by 0.1-degree block (CONUS shown)", fontsize=9)
+    ax.set_title("Train/test split by 0.25-degree block (CONUS shown)", fontsize=9)
     ax.set_xlabel("lon")
     ax.set_ylabel("lat")
     ax.legend(fontsize=8, markerscale=2)

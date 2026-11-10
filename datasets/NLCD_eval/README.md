@@ -28,7 +28,7 @@ Labels are **reference labels, not the modeled NLCD map**: the NLCD 2021 accurac
 | `label_source` | `NLCD2021_AA_reference` for every row |
 | `product_name_AWS`, `collection_year_AWS`, `year_diff_AWS` | same meaning as in the other datasets: the 3DEP project containing the point whose collection year is closest to `year`, its year, and the absolute gap in years (always 0 here) |
 | `als_site_id` | `<product>__<lat>_<lon>`, as built by `eagle_als.sites.add_site_ids` |
-| `test_split` | `True` for about 25% of rows, assigned by whole 1-degree lat/lon blocks (spatial hold-out) |
+| `test_split` | `True` for about 50% of rows (0.506), assigned by whole 0.25-degree lat/lon blocks (`eagle_als.splits.spatial_split`, a stable hash of the block id) |
 | `balanced_subset` | `True` for the class-balanced evaluation subset (see below) |
 
 ## Class-balanced subset

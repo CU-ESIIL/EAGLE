@@ -1,6 +1,7 @@
 """Match VegBench surveys (California vegetation plots, NVC labels) to the 3DEP lidar (ALS) product closest in time.
 
-VegBench ships its own train/val/test split (`split`, `test_type`), which is kept unchanged.
+VegBench ships its own train/val/test split (`split`, `test_type`), which is kept unchanged. `test_split` (bool) is
+added for the shared protocol: True for both test sets (acc, strat), False for train and val.
 
 Steps (counts go to catalog/):
   1. read benchmark_splits/VegBench/VegBench.csv (42,393 surveys; survey year from SurveyDate)
@@ -35,7 +36,7 @@ MAX_REPORT = 5
 
 KEEP = [
     "survey_point_id", "source_survey_id", "ProjectCode", "SurveyType", "SurveyDate", "year", "lat", "lon",
-    "split", "test_type", "holdout_reason", "proximity_component_id",
+    "split", "test_type", "test_split", "holdout_reason", "proximity_component_id",
     # NVC hierarchy, coarsest to finest
     "survey_formation_class", "survey_formation_subclass", "survey_formation", "survey_division",
     "survey_macrogroup", "survey_group", "survey_alliance", "survey_alliance_ca_code",
@@ -54,6 +55,7 @@ def main():
     d = d.rename(columns={"latitude": "lat", "longitude": "lon"})
     d["year"] = pd.to_datetime(d.SurveyDate, utc=True).dt.year.astype(int)
     d["split"] = d.split.astype(str)
+    d["test_split"] = d.split == "test"
 
     keys = d[["lat", "lon", "year"]].drop_duplicates()
     res = []

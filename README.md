@@ -149,8 +149,8 @@ eval_tasks = [dict(type="classification", name="nlcd", table="datasets/NLCD_eval
 cookies are dropped. Rank 0 embeds every cookie (one fixed view: 8 pts/m², central 50 m disc, no
 augmentation, mean of the up-cast point features) and fits logistic regression and cosine kNN. In
 TensorBoard, `eval/<name>/` holds balanced accuracy and macro F1 of each probe, and `eval_<name>/`
-holds the F1 of each class. Keep a task to roughly 2,000 cookies or fewer. Its sites must be listed in
-`squares.EVAL_SITES`, so pre-training never sees them. To add a new kind of task, subclass `EvalTask`
+holds the F1 of each class. Keep a task to roughly 2,000 cookies or fewer. Its table must be listed in
+`datasets/registry.yaml` (which `squares.EVAL_SITES` reads), so pre-training never sees its sites. To add a new kind of task, subclass `EvalTask`
 and register it (see the docstring of `evaluation.py`). To score the saved checkpoints of an earlier
 run, use `python scripts/litePT/eval_checkpoints.py $EAGLE_SCRATCH/runs/<run_name> --init --tb` on a GPU.
 

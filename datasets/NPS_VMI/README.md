@@ -9,6 +9,7 @@ Vegetation classification and accuracy-assessment (AA) plots from the NPS VMI pr
 | `vmi_core_events.parquet` | ~76k | one row per plot / accuracy-assessment (AA) point visit, all harmonized families. ALS-matching columns come first (see below), then NVC resolution, then raw coordinates and `qa_flags` |
 | `vmi_core_species.parquet` | ~700k | species x stratum records: event_key, species_name, plants_symbol, tsn, stratum, cover_code, `cover_pct`, `cover_pct_source`, qa_flags (plots only; the v3 AA points have no species lists) |
 | `vmi_plot_events.parquet`, `vmi_plot_species.parquet` | | richer PLOTS v3/v4-schema-only tables (all original tPlots/tPlotEvents columns incl. ground cover, strata heights) |
+| `vmi_classification_task.parquet` | 6,264 | **the evaluation table**: one row per plot visit with a community name, coordinates as recorded or repaired, and 3DEP lidar collected within 3 years of the visit (gaps 0/1/2/3: 1,149 / 693 / 2,451 / 1,971). NVC `nvc_macrogroup`, `nvc_group`, `nvc_division` labels (82 macrogroups, 151 groups, 32 divisions), `product_name_AWS`, `collection_year_AWS`, `year_diff_AWS`, `als_site_id`, and `test_split` (True for 43.5%; whole 0.25-degree blocks, `eagle_als.splits.spatial_split`) |
 
 Join species to events with `event_key`.
 

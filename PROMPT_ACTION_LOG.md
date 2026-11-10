@@ -673,3 +673,77 @@ Evaluate lidar embedding models and alternative representations (AlphaEarth firs
 - Added `src/eagle_bench/` (`tasks.py`: 16 task loaders on the stored spatial splits; `aef.py`: AlphaEarth COG reader from Source Cooperative with nearest-year fallback; `probes.py`: logistic / ridge linear probes) and its README.
 - Added `scripts/baseline_eval/` (`01_extract_aef.py` resumable extraction, `02_linear_probe.py`, `extract_aef.sbatch`, `README.md` with the handoff steps and checks).
 - Measured: 93,971 unique points need ~33,400 COG blocks (~1 TB read, ~100 MB kept); too heavy for a laptop, so the full extraction was not run. Tested the probes on random embeddings (chance-level scores) and the reader on 2 real points (unit norm, 81 valid pixels). No probe results yet.
+
+## 2026-10-29 - Unify data cleaning: plan, NPS VMI gap, eval-site exclusion, one table per dataset
+
+### Prompt
+
+Review data_cleaning/* against DATASET_INGESTION.md and propose changes to unify cleaning and output formats. Then: set NPS VMI to year_diff <= 3, add eval sites to avoid pretraining leakage, publish only full class tables (no "-20" copies) and compare "all" vs ">= 20 samples" in the evaluation workflow; splits need not be stable except for datasets with a published split (VegBench keeps `split`/`test_type` and always gets bool `test_split`: True for both test types, False for train and val). SatBird is being reworked separately.
+
+### Actions
+
+- `data_cleaning/nps_vmi/07_filter_split.py`: `year_diff_AWS < 3` -> `<= 3`; reran: 4,293 -> 6,264 plots (gaps 0/1/2/3 = 1,149/693/2,451/1,971), still ~50% test, 151 groups / 82 macrogroups.
+- `src/eagle_als/squares.py`: `EVAL_SITES` now also lists LFRDB, SnapShot USA, NPS VMI and VegBench (pretraining squares are redrawn if within 500 m of them; earlier scratch runs are not reproducible).
+- `eagle_bench.probes.evaluate(..., min_count=)` and `02_linear_probe.py --min-counts` (default 20 and 1) give both class-set scenarios from one table; `tasks.py` loads `SNAPSHOT_USA_eval` and `SATBIRD_eval` only (`satbird_occupancy_20` removed). Checked on random embeddings: SnapShot 159/39 species, SatBird 618/537, NPS group 86/19 classes (all/>=20).
+- `DATASET_INGESTION.md`: replaced "all/-20 variants" with the single-table rule, added the published-split rule. Not done yet: delete the `-20` folders, shared `match_3dep`/`spatial_split` helpers, column renames, registry, VegBench `test_split`, notebook-to-script conversions.
+
+## 2026-10-29 - Shared ingestion helpers, dataset registry, CRS policy, stable splits
+
+### Prompt
+
+Splits must be stable once the ingestion protocol is final. Build the shared helpers and the registry. Also add coordinate reference system handling to the protocol: check the raw CRS rather than guess, and standardize the output CRS.
+
+### Actions
+
+- Added `src/eagle_als/crs.py` (`source_crs`, `to_wgs84` with no default CRS, `check_lonlat`, `candidate_crs`; output WGS84), `match.py` (`match_3dep`, `apply_year_gap`, `gap_counts`; checked against 150 stored LFRDB rows: identical product, years and site ids), `splits.py` (`spatial_split`: block hash + seed, so a row's side never depends on other rows; checked stable under dropping and shuffling rows; default 0.25 degree blocks because 1 degree gave 0.29-0.76 test shares on NPS/LFRDB) and `registry.py` with `datasets/registry.yaml` (10 tables, source CRS and verified/assumed status).
+- `squares.EVAL_SITES` now comes from the registry. It also adds BLM AIM, which had never been excluded (reads GeoPackages via `sites.read_table`). `eagle_bench/tasks.py` takes paths and columns from the registry; all 15 tasks load frames identical to before the refactor (hash comparison); OFO now reads the GeoPackage.
+- Added `scripts/validate_datasets.py` (warnings only). First run: NPS VMI, OFO and BLM have no `als_site_id`; BBS no `year_diff_AWS`; source CRS unverified for LFRDB, SnapShot, SatBird, BBS, butterflies. Fixed NPS (`als_site_id` added, rest of table unchanged).
+- `DATASET_INGESTION.md`: CRS step, `match_3dep`, `spatial_split`, registry, frozen-split rule. Not done: migrating existing datasets to `spatial_split` (a one-time re-split, pending confirmation of the defaults), verifying the assumed CRSs, notebook datasets to scripts, column renames, VegBench `test_split`.
+
+## 2026-10-29 - OFO: registry points at the current parquet; cookie id added
+
+### Prompt
+
+The OFO parquet lacked `total_trees` (the GeoPackage had it); fix how the parquet is made.
+
+### Actions
+
+- Not a dropped column: the notebook already writes `plots_w_als.parquet` with every column. The table without `total_trees` was the stale `plots_w_als_als_available.parquet` (Oct 6, written before the tree-size columns were added). The registry now points at `plots_w_als.parquet` (197 plots).
+- `create_ofo_eval_task.ipynb` save cell now calls `add_site_ids` so both outputs carry `als_site_id`. Regenerated `plots_w_als.gpkg` and `.parquet` from the existing gpkg with the same call; ids equal the stale file's on all 194 shared plots. The stale `_als_available.parquet` and `_als_status.csv` are no longer used and can be deleted.
+
+## 2026-10-29 - Re-split of the self-split datasets with the shared protocol (frozen from here)
+
+### Prompt
+
+Defaults confirmed (0.25 degree blocks, 50% test, seed 20261029). OFO keeps its provider flag `withhold_from_training`; butterflies move to spatial blocks; BBS (routes) and BLM AIM (primary sampling units) keep their design units as the splitting unit; NestWatch and VegBank deferred; SatBird left to the user.
+
+### Actions
+
+- `splits.unit_split(df, unit_col)`: whole units to test by a hash of (seed, unit id), so stable and never splits a unit. BBS: `RouteID` (2,923 routes; test 0.500). BLM AIM: `SegmentPolygonID` (4,767 units; 0.496). Applied to all three BBS tables (`BBS_train_test`, `_als_available`, `BBS_route_presence`) and `BLM_AIM_plots.gpkg`; no unit straddles the split.
+- `splits.spatial_split` (0.25 degree blocks): LFRDB (0.497 test), SnapShot (0.519 deployments, 0.532 locations, no location in both; 40 deployment-level and 150/37 location-level species), NPS VMI (0.435, flagged by the 0.05 tolerance warning: parks cluster), NLCD (0.506, was 25%), butterflies (0.487 of 265 sites; 0.428 of rows, since sites differ in visits). Scripts `lfrdb/05`, `snapshot_usa/03`, `nps_vmi/07`, `nlcd/01` call the shared function (local copies and seeds removed) and were rerun; notebook split cells for BBS, BLM AIM and butterflies were rewritten but not rerun, the existing outputs were updated with the same calls. Butterfly CSV: only `test_split` changed.
+- Dataset READMEs for LFRDB, SnapShot and NLCD updated with the new split numbers. Not yet updated: NPS VMI README numbers, BBS/BLM/butterflies docs (none exist), the stale `*_eval-20` folders (nothing reads them), VegBench `test_split` column.
+- Old split files kept in the session scratchpad only; the tracked ones are recoverable from git.
+
+## 2026-10-29 - NestWatch NAIP chips notebook
+
+### Prompt
+
+No nests could be spotted in the 3DEP lidar cookies (`nestwatch_lidar_cookies.ipynb`). Build a version that pulls NAIP imagery for visual inspection, using only nest observations with NAIP from the same year as the observation; reuse the NAIP access code in `scripts/naip`.
+
+### Actions
+
+- New `data_cleaning/data_exploration/nestwatch_naip_chips.ipynb`, same configuration/structure as the lidar notebook (species list, N_SHOW, one attempt per location, seed). Draws random nests (since 2010), keeps those where `eagle_als.coreg.data.search_naip(grid, years=[nest year])` finds a survey, reads the chip with `read_naip`, and plots RGB (or CIR) with a dashed 30 m circle matching the lidar cookie. Chips and "no coverage" results are cached in `~/.cache/eagle_naip_nestwatch`.
+- Tested by running the code cells as a script (N_SHOW=4): 4 of 8 candidate nests had same-year NAIP; chips rendered.
+- Note: "same year" uses the STAC `naip:year`; the acquisition date can fall in the following calendar year (e.g. nest 2021, NAIP flown 2022-04-28). The date is shown in each title.
+
+## 2026-10-29 - VegBench test_split, stale folders removed, READMEs brought up to date
+
+### Prompt
+
+Do not worry about NPS 0.435 test; remove the stale `-20` folders; add VegBench `test_split`; update stale READMEs.
+
+### Actions
+
+- `vegbench/01_match_als.py` adds bool `test_split` (`split == "test"`: True for both test sets `acc` and `strat`, False for train and val); `split`/`test_type` kept. Reran: rows and every other column identical (10,455). Registry entry now uses `test_split`; the benchmark task still drops val.
+- Deleted `datasets/SNAPSHOT_USA_eval-20/` and `datasets/SATBIRD_eval-20/` (git rm; recoverable from git history). `snapshot_usa/04_location_targets.py` lost its `--min-locations` option and writes only `SNAPSHOT_USA_eval/` (reran, outputs unchanged). Left for the SatBird rework (user): `data_cleaning/satbird/03_split_and_export.py` (`MIN_VARIANTS` still writes `SATBIRD_eval-20/`, which would recreate the folder), `data_cleaning/satbird/README.md` and `datasets/SATBIRD_eval/README.md`.
+- READMEs: SnapShot (data and cleaning), LFRDB, NLCD (split description and counts), NPS VMI (documented `07_filter_split.py` and `vmi_classification_task.parquet`, which had no entry), baseline_eval (NPS 6,108 rows). Still missing per the protocol: `datasets/VegBench_eval/README.md`.

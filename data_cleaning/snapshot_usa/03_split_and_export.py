@@ -10,14 +10,13 @@ Wide columns are written only for ELIGIBLE species: wild species (not human or d
 MIN_PRESENT_PER_SPLIT deployments of both the train and the test split. Every species is in
 the long table `species_events_long.parquet` and in `species_summary.csv`.
 
-Split: ~50% of deployments held out, assigned by whole 0.1-degree lat/lon blocks (spatial hold-out; cameras
-of one array and repeat surveys of one site share blocks, so a random split would leak). Blocks are shuffled
-with SEED (same seed as the BBS, butterfly and LFRDB splits) and added to the test set while that moves the test
-share closer to 50%.
+Split: eagle_als.splits.spatial_split (protocol defaults: whole 0.25-degree lat/lon blocks, about 50% test, stable;
+cameras of one array and repeat surveys of one site share blocks, so a random split would leak).
 
 Reads datasets/raw/snapshotUSA_2019-2023/derived/{deployments_matched,species_counts,unresolved_counts,taxa}.parquet.
 Writes datasets/SNAPSHOT_USA_eval/{snapshot_usa_eval.parquet, species_events_long.parquet, species_summary.csv, figures/}.
 """
+import sys
 from pathlib import Path
 
 import matplotlib
@@ -28,25 +27,12 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "src"))
+from eagle_als.splits import spatial_split  # noqa: E402
 DERIVED = ROOT / "datasets/raw/snapshotUSA_2019-2023/derived"
 OUT = ROOT / "datasets/SNAPSHOT_USA_eval"
-SEED = 20260909
-TEST_FRACTION = 0.5
 MIN_PRESENT_PER_SPLIT = 20
 
-
-def spatial_split(d):
-    block = np.floor(d.lat * 10).astype(int).astype(str) + "_" + np.floor(d.lon * 10).astype(int).astype(str)
-    sizes = block.value_counts()
-    order = np.sort(sizes.index.to_numpy())  # sorted, so the shuffle depends only on SEED
-    np.random.default_rng(SEED).shuffle(order)
-    target = TEST_FRACTION * len(d)
-    test, n = set(), 0
-    for b in order:
-        if abs(n + sizes[b] - target) < abs(n - target):
-            test.add(b)
-            n += sizes[b]
-    return block.isin(test), block
 
 
 def main():
@@ -110,7 +96,7 @@ def main():
     counts[["deployment_key", "species", "common_name", "n_sequences", "n_events", "encounter_rate_per_100n"]] \
         .sort_values(["deployment_key", "species"]).to_parquet(OUT / "species_events_long.parquet", index=False)
 
-    print(f"{len(out)} deployments, {out.location_id.nunique()} locations, {block.nunique()} 0.1-degree blocks, {len(elig)} eligible species")
+    print(f"{len(out)} deployments, {out.location_id.nunique()} locations, {block.nunique()} 0.25-degree blocks, {len(elig)} eligible species")
     print("test_split:", out.test_split.value_counts().to_dict(), f"({out.test_split.mean():.3f} test)")
     print("locations in both splits (should be 0):", int((out.groupby("location_id").test_split.nunique() > 1).sum()))
     print("species detected:", len(summ), "; wild:", int((~summ.is_human_or_domestic).sum()),
@@ -124,7 +110,7 @@ def main():
     for flag, color, name in [(False, "#1565c0", "train"), (True, "#c62828", "test")]:
         g_ = out[(out.test_split == flag) & out.lon.between(-126, -66) & out.lat.between(24, 50)]
         ax.scatter(g_.lon, g_.lat, s=4, alpha=0.5, color=color, label=f"{name} ({int((out.test_split == flag).sum())} deployments)")
-    ax.set_title("Snapshot USA deployments with lidar within 3 yr: train/test by 0.1-degree block (CONUS shown)", fontsize=9)
+    ax.set_title("Snapshot USA deployments with lidar within 3 yr: train/test by 0.25-degree block (CONUS shown)", fontsize=9)
     ax.set_xlabel("lon")
     ax.set_ylabel("lat")
     ax.legend(fontsize=8, markerscale=2)

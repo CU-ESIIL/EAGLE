@@ -30,7 +30,7 @@ The labels are not the modeled LANDFIRE EVT raster. They come from the public LA
 | `loc_method`, `n_decimals` | location method (`G` for every row) and the number of decimals in the coarser of lat/lon (5 or 6) |
 | `product_name_AWS`, `collection_year_AWS`, `year_diff_AWS` | same meaning as in the other datasets: the 3DEP project covering the plot whose collection year is closest to `year`, its collection year, and the absolute gap in years (0 to 3) |
 | `als_site_id` | `<product>__<lat>_<lon>`, as built by `eagle_als.sites.add_site_ids` |
-| `test_split` | `True` for 50% of rows (3,379), assigned by whole 1-degree lat/lon blocks (spatial hold-out; see caveats) |
+| `test_split` | `True` for 50% of rows (3,986), assigned by whole 0.25-degree lat/lon blocks (`eagle_als.splits.spatial_split`, a stable hash of the block id; see caveats) |
 
 ## How the table was built
 
@@ -62,7 +62,7 @@ The ALS match uses `get_nearest_year_product` from `src/streaming/3dep/get_als.p
 ## Choices and caveats
 
 - **Small and clustered by design.** 68% of rows are NPS plots and 4,039 of the 7,783 matched rows (before the label filter) are in the Southwest; coverage is mostly parks and a few California and southeastern surveys. Rows within a source are often close together and share a lidar product (50 products in total).
-- **Spatial split lumpiness.** Updated from 1-degree to 0.1 degree blocks for spatial holdout. Some classes land entirely in test. 24 classes in both splits.
+- **Spatial split lumpiness.** Whole 0.25-degree blocks go to one side, so some classes land entirely in test or train: 112 of 240 Ecological Systems occur in both splits, 22 with at least 20 plots in each.
 - **Time gap.** Plots were visited 0 to 3 years from the lidar (1,013 exact matches, 1,560, 2,022 and 2,147 at 1, 2 and 3 years). Vegetation can change in that time, especially after fire, logging or conversion; use `year_diff_AWS == 0` for the strictest evaluation.
 - **Plot geometry is unknown.** The public LFRDB gives a point but no plot size, so evaluation crops cannot be matched to a plot footprint. Plot positions are GPS positions of unknown accuracy (decimals only bound the rounding, not the GPS error).
 - **Footprint matching only.** 3DEP footprints can include gaps (water, edges); no point-cloud availability check was run for this dataset. The `eagle_als` streaming check used for `NLCD_eval` can be run on `plot_id`/`lat`/`lon`/`als_site_id` if needed.

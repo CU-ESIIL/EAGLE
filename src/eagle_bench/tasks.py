@@ -11,7 +11,8 @@ annual imagery to use: `year` clipped to the range given by `clip_years`, defaul
 AlphaEarth), `is_test` and, where the lidar match exists, `als_site_id`. `Task.y` is aligned to `df`.
 
 Every split is the one stored with the dataset (spatial hold-out); nothing here re-splits.
-Add a task by writing a loader and decorating it with `@task("<name>")`.
+Paths, column names and the split rule come from datasets/registry.yaml (`eagle_als.registry`); a loader only
+says which label columns make the task. Add a task by writing a loader and decorating it with `@task("<name>")`.
 """
 
 from dataclasses import dataclass, field
@@ -20,13 +21,13 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from eagle_als import registry
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DATASETS = REPO_ROOT / "datasets"
 
-# A class (or species) is scored only if it has enough rows in both parts of the split; this follows the
-# "-20" convention in data_cleaning/DATASET_INGESTION.md (classes with >= 20 rows in each of train and test).
-MIN_TRAIN = 20
-MIN_TEST = 20
+# Datasets ship every class; how many rows a class needs in each of train and test to be scored is a
+# parameter of the evaluation (eagle_bench.probes.evaluate(min_count=...)), not of the dataset.
 
 TASKS = {}
 
@@ -81,41 +82,47 @@ def _frame(df, lat, lon, year, is_test, als="als_site_id", extra=()):
     return out
 
 
-def _multiclass(name, df, label_col, lat, lon, year, is_test, description):
-    """Build a multiclass Task from rows with a label; `is_test` is a boolean Series aligned to `df`."""
+def _table(name, query=None):
+    """Registry table `name` with its row filter applied: (df, spec, is_test aligned to df)."""
+    spec = registry.get(name)
+    df = registry.read(name)
+    if query is not None:
+        df = df.query(query)
+    return df, spec, registry.is_test(df, spec)
+
+
+def _std(df, spec, is_test, year=None):
+    return _frame(df, spec["lat"], spec["lon"], year or spec["year"], is_test, als=spec["als_id"])
+
+
+def _multiclass(name, table, label_col, description, query=None):
+    """Build a multiclass Task from the rows of registry table `table` that have a label."""
+    df, spec, is_test = _table(table, query)
     keep = df[label_col].notna()
     df, is_test = df[keep], is_test[keep]
-    return Task(name, "multiclass", _frame(df, lat, lon, year, is_test.to_numpy()),
+    return Task(name, "multiclass", _std(df, spec, is_test.to_numpy()),
                 pd.DataFrame({"label": df[label_col].astype(str).to_numpy()}), description)
 
 
 @task("nlcd")
 def _nlcd():
-    df = pd.read_parquet(DATASETS / "NLCD_eval/nlcd_lidar_eval.parquet")
-    df = df[df["balanced_subset"]]
-    return _multiclass("nlcd", df, "nlcd_class", "lat", "lon", "year", df["test_split"],
-                       "NLCD 2021 reference land cover (Level II), class-balanced subset")
+    return _multiclass("nlcd", "nlcd", "nlcd_class", "NLCD 2021 reference land cover (Level II), class-balanced subset",
+                       query="balanced_subset")
 
 
 @task("lfrdb_ecosys")
 def _lfrdb_ecosys():
-    df = pd.read_parquet(DATASETS / "LFRDB_eval/lfrdb_eval.parquet")
-    return _multiclass("lfrdb_ecosys", df, "ecosys", "lat", "lon", "year", df["test_split"],
-                       "LANDFIRE reference database: ecological system")
+    return _multiclass("lfrdb_ecosys", "lfrdb", "ecosys", "LANDFIRE reference database: ecological system")
 
 
 @task("lfrdb_nvc_group")
 def _lfrdb_group():
-    df = pd.read_parquet(DATASETS / "LFRDB_eval/lfrdb_eval.parquet")
-    return _multiclass("lfrdb_nvc_group", df, "nvc_group", "lat", "lon", "year", df["test_split"],
-                       "LANDFIRE reference database: NVC group")
+    return _multiclass("lfrdb_nvc_group", "lfrdb", "nvc_group", "LANDFIRE reference database: NVC group")
 
 
 def _nps(level):
-    df = pd.read_parquet(DATASETS / "NPS_VMI/vmi_classification_task.parquet")
-    df = df[df["product_name_AWS"].notna()]
-    return _multiclass(f"nps_vmi_{level}", df, f"nvc_{level}", "latitude", "longitude", "year", df["test_split"],
-                       f"NPS Vegetation Mapping Inventory plots: NVC {level}")
+    return _multiclass(f"nps_vmi_{level}", "nps_vmi", f"nvc_{level}", f"NPS Vegetation Mapping Inventory plots: NVC {level}",
+                       query="product_name_AWS.notna()")
 
 
 task("nps_vmi_macrogroup")(lambda: _nps("macrogroup"))
@@ -123,10 +130,9 @@ task("nps_vmi_group")(lambda: _nps("group"))
 
 
 def _vegbench(level):
-    df = pd.read_parquet(DATASETS / "VegBench_eval/vegbench_eval.parquet")
-    df = df[df["split"].isin(["train", "test"])]  # the validation split is not used
-    return _multiclass(f"vegbench_{level}", df, f"survey_{level}", "lat", "lon", "year", df["split"] == "test",
-                       f"VegBench survey plots: USNVC {level} (published train/test split; val unused)")
+    return _multiclass(f"vegbench_{level}", "vegbench", f"survey_{level}",
+                       f"VegBench survey plots: USNVC {level} (published train/test split; val unused)",
+                       query="split in ['train', 'test']")  # the validation split is not used
 
 
 for _lvl in ("formation", "division", "macrogroup", "group"):
@@ -135,20 +141,20 @@ for _lvl in ("formation", "division", "macrogroup", "group"):
 
 @task("bbs_occurrence")
 def _bbs():
-    df = pd.read_parquet(DATASETS / "BBS/BBS_train_test_als_available.parquet")
+    df, spec, is_test = _table("bbs")
     species = [c for c in df.columns[7:] if c not in ("test_split", "als_site_id", "als_n_points")]
     y = (df[species] > 0).astype(int)
-    return Task("bbs_occurrence", "multilabel", _frame(df, "Latitude", "Longitude", "Year", df["test_split"]), y,
+    return Task("bbs_occurrence", "multilabel", _std(df, spec, is_test), y,
                 "Breeding Bird Survey route-years: species occurrence (count > 0)")
 
 
 @task("butterflies_occurrence")
 def _butterflies():
-    df = pd.read_parquet(DATASETS / "butterflies/species_observations_als_available.parquet")
+    df, spec, _ = _table("butterflies")
     df = df[df["count"] > 0]
     sites = df.groupby("EAGLE_site_index").agg(
-        lat=("lat", "first"), lon=("lon", "first"), year=("year", "mean"), test_split=("test_split", "first"),
-        als_site_id=("als_site_id", "first"))
+        lat=(spec["lat"], "first"), lon=(spec["lon"], "first"), year=(spec["year"], "mean"),
+        test_split=("test_split", "first"), als_site_id=(spec["als_id"], "first"))
     y = pd.crosstab(df["EAGLE_site_index"], df["Reported species name"]).reindex(sites.index).gt(0).astype(int)
     sites = sites.reset_index(drop=True)
     return Task("butterflies_occurrence", "multilabel", _frame(sites, "lat", "lon", "year", sites["test_split"]),
@@ -158,27 +164,21 @@ def _butterflies():
 
 @task("snapshot_usa_occurrence")
 def _snapshot():
-    df = pd.read_parquet(DATASETS / "SNAPSHOT_USA_eval-20/location_occupancy.parquet")
+    df, spec, is_test = _table("snapshot_usa")
     df["year"] = (df["first_year"] + df["last_year"]) / 2
     cols = [c for c in df.columns if c.startswith("occ__")]
-    return Task("snapshot_usa_occurrence", "multilabel", _frame(df, "lat", "lon", "year", df["test_split"]),
+    return Task("snapshot_usa_occurrence", "multilabel", _std(df, spec, is_test, year="year"),
                 df[cols].astype(int).rename(columns=lambda c: c[5:]),
-                "SnapShot USA camera-trap locations: species occupancy (SNAPSHOT_USA_eval-20 species set)")
-
-
-def _satbird(folder, name, min_pos):
-    df = pd.read_parquet(DATASETS / folder / "location_occupancy.parquet")
-    cols = [c for c in df.columns if c.startswith("occ__")]
-    t = Task(name, "multilabel", _frame(df, "lat", "lon", "year", df["test_split"]),
-             df[cols].astype(np.int8).rename(columns=lambda c: c[5:]),
-             f"SatBird eBird hotspots (summer): species occupancy, {len(cols)} species ({folder})")
-    t.meta["min_pos"] = min_pos
-    return t
+                "SnapShot USA camera-trap locations: species occupancy")
 
 
 # year = 2022 (the paired Sentinel-2 year); the labels pool 2010-2023 checklists, so the year is a reference only
-task("satbird_occupancy")(lambda: _satbird("SATBIRD_eval", "satbird_occupancy", (1, 1)))
-task("satbird_occupancy_20")(lambda: _satbird("SATBIRD_eval-20", "satbird_occupancy_20", (20, 20)))
+@task("satbird_occupancy")
+def _satbird():
+    df, spec, is_test = _table("satbird")
+    cols = [c for c in df.columns if c.startswith("occ__")]
+    return Task("satbird_occupancy", "multilabel", _std(df, spec, is_test), df[cols].astype(np.int8).rename(columns=lambda c: c[5:]),
+                f"SatBird eBird hotspots (summer): species occupancy, {len(cols)} species")
 
 
 BLM_TARGETS = ["TotalFoliarCover", "BareSoilCover", "AH_ShrubCover", "AH_SagebrushCover", "AH_GrassCover",
@@ -188,11 +188,8 @@ BLM_TARGETS = ["TotalFoliarCover", "BareSoilCover", "AH_ShrubCover", "AH_Sagebru
 
 @task("blm_aim")
 def _blm():
-    import geopandas as gpd
-
-    df = pd.DataFrame(gpd.read_file(DATASETS / "BLM_AIM/BLM_AIM_plots.gpkg").drop(columns="geometry"))
-    return Task("blm_aim", "regression",
-                _frame(df, "Latitude_WGS84", "Longitude_WGS84", "Year", df["test_split"]), df[BLM_TARGETS],
+    df, spec, is_test = _table("blm_aim")
+    return Task("blm_aim", "regression", _std(df, spec, is_test), df[BLM_TARGETS],
                 "BLM AIM rangeland plots: cover (%), heights (cm) and species richness")
 
 
@@ -201,9 +198,6 @@ OFO_TARGETS = ["basal_area_m2ha", "total_trees"]
 
 @task("ofo_trees")
 def _ofo():
-    import geopandas as gpd
-
-    df = pd.DataFrame(gpd.read_file(DATASETS / "OFO_trees/plots_w_als.gpkg").drop(columns="geometry"))
-    df = df[df["product_name_AWS"].notna()]
-    return Task("ofo_trees", "regression", _frame(df, "plot_lat", "plot_lon", "survey_year", df["test_split"]),
-                df[OFO_TARGETS], "Open Forest Observatory plots: basal area (m2/ha) and tree count per plot")
+    df, spec, is_test = _table("ofo_trees", query="product_name_AWS.notna()")
+    return Task("ofo_trees", "regression", _std(df, spec, is_test), df[OFO_TARGETS],
+                "Open Forest Observatory plots: basal area (m2/ha) and tree count per plot")

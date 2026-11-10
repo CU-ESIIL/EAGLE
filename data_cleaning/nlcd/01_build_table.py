@@ -23,6 +23,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 from eagle_als.sites import add_site_ids  # noqa: E402
+from eagle_als.splits import spatial_split  # noqa: E402
 
 RAW = ROOT / "datasets/raw/NLCD_AA2021"
 OUT = ROOT / "datasets/NLCD_eval"
@@ -123,9 +124,8 @@ def main():
     m["nlcd_L1_class"] = m.nlcd_L1_code.map(L1)
     m["label_source"] = "NLCD2021_AA_reference"
     m = add_site_ids(m, "lat", "lon")
-    # spatial split: ~25% of 1-degree blocks held out
-    blk = (np.floor(m.lat).astype(int) * 1000 + np.floor(m.lon).astype(int)).astype(str)
-    m["test_split"] = blk.map(lambda s: (hash_int(s) % 4) == 0)
+    # spatial split (eagle_als.splits: 0.25 degree blocks, ~50% test, stable)
+    m["test_split"] = spatial_split(m)[0].to_numpy()
     m["balanced_subset"] = balanced_subset(m)
     cols = [
         "point_id", "nlcd_code", "nlcd_class", "nlcd_L1_code", "nlcd_L1_class",
@@ -142,11 +142,6 @@ def main():
         n=("point_id", "size"), balanced=("balanced_subset", "sum"),
         stable=("stable_2016_2021", "sum"), exact_year=("year_diff_AWS", lambda s: (s == 0).sum()),
     ).to_string())
-
-
-def hash_int(s):
-    import zlib
-    return zlib.crc32(s.encode())
 
 
 if __name__ == "__main__":

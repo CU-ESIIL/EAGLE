@@ -2,6 +2,8 @@
 
 Scripts that download the public LANDFIRE Reference Database, filter it to plots with trustworthy GPS coordinates, match each plot to the closest-in-time 3DEP lidar product, and write the evaluation table in [datasets/LFRDB_eval/](../../datasets/LFRDB_eval/README.md) (read that README for columns, caveats and recommended use).
 
+CRS: WGS 84 (from database definitions pdf)
+
 ## Where the raw data came from, and when
 
 - **What**: public LANDFIRE Reference Database (LFRDB), version LF 2.0.0 (LF 2016 Remap): vegetation and fuel plots contributed by USFS, USGS GAP, NPS Inventory and Monitoring, state programs and others. "Certain proprietary and/or sensitive data were removed in the public database"; the source flags (`PublicAccess` in `lutdtVisitsSourceID`) include "plot locations excluded" for some sources.

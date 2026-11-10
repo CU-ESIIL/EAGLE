@@ -4,14 +4,18 @@
 (rows with a NaN embedding are left out and counted). Returns (summary dict, per-target DataFrame).
 
     multiclass   standardize + multinomial logistic regression (class-balanced); C chosen by 3-fold CV on train.
-                 Only classes with >= MIN_TRAIN train rows and >= MIN_TEST_CLASS test rows are scored/predicted.
+                 Only classes with >= MIN_TRAIN train rows and >= MIN_TEST_CLASS test rows are scored/predicted
+                 (or >= min_count in both, when min_count is given).
                  Reported: balanced accuracy, macro F1, accuracy, chance (1 / n classes).
     multilabel   one logistic regression per species (class-balanced); one C per task, chosen by 3-fold CV on
-                 train over the most common species. Species with >= min_pos positives in train and in test
-                 (task.meta["min_pos"], default 20 / 20). Reported: mean AUROC and mean average precision
+                 train over the most common species. Species with >= min_count positives in train and in test
+                 (default 20). Reported: mean AUROC and mean average precision
                  (with mean prevalence as the AP of a random ranking).
     regression   standardize + ridge, alpha by RidgeCV on train. Per target: R2, Spearman, RMSE on the test
                  rows with a measured value.
+
+min_count sets the class-set scenario, so one full table gives both "all classes" (min_count=1) and
+">= 20 per split" (min_count=20) results; None keeps the legacy per-kind defaults. Regression ignores it.
 
 Hyperparameter selection uses only train rows (random folds, so slightly optimistic inside train; the test
 split is spatial and untouched).
@@ -41,24 +45,25 @@ def _logreg(C):
     return LogisticRegression(C=C, class_weight="balanced", max_iter=1000)
 
 
-def evaluate(task, X, n_jobs=-1, seed=0):
+def evaluate(task, X, n_jobs=-1, seed=0, min_count=None):
     ok = np.isfinite(X).all(1)
     tr, te = ok & ~task.df["is_test"].to_numpy(), ok & task.df["is_test"].to_numpy()
     fn = dict(multiclass=_multiclass, multilabel=_multilabel, regression=_regression)[task.kind]
-    summary, per = fn(task, X, tr, te, n_jobs, seed)
-    summary.update(task=task.name, kind=task.kind, n_train=int(tr.sum()), n_test=int(te.sum()),
+    summary, per = fn(task, X, tr, te, n_jobs, seed, min_count)
+    summary.update(task=task.name, min_count=min_count, kind=task.kind, n_train=int(tr.sum()), n_test=int(te.sum()),
                    n_no_embedding=int((~ok).sum()), n_dim=X.shape[1])
     per.insert(0, "task", task.name)
     return summary, per
 
 
-def _multiclass(task, X, tr, te, n_jobs, seed):
+def _multiclass(task, X, tr, te, n_jobs, seed, min_count):
     from sklearn.metrics import accuracy_score, balanced_accuracy_score, f1_score
     from sklearn.model_selection import StratifiedKFold, cross_val_score
 
     y = task.y["label"].to_numpy()
     n_tr, n_te = pd.Series(y[tr]).value_counts(), pd.Series(y[te]).value_counts()
-    classes = sorted(c for c in n_tr.index if n_tr[c] >= MIN_TRAIN and n_te.get(c, 0) >= MIN_TEST_CLASS)
+    min_tr, min_te = (MIN_TRAIN, MIN_TEST_CLASS) if min_count is None else (min_count, min_count)
+    classes = sorted(c for c in n_tr.index if n_tr[c] >= min_tr and n_te.get(c, 0) >= min_te)
     if len(classes) < 2:
         return dict(n_classes=len(classes)), pd.DataFrame()
     tr, te = tr & np.isin(y, classes), te & np.isin(y, classes)
@@ -87,11 +92,11 @@ def _fit_species(Xtr, ytr, Xte, yte, C):
     return roc_auc_score(yte, p), average_precision_score(yte, p)
 
 
-def _multilabel(task, X, tr, te, n_jobs, seed):
+def _multilabel(task, X, tr, te, n_jobs, seed, min_count):
     from sklearn.model_selection import StratifiedKFold, cross_val_score
 
     Y = task.y.to_numpy()
-    min_tr, min_te = task.meta.get("min_pos", (20, 20))
+    min_tr = min_te = 20 if min_count is None else min_count
     pos_tr, pos_te = Y[tr].sum(0), Y[te].sum(0)
     keep = np.where((pos_tr >= min_tr) & (pos_te >= min_te) & (pos_tr < tr.sum()) & (pos_te < te.sum()))[0]
     if len(keep) == 0:
@@ -113,7 +118,7 @@ def _multilabel(task, X, tr, te, n_jobs, seed):
     return summary, per
 
 
-def _regression(task, X, tr, te, n_jobs, seed):
+def _regression(task, X, tr, te, n_jobs, seed, min_count):
     from scipy.stats import spearmanr
     from sklearn.linear_model import RidgeCV
     from sklearn.metrics import r2_score

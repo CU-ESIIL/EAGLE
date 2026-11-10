@@ -22,6 +22,8 @@ from pathlib import Path
 
 import numpy as np
 
+from . import registry
+from .sites import read_table
 from .fetch import EmptyCookieError, fetch_square, tile_index, validate_cookie
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -29,14 +31,9 @@ SHARD_DTYPE = np.dtype([
     ("x", "<f4"), ("y", "<f4"), ("z", "<f4"), ("hag", "<f4"), ("intensity", "<u2"),
     ("return_number", "u1"), ("number_of_returns", "u1"), ("classification", "u1"),
 ])
-# evaluation sites kept out of pre-training: (table, lat column, lon column)
-EVAL_SITES = [
-    ("datasets/BBS/BBS_train_test_als_available.parquet", "Latitude", "Longitude"),
-    ("datasets/butterflies/species_observations_als_available.parquet", "lat", "lon"),
-    ("datasets/OFO_trees/plots_w_als_als_available.parquet", "plot_lat", "plot_lon"),
-    ("datasets/NLCD_eval/nlcd_lidar_eval.parquet", "lat", "lon"),  # in-training validation task (since 2026-10-08)
-    ("datasets/SATBIRD_eval/location_occupancy.parquet", "lat", "lon"),
-]
+# evaluation sites kept out of pre-training: (table, lat column, lon column), from datasets/registry.yaml
+# (add a dataset there and it is excluded here; no edit to this file)
+EVAL_SITES = registry.eval_sites()
 
 
 # ---------------- square sampling ----------------
@@ -71,7 +68,7 @@ class SquareSampler:
         for path, lat_col, lon_col in eval_sites or []:
             import pandas as pd
 
-            df = pd.read_parquet(REPO_ROOT / path, columns=[lat_col, lon_col]).dropna().drop_duplicates()
+            df = pd.DataFrame(read_table(REPO_ROOT / path)[[lat_col, lon_col]]).dropna().drop_duplicates()
             xy.append(np.stack(self._to_albers.transform(df[lon_col].to_numpy(), df[lat_col].to_numpy()), 1))
         self.n_eval_sites = int(sum(len(a) for a in xy))
         self.tree = cKDTree(np.concatenate(xy)) if xy else None

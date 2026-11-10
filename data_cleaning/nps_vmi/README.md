@@ -20,6 +20,7 @@ Run from the repo root with `pixi run python data_cleaning/nps_vmi/<script>`. Ev
 | `04_harmonize_v4.py` | PLOTS v3/v4-schema packages -> full-detail tables | `datasets/NPS_VMI/vmi_plot_events.parquet`, `vmi_plot_species.parquet` |
 | `05_build_core.py` | stacks all three schema families into one core schema | `datasets/NPS_VMI/vmi_core_events.parquet`, `vmi_core_species.parquet`, `catalog/core_build_notes.csv` |
 | `06_status_and_concerns.py` | per-park access/harmonization status and generated concerns | `catalog/package_status.csv`, `DATASET_CONCERNS.md` |
+| `07_filter_split.py` | evaluation table: plots with a community name and recorded or repaired coordinates, matched to 3DEP lidar collected within 3 years (`year_diff_AWS <= 3`), `als_site_id`, spatial train/test split (`eagle_als.splits`, 0.25-degree blocks, about 50% test; 0.435 realized) | `datasets/NPS_VMI/vmi_classification_task.parquet` (6,264 plots) |
 
 Stage 5 also resolves community labels against `datasets/vegbank/USNVC_catalog_full_taxonomy.csv` (see the column table in the data README). Label sources: PLOTS `NVC_Elcode`/`Classified_Code`/`Primary_Code`, NER `NVC.ELCODE` + classified names, NCPN `tblFinalAssociationNames*`, `tblFinalClassification`, `tbl_Final_Classification`, `tblVegetation.CEGLCode`/`FinalNVCName`/`Associations`, `tblAAVegetation.Associations`. Not yet used: the 12 non-harmonized custom packages, and free-text `freeform_community_name` is not matched to NVC.
 

@@ -8,16 +8,13 @@ rounded to 4 decimals, ~11 m) are pooled:
   - occupancy: 1 if the species was detected in any pooled deployment, else 0
   - detection rate: independent events (30-min rule) summed over the pooled deployments / total survey nights x 100
 
-Species included: wild species (not human or domestic) with at least `--min-locations` N locations of presence in
-each of the train and the test split (default 1 = at least one location in both). N = 1 writes to
-datasets/SNAPSHOT_USA_eval/; any other N writes the same locations and file names to datasets/SNAPSHOT_USA_eval-N/
-(`--min-locations 20` is the "-20" evaluation set).
+Species included: wild species (not human or domestic) present at at least MIN_LOCATIONS_PER_SPLIT (1) location in
+each of the train and the test split. Stricter sets (e.g. >= 20 locations per split) are chosen at evaluation time (`eagle_bench.probes`, `--min-counts`), not published as separate folders.
 Two separate tables are written, one for each target type; both carry the same location columns.
 
 Reads datasets/SNAPSHOT_USA_eval/{snapshot_usa_eval.parquet, species_events_long.parquet, species_summary.csv} (stage 3).
 Writes {location_occupancy.parquet, location_detection_rate.parquet, location_species_summary.csv} to the output folder.
 """
-import argparse
 import sys
 from pathlib import Path
 
@@ -37,12 +34,8 @@ def mode(s):
 
 
 def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--min-locations", type=int, default=1, help="minimum locations with the species present in each split")
-    a = ap.parse_args()
-    MIN_LOCATIONS_PER_SPLIT = a.min_locations
-    OUT = SRC if a.min_locations == 1 else ROOT / f"datasets/SNAPSHOT_USA_eval-{a.min_locations}"
-    OUT.mkdir(exist_ok=True)
+    MIN_LOCATIONS_PER_SPLIT = 1
+    OUT = SRC  # one table with every included species; stricter class sets are an evaluation setting (probes min_count)
     d = pd.read_parquet(SRC / "snapshot_usa_eval.parquet")
     d = d[[c for c in d.columns if not c.startswith(("occ__", "rate__"))]]
     ev = pd.read_parquet(SRC / "species_events_long.parquet")

@@ -1,6 +1,9 @@
 import pandas as pd
 import sys
 sys.path.append('../../src/streaming/3dep/')
+sys.path.append('../../src')
+from eagle_als.sites import add_site_ids
+from eagle_als.splits import spatial_split
 from get_als import get_nearest_year_product
 import numpy as np
 
@@ -22,7 +25,7 @@ matched_als = filtered_plots.apply(find, axis=1, result_type='expand')
 print(f"Matched {matched_als.product_name_AWS.notna().sum()} plots to ALS products.")
 filtered_plots = filtered_plots.join(matched_als)
 
-matched = filtered_plots[filtered_plots['year_diff_AWS']<3]
+matched = filtered_plots[filtered_plots['year_diff_AWS']<=3]
 len(matched), len(matched)/len(filtered_plots)
 
 # select cols
@@ -32,24 +35,11 @@ matched=matched[['event_key', 'package', 'unit_code', 'plot_code',
        'year', 'event_date', 'product_name_AWS', 'collection_year_AWS','year_diff_AWS',
        'plot_type', 'plot_shape', 'plot_area_m2']]
 
-# blocked train test split in 0.1 degree lat/lon blocks
-TEST_FRACTION = 0.5
-SEED = 20261009
-def spatial_split(d):
-    block = (np.floor(d.latitude)*10).astype(int) * 1000 + (np.floor(d.longitude)*10).astype(int)
-    sizes = block.value_counts()
-    order = np.sort(sizes.index.to_numpy())  # sorted, writable, so the shuffle depends only on SEED
-    np.random.default_rng(SEED).shuffle(order)
-    target = TEST_FRACTION * len(d)
-    test, n = set(), 0
-    for b in order:
-        if abs(n + sizes[b] - target) < abs(n - target):
-            test.add(b)
-            n += sizes[b]
-    return block.isin(test)
+# blocked train/test split (eagle_als.splits: 0.25 degree blocks, ~50% test, stable)
 
 # note: splitting results in some Divisions only in test split (6) or only in train split (1)
-matched['test_split'] = spatial_split(matched).values
+matched['test_split'] = spatial_split(matched, 'latitude', 'longitude')[0].to_numpy()
 class_cnts = matched.groupby(['test_split','nvc_division']).size().unstack(level=0,fill_value=0).sort_index().rename(columns={False:'train',True:'test'})
 
+matched = add_site_ids(matched, 'latitude', 'longitude')  # cookie id (key in the cookie cache)
 matched.to_parquet('../../datasets/NPS_VMI/vmi_classification_task.parquet', index=False)
