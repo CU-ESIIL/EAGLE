@@ -1,0 +1,13 @@
+# R environment for standard lidar metrics (lidR::stdmetrics + terrain) on the cached benchmark cookies.
+#   pixi install --manifest-path envs/lidr/pixi.toml
+[workspace]
+channels = ["conda-forge"]
+name = "eagle-lidr"
+platforms = ["linux-64", "osx-arm64"]
+
+[dependencies]
+r-base = "4.4.*"
+r-lidr = ">=4.3"
+r-arrow = "*"
+"r-data.table" = "*"
+r-terra = "*"

@@ -26,6 +26,13 @@ Lidar point cloud cookie -> 1d embedding vector
 
 ### Lidar Derived Metrics
 
+**Decision (2026-11-10, user): use `lidR::stdmetrics`** (Roussel et al. 2020), on height above ground in the central 50 m
+disc, with and without a small set of lidR terrain/ground metrics (elevation, slope, aspect from the ground points).
+No GEDI simulation. `lidRmetrics` (Tompalski et al.) kept as a future candidate. The custom proposal below is superseded
+except for the location-only and acquisition-only baselines, which are kept.
+
+<details><summary>Superseded: custom-metrics proposal</summary>
+
 **Claude proposal for review (2026-11-10).** Hand-crafted structure metrics per cookie, computed from the cached points
 (central 50 m disc by default, with 25 m and 100 m versions to test scale), then linear probe and random forest / gradient
 boosting on the same splits. About 120 features; all from xyz, height above ground (HAG), return numbers and class.
@@ -48,6 +55,8 @@ boosting on the same splits. About 120 features; all from xyz, height above grou
    Intensity left out by default (uncalibrated across 3DEP collections); a within-cookie-ranked intensity version is optional.
 8. Class shares where reliable: ground, building (6), water (9) fractions.
 
+Additions: Topographic Wetness Index TWI (derived from a larger-area DEM than our tiles, but I imagine we can just pull the TWI directly as a derived product from somewhere)
+
 Covariates reported but not used as features (for confound checks): point density, pulse density, collection year,
 quality level, leaf-on/off, years between lidar and survey.
 
@@ -62,8 +71,14 @@ Implementation: numpy / scipy on the cached cookies, CPU only (~0.2-1 s per cook
 run per task, small tasks first). Random forest: scikit-learn `RandomForestClassifier/Regressor` (500 trees, class-balanced),
 hyperparameters fixed or tuned by CV on train only, like the linear probes.
 
-*Questions for you:* (a) is the 50 m disc the right default scale (plot data vs. BBS routes / eBird hotspots, which are much
+</details>
+
+*Questions for you (still open):* (a) is the 50 m disc the right default scale (plot data vs. BBS routes / eBird hotspots, which are much
 larger)? (b) include intensity? (c) random forest or gradient boosting (HistGradientBoosting is faster on 4 CPUs)?
+Let's try 100 m radius as a starting point
+Leave out intensity from derived metrics
+Gradient boost works. 
+Main critique: lots of custom code; is there a standard feature set or sets that are available, or that existing packages extract? 
 
 
 ### SatCLIP
@@ -82,3 +97,32 @@ SatCLIP is a location encoder trained on satellite imagery.
 - **ForPT: embedder ready**, weights cached, smoke-tested on synthetic clouds (1008-d, 0.75 GB GPU per 50k-point cloud).
   Waiting for cookies.
 - **Lidar metrics: proposal above**, waiting for your review.
+
+## Why does AlphaEarth classify so well? (diagnostics plan, 2026-11-10)
+
+Two hypotheses: (H1) the embedding mostly encodes geographic position / regional context; (H2) label information leaked
+in through AEF's training data (secondary summaries of the AEF paper list GBIF species records and geotagged Wikipedia
+as text sources, alongside Sentinel-1/2, Landsat, GEDI, DEM, ERA5-Land, GRACE; to confirm in arXiv 2507.22291).
+
+Tests for H1 (geography):
+1. *Location-only baselines* on the same splits: lat/lon through random Fourier features / spherical harmonics + the
+   same linear probe, and kNN / random forest on lat/lon. AEF minus location-only = what AEF adds beyond position.
+2. *AEF + location* vs location: incremental gain; and AEF residualized on location features.
+3. *Displacement test* (cheap with Earth Engine): use AEF from points moved 30 m, 100 m, 500 m, 2 km, 10 km in a random
+   direction at test time (train on true positions). Scores that survive 2-10 km displacement are regional context,
+   not the site itself; the decay curve shows the spatial scale each task is really using.
+4. *Within-region discrimination*: score only among test sites within the same ~50 km block (or pairs of nearby sites
+   with different labels). Geography cannot separate neighbours; site-level information can.
+5. *How much position is in the embedding*: predict lat/lon from AEF on the spatial hold-out (R², error in km).
+
+Tests for H2 (training-data leakage):
+6. *Map-vs-truth test (NLCD)*: NLCD reference points carry a field/photo-interpreted reference class; the NLCD 2021 map
+   class at the same pixel sometimes disagrees. On the disagreeing points, does AEF predict the map class or the
+   reference class? Predicting the map's errors means it has learned a map product rather than the land cover.
+7. *Bird tasks vs GBIF*: eBird (SatBird) and possibly BBS records flow into GBIF. Compare AEF's gain over location-only
+   on bird occupancy with its gain on tasks whose labels are not in GBIF (BLM AIM, OFO, NPS VMI plots, SnapShot only
+   partly). A much larger gain for GBIF-sourced labels is consistent with leakage (not proof).
+8. *Year test*: AEF embeddings of the survey year vs other years (2017 vs 2024). Static geography gives the same score in
+   every year; real land-cover signal should degrade where the site changed.
+
+Proposed order: 1, 3, 5 (cheap, most informative), then 6, then 2, 4, 7, 8.
