@@ -18,7 +18,7 @@ full extraction has NOT been run.** It reads about 1 TB, so it is handed off to 
 | `bbs_occurrence` | multilabel | 12,934 route-years | 670 species, count > 0 | |
 | `butterflies_occurrence` | multilabel | 265 sites | 387 species, any record | site level, year = mean survey year |
 | `snapshot_usa_occurrence` | multilabel | 3,409 locations | 159 species (39 with >= 20 locations per split) | `SNAPSHOT_USA_eval` |
-| `satbird_occupancy` | multilabel | 48,048 hotspots | 618 species (537 with >= 20 hotspots per split) | `SATBIRD_eval`; year 2022 |
+| `satbird_winter_occupancy` | multilabel | 40,514 hotspots (SatBird train + test; val unused) | 587 species (467 with >= 20 hotspots per split) | `SATBIRD_USA_winter_eval`; year 2022 |
 | `blm_aim` | regression | 9,233 | 12 cover / height / richness targets | |
 | `ofo_trees` | regression | 197 | `basal_area_m2ha`, `total_trees` | `datasets/OFO_trees/plots_w_als.gpkg` |
 
@@ -37,7 +37,7 @@ SatBird encounter rate is not included (occupancy only); the class-set scenarios
 - **Probe.** Standardise on train, then logistic regression (class-balanced, C in {0.01, 0.1, 1} by 3-fold CV on
   train) or ridge (RidgeCV). Multiclass classes are scored if they have >= 20 train and >= 5 test rows
   (`test_rows_scored_frac` says how much of the test set that covers); species if >= 20 positives in each split
-  (1 for `satbird_occupancy`). Rows with no embedding (masked pixels) are excluded and counted in `n_no_embedding`.
+  (1 for `satbird_winter_occupancy`). Rows with no embedding (masked pixels) are excluded and counted in `n_no_embedding`.
 - Metrics: multiclass balanced accuracy, macro F1, accuracy (chance = 1/classes); multilabel mean AUROC and
   mean average precision (AP of a random ranking = `mean_prevalence`); regression R2, Spearman, RMSE per target.
 
@@ -46,7 +46,7 @@ SatBird encounter rate is not included (occupancy only); the class-set scenarios
 1. **Sync.** Needs the repo with `src/eagle_bench/`, `scripts/baseline_eval/`, and these `datasets/` inputs (they are
    built by `data_cleaning/`; several (SatBird, VegBench) are still untracked in git, so copy them; `datasets/raw/`
    is gitignored and not needed): `NLCD_eval`, `LFRDB_eval`,
-   `NPS_VMI`, `VegBench_eval`, `BBS`, `butterflies`, `SNAPSHOT_USA_eval`, `SATBIRD_eval`,
+   `NPS_VMI`, `VegBench_eval`, `BBS`, `butterflies`, `SNAPSHOT_USA_eval`, `SATBIRD_USA_winter_eval`,
    `BLM_AIM`, `OFO_trees`. Check each exists (`ls`); load a task with
    `python -c "import sys; sys.path.insert(0,'src'); from eagle_bench.tasks import load_task; print(load_task('nlcd').df.shape)"`.
 2. **Environment.** Needs `rasterio`, `pyproj`, `geopandas`, `pandas`, `pyarrow`, `scikit-learn`, `scipy`, `joblib`,

@@ -1,42 +1,33 @@
-"""Stage 1: fetch SatBird-USA-summer targets (Hugging Face) and eBird hotspot coordinates (eBird API).
+"""Stage 1: fetch SatBird labels and metadata (no imagery) from the Hugging Face repo sammlapp/SatBird-labels.
 
-SatBird (Teng et al. 2023, https://arxiv.org/abs/2311.00936) labels are eBird encounter rates per
-hotspot. The targets pickle is a dict {hotspot_id: float vector of 670 species} for 122,593
-hotspots and carries no coordinates. Coordinates come from the eBird API v2 bulk endpoint
-`ref/hotspot/<region>` (one call per US state + DC, all hotspots of that region), which needs a
-free API key in the environment variable EBIRD_API_KEY (https://ebird.org/api/keygen).
+SatBird (Teng et al. 2023, https://arxiv.org/abs/2311.00936) labels are eBird encounter rates per hotspot. The HF repo
+repackages the original dataset's non-image files unmodified: per season (`USA_winter`, `USA_summer`) a
+`hotspots.parquet` (hotspot_id, lat, lon, SatBird's own `split` train/valid/test, `probs` = encounter rate of every
+species, in the order of `species_list.txt`), SatBird's original split CSVs, and the species list. Kenya is not used.
+Nothing else (coordinates, split) comes from anywhere else.
 
-Outputs (datasets/raw/satbird/, gitignored):
-  satbird_usa_summer_targets.pkl        from huggingface.co/datasets/cisosdm/SatBird (USA_summer/)
-  songbird_indices.npy, nonsongbird_indices.npy
-  ebird_hotspots/<region>.json           raw API response per region
-Provenance goes to catalog/download_log.csv (URL, UTC time, size, sha256) and a SOURCE.md in the raw folder.
-Reruns skip files that exist (delete to refetch). Hotspot coordinates are eBird's current values,
-which can differ slightly from those used when SatBird was built (2023).
+Usage (from the repo root):
+  pixi run python data_cleaning/satbird/01_download.py                 # runs `hf download` (needs the hf CLI)
+  pixi run python data_cleaning/satbird/01_download.py --source DIR    # copy from an existing `hf download` snapshot
+
+Outputs (datasets/raw/satbird/SatBird-labels/<season>/, gitignored), a download log in catalog/download_log.csv and
+a SOURCE.md in the raw folder. Seasons missing from the repo (USA_summer until it is released) are skipped.
 """
+import argparse
 import hashlib
-import json
-import os
-import urllib.request
+import shutil
+import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
-RAW = ROOT / "datasets/raw/satbird"
+RAW = ROOT / "datasets/raw/satbird/SatBird-labels"
 CAT = Path(__file__).parent / "catalog"
-HF = "https://huggingface.co/datasets/cisosdm/SatBird/resolve/main/USA_summer"
-HF_FILES = {
-    "satbird_usa_summer_targets.pkl": f"{HF}/satbird_usa_summer_targets.pkl",
-    "songbird_indices.npy": f"{HF}/stats/songbird_indices.npy",
-    "nonsongbird_indices.npy": f"{HF}/stats/nonsongbird_indices.npy",
-}
-STATES = (
-    "AL AK AZ AR CA CO CT DE DC FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY "
-    "NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY"
-).split()
-EBIRD = "https://api.ebird.org/v2/ref/hotspot/US-{}?fmt=json"
+REPO = "sammlapp/SatBird-labels"
+SEASONS = ["USA_winter", "USA_summer"]
+FILES = ["hotspots.parquet", "species_list.txt", "train_split.csv", "valid_split.csv", "test_split.csv"]
 
 
 def sha256(path):
@@ -47,50 +38,38 @@ def sha256(path):
     return h.hexdigest()
 
 
-def download(url, out, headers=None):
-    req = urllib.request.Request(url, headers=headers or {"User-Agent": "EAGLE research download"})
-    with urllib.request.urlopen(req, timeout=600) as resp:
-        out.write_bytes(resp.read())
-    return dict(
-        file=str(out.relative_to(RAW)), url=url.split("?")[0],
-        downloaded_utc=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        bytes=out.stat().st_size, sha256=sha256(out),
-    )
-
-
 def main():
-    RAW.mkdir(parents=True, exist_ok=True)
-    (RAW / "ebird_hotspots").mkdir(exist_ok=True)
-    log_path = CAT / "download_log.csv"
-    rows = [] if not log_path.exists() else pd.read_csv(log_path).to_dict("records")
-    done = {r["file"] for r in rows}
-    for name, url in HF_FILES.items():
-        out = RAW / name
-        if not out.exists():
-            rows.append(download(url, out))
-        elif name not in done:  # present from a manual download: record hash, source URL
-            rows.append(dict(file=name, url=url, downloaded_utc="manual (before logging)",
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--source", type=Path, help="snapshot folder of an earlier `hf download`; default: download now")
+    src = ap.parse_args().source
+    if src is None:
+        src = RAW / "_hf_download"
+        subprocess.run(["hf", "download", REPO, "--repo-type", "dataset", "--local-dir", str(src),
+                        *sum([["--include", f"{s}/*"] for s in SEASONS], [])], check=True)
+    CAT.mkdir(exist_ok=True)
+    rows = []
+    for season in SEASONS:
+        for name in FILES:
+            f = src / season / name
+            if not f.exists():
+                print(f"skip {season}/{name} (not in the repo)")
+                continue
+            out = RAW / season / name
+            out.parent.mkdir(parents=True, exist_ok=True)
+            if f.resolve() != out.resolve():
+                shutil.copyfile(f.resolve(), out)
+            rows.append(dict(file=f"{season}/{name}", url=f"https://huggingface.co/datasets/{REPO}/resolve/main/{season}/{name}",
+                             downloaded_utc=datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
                              bytes=out.stat().st_size, sha256=sha256(out)))
-    key = os.environ.get("EBIRD_API_KEY")
-    for st in STATES:
-        out = RAW / "ebird_hotspots" / f"US-{st}.json"
-        if out.exists():
-            continue
-        if not key:
-            raise SystemExit("set EBIRD_API_KEY (free key: https://ebird.org/api/keygen)")
-        rows.append(download(EBIRD.format(st), out, {"X-eBirdApiToken": key}))
-        print(st, out.stat().st_size, flush=True)
-    log = pd.DataFrame(rows).drop_duplicates("file", keep="last")
-    log.to_csv(log_path, index=False)
+    if src == RAW / "_hf_download":
+        shutil.rmtree(src)
+    pd.DataFrame(rows).to_csv(CAT / "download_log.csv", index=False)
     (RAW / "SOURCE.md").write_text(
-        "# SatBird raw data (gitignored)\n\n"
-        "Targets: SatBird-USA-summer encounter rates from https://huggingface.co/datasets/cisosdm/SatBird "
-        "(CC BY-NC 4.0, derived from Teng et al. 2023; the full 152 GB set is on Google Drive, see the SatBird repo).\n"
-        "Coordinates: eBird API v2 `ref/hotspot/US-<state>` (https://documenter.getpostman.com/view/664302/S1ENwy59), "
-        "fetched by `data_cleaning/satbird/01_download.py`.\n"
-        "Hashes and fetch times: `data_cleaning/satbird/catalog/download_log.csv`.\n"
-    )
-    print(log[["file", "bytes", "downloaded_utc"]].tail(8).to_string(index=False), f"\n{len(log)} files logged")
+        "# SatBird labels (gitignored)\n\n"
+        f"From https://huggingface.co/datasets/{REPO} (CC BY-NC 4.0): the label and metadata files of the original SatBird "
+        "dataset (Teng et al. 2023), without imagery. Fetched by `data_cleaning/satbird/01_download.py`; hashes and fetch times in "
+        "`data_cleaning/satbird/catalog/download_log.csv`. Use must also comply with the eBird Terms of Use.\n")
+    print(pd.DataFrame(rows)[["file", "bytes"]].to_string(index=False))
 
 
 if __name__ == "__main__":

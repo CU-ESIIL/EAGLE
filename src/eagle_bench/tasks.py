@@ -172,13 +172,13 @@ def _snapshot():
                 "SnapShot USA camera-trap locations: species occupancy")
 
 
-# year = 2022 (the paired Sentinel-2 year); the labels pool 2010-2023 checklists, so the year is a reference only
-@task("satbird_occupancy")
-def _satbird():
-    df, spec, is_test = _table("satbird")
+# year = 2022 (the Sentinel-2 year of SatBird); the labels pool 2010-2023 checklists, so the year is a reference only
+@task("satbird_winter_occupancy")
+def _satbird_winter():
+    df, spec, is_test = _table("satbird_winter", query="split in ['train', 'test']")  # SatBird's validation split is not used
     cols = [c for c in df.columns if c.startswith("occ__")]
-    return Task("satbird_occupancy", "multilabel", _std(df, spec, is_test), df[cols].astype(np.int8).rename(columns=lambda c: c[5:]),
-                f"SatBird eBird hotspots (summer): species occupancy, {len(cols)} species")
+    return Task("satbird_winter_occupancy", "multilabel", _std(df, spec, is_test), df[cols].astype(np.int8).rename(columns=lambda c: c[5:]),
+                f"SatBird eBird hotspots (USA winter): species occupancy, {len(cols)} species")
 
 
 BLM_TARGETS = ["TotalFoliarCover", "BareSoilCover", "AH_ShrubCover", "AH_SagebrushCover", "AH_GrassCover",

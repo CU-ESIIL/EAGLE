@@ -73,16 +73,16 @@ snapshot_usa:
   crs_status: assumed
   notes: place-level table; year is the first deployment year, year_diff_AWS_max is the largest gap
 
-satbird:
-  path: datasets/SATBIRD_eval/location_occupancy.parquet
+satbird_winter:
+  path: datasets/SATBIRD_USA_winter_eval/location_occupancy.parquet
   lat: lat
   lon: lon
   year: year
   id: hotspot_id
   split: {col: test_split, test: true}
-  source_crs: "eBird hotspot lat/lon (eBird API)"
+  source_crs: "eBird hotspot lat/lon as published in SatBird (HF sammlapp/SatBird-labels); datum not stated"
   crs_status: assumed
-  notes: labels pool 2010-2023 checklists; year is a reference only
+  notes: SatBird's own split kept in split (train, val, test); test_split is True for test only. Labels pool Dec-Jan checklists 2010-2023; year is a reference only
 
 bbs:
   path: datasets/BBS/BBS_train_test_als_available.parquet

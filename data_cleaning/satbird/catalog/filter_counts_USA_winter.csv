@@ -1,0 +1,5 @@
+step,n_hotspots,dropped
+1. hotspots in SatBird,53361,0
+2. valid coordinates,53361,0
+3. covered by a 3DEP footprint with a collection year,48008,5353
+4. 3DEP collection year inside the label years 2010-2023,47688,320

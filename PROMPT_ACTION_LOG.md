@@ -747,3 +747,17 @@ Do not worry about NPS 0.435 test; remove the stale `-20` folders; add VegBench 
 - `vegbench/01_match_als.py` adds bool `test_split` (`split == "test"`: True for both test sets `acc` and `strat`, False for train and val); `split`/`test_type` kept. Reran: rows and every other column identical (10,455). Registry entry now uses `test_split`; the benchmark task still drops val.
 - Deleted `datasets/SNAPSHOT_USA_eval-20/` and `datasets/SATBIRD_eval-20/` (git rm; recoverable from git history). `snapshot_usa/04_location_targets.py` lost its `--min-locations` option and writes only `SNAPSHOT_USA_eval/` (reran, outputs unchanged). Left for the SatBird rework (user): `data_cleaning/satbird/03_split_and_export.py` (`MIN_VARIANTS` still writes `SATBIRD_eval-20/`, which would recreate the folder), `data_cleaning/satbird/README.md` and `datasets/SATBIRD_eval/README.md`.
 - READMEs: SnapShot (data and cleaning), LFRDB, NLCD (split description and counts), NPS VMI (documented `07_filter_split.py` and `vmi_classification_task.parquet`, which had no entry), baseline_eval (NPS 6,108 rows). Still missing per the protocol: `datasets/VegBench_eval/README.md`.
+
+## 2026-11-10 - SatBird: ingest the original dataset's labels and split only (USA winter)
+
+### Prompt
+
+Remove the ingestion workflow that matched eBird hotspots from partial data; use only the original dataset's data, now in the HF repo `sammlapp/SatBird-labels` (USA_winter; summer not complete). Follow the original dataset's data split, do not invent one.
+
+### Actions
+
+- `data_cleaning/satbird/`: `01_download.py` now fetches the label files from the HF repo (`hf download`, or `--source` a local snapshot); the eBird API download, companion-split cross-check, "still a public hotspot" and "moved" filters, and the own 1-degree block split are gone (`03_split_and_export.py` replaced by `03_export.py`). `02_filter_and_match_als.py` only checks coordinates and matches 3DEP (pooled 2010-2023 rule unchanged). All scripts take a season argument (`USA_winter` default; `USA_summer` once released). Old catalog CSVs replaced by `*_USA_winter.csv`.
+- USA winter: 53,361 hotspots, 48,008 with 3DEP, 47,688 with a product collected 2010-2023. Split is SatBird's: 34,327 train / 7,174 val / 6,187 test (`split`, plus bool `test_split`, val False; test share 13%, deliberate). 587 species published (scientific names as columns, `enc__` / `occ__`); 467 with >= 20 hotspots in each of train and test.
+- Output `datasets/SATBIRD_USA_winter_eval/`; registry entry `satbird_winter`; task `satbird_occupancy` renamed `satbird_winter_occupancy` (train + test only). READMEs updated (satbird, dataset, baseline_eval, ingestion doc example).
+- Removed the stale SatBird files: `datasets/SATBIRD_eval/` (old summer table, recoverable from git), the old raw eBird/pickle/companion-split files, and `view_satbird.ipynb`.
+- Not done: summer run pending the HF upload; cookie cache not built.

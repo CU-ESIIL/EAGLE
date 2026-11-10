@@ -1,6 +1,6 @@
 # Ingesting a new evaluation dataset
 
-How a labeled dataset becomes an evaluation task for the lidar encoder: a table of locations with labels, each tied to the 3DEP lidar product closest in time. Worked examples to copy from: `lfrdb/` (database download, many filters), `snapshot_usa/` (counts to per-location targets), `satbird/` (API download of coordinates, encounter-rate and occupancy targets), `vegbench/` (ready-made split, repeat-survey analysis), `nps_vmi/` (many tables).
+How a labeled dataset becomes an evaluation task for the lidar encoder: a table of locations with labels, each tied to the 3DEP lidar product closest in time. Worked examples to copy from: `lfrdb/` (database download, many filters), `snapshot_usa/` (counts to per-location targets), `satbird/` (labels and split from a Hugging Face repackaging of the original dataset; encounter-rate and occupancy targets), `vegbench/` (ready-made split, repeat-survey analysis), `nps_vmi/` (many tables).
 
 ## Steps
 
