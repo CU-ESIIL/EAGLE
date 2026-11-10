@@ -27,9 +27,9 @@ Lidar point cloud cookie -> 1d embedding vector
 ### Lidar Derived Metrics
 
 **Decision (2026-11-10, user): use `lidR::stdmetrics`** (Roussel et al. 2020), on height above ground in the central 50 m
-disc, with and without a small set of lidR terrain/ground metrics (elevation, slope, aspect from the ground points).
+disc, with and without a small set of lidR terrain/ground metrics (elevation, slope, aspect from the ground points or fetched from a provider; TWI fetched from a provider).
 No GEDI simulation. `lidRmetrics` (Tompalski et al.) kept as a future candidate. The custom proposal below is superseded
-except for the location-only and acquisition-only baselines, which are kept.
+except for the location-only and acquisition-only baselines, which are kept. 
 
 <details><summary>Superseded: custom-metrics proposal</summary>
 
@@ -90,6 +90,16 @@ SatCLIP is a location encoder trained on satellite imagery.
 ## Status and results (Claude, kept current)
 
 ### 2026-11-10
+- **Lidar cache running** (tmux `als_cache`, survives the session): ~1.1 cookies/s → ~21 h for 86k sites; cookies ~7.7 MB
+  (~650 GB total on the data store). 1,434 ok / 63 empty after the first 25 min; 99% of cookies have ground points.
+- **Bug found (pre-training code too): noise points are not removed.** `eagle_als.fetch` uses
+  `Classification![7:7],Classification![18:18]`; PDAL keeps a point if it passes *any* range of a dimension, so classes
+  7 and 18 stay (one NLCD water cookie: 155k high-noise points, max height 256 m). The benchmark drops them downstream.
+  Fix in fetch.py: one expression `Classification[0:6],Classification[8:17],Classification[19:255]` (still ORed, but
+  the ranges now cover exactly the kept classes) or a `filters.expression` `Classification != 7 && Classification != 18`.
+  Your call, since it changes pre-training data.
+- **lidR stdmetrics pipeline trialled** (20 cookies): 56 stdmetrics + 7 terrain columns. Heights < 0 clamped to 0
+  (lidR convention). Open water: no ground → terrain NaN; zentropy NA on flat cookies → train-median imputation in the probe.
 - **AlphaEarth (centre pixel, Earth Engine): done for all tasks.** Results: `scripts/baseline_eval/results/alphaearth_center/summary.md`.
   Validated against the COG files (cosine 1.000 median). Re-extracted after the SatBird → USA winter change.
 - **Lidar cookie cache: blocked on PDAL.** Site table ready (86,150 unique sites, `benchmarking/als_cache/sites.parquet`);

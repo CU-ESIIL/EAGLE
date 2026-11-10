@@ -52,7 +52,9 @@ def preprocess(cookie, radius_m=50.0, height="z", max_points=None, seed=0):
         xyz[:, 2] = cookie["hag"]
     elif height != "z":
         raise ValueError(f"height must be 'z' or 'hag', got {height!r}")
-    keep = (xyz[:, 0] ** 2 + xyz[:, 1] ** 2) <= radius_m**2
+    keep = ((xyz[:, 0] ** 2 + xyz[:, 1] ** 2) <= radius_m**2)
+    if "classification" in cookie:  # noise 7 / 18 survive the cache's PDAL filter (it ORs its ranges)
+        keep &= ~np.isin(cookie["classification"], (7, 18))
     xyz = xyz[keep]
     rng = np.random.default_rng(seed)
     if max_points is not None and len(xyz) > max_points:

@@ -25,8 +25,9 @@ User notes and feedback for this work: `benchmarking_working_doc.md` (check it f
   - `/home/jovyan/envs/eagle-gpu` (GPU): torch 2.8.0+cu126, torch-scatter (PyG wheel for torch 2.8.0+cu126),
     spconv-cu126, timm, addict + the CPU stack. Install torch **from the cu126 index last**, other packages can
     silently upgrade it (torch-scatter then segfaults). Pinned list: `/home/jovyan/envs/eagle-gpu.freeze.txt`.
-  - **No PDAL yet** (no pip wheel; pixi install script and conda were not approved). Lidar cookie fetching
-    (`eagle_als.cache`) needs it. Waiting on the user (see Status).
+  - pixi (installed by the user at `~/.pixi/bin/pixi`): `envs/eagle-bench` (CPU + PDAL, used for cookie fetching and
+    lidar metrics) and `envs/lidr` (R 4.4 + lidR 4.3.3, arrow, terra; linux-64 only). Always go through
+    `pixi run --manifest-path ...` (activation sets PROJ_DATA/GDAL_DATA).
 - Run everything from the repo root with `PYTHONPATH=src`.
 - Earth Engine: project `eagle-lidar`, credentials in `~/.config/earthengine/credentials`
   (re-auth: `earthengine authenticate --auth_mode=notebook`, user does it in a terminal).
@@ -38,10 +39,12 @@ User notes and feedback for this work: `benchmarking_working_doc.md` (check it f
 | AlphaEarth, centre pixel, all tasks | **done** 2026-11-10 | `results/alphaearth_center/`; embeddings `$BENCH/aef/points_ee` (via symlink `datasets/raw/aef`) |
 | AlphaEarth after SatBird → `satbird_winter_occupancy` | re-extracted (18,379 new points); probes rerun | check `results/alphaearth_center/summary.md` has `satbird_winter_occupancy` |
 | Lidar site table | **done**: 86,150 unique sites in `$BENCH/als_cache/sites.parquet` | rerun `scripts/baseline_eval/03_lidar_sites.py` when a dataset changes |
-| Lidar cookie cache | **blocked: needs PDAL** | `python -m eagle_als.cache --sites $BENCH/als_cache/sites.parquet --out $BENCH/als_cache --id-col als_site_id --workers 8` (resumable; run in background, log to `$BENCH/als_cache/logs/`) |
+| Lidar cookie cache | **running** since 2026-11-10 13:51 UTC in tmux session `als_cache` (`scripts/baseline_eval/run_lidar_cache.sh`); ~1.1 cookies/s, ~21 h, ~7.7 MB/cookie (~650 GB) | check: `tmux ls`; log `$BENCH/als_cache/logs/`; progress = manifest status counts (see the script header). If it died: rerun the same tmux command (resumes) |
 | ForPT embedder | **written, smoke-tested on synthetic clouds** | weights `$BENCH/forpt_weights/epoch_30.pth`; run `scripts/baseline_eval/04_embed_forpt.py --limit 200` once cookies exist, then full |
 | ForPT probes | not started | `02_linear_probe.py --embeddings $BENCH/embeddings/forpt/r50_z --model forpt_r50_z --n-jobs 4` |
-| Lidar metrics (derived products) | **proposal awaiting user review** in `benchmarking_working_doc.md` | implement after approval |
+| lidR stdmetrics (+terrain) | **pipeline written and trialled** (20 cookies); user approved lidR::stdmetrics with and without terrain, no GEDI | `pixi run --manifest-path envs/eagle-bench/pixi.toml env PYTHONPATH=src python scripts/baseline_eval/05_lidr_metrics.py` (resumable; ~0.18 cookies/s while the cache saturates the CPUs, so best run after it); probe `02_linear_probe.py --embeddings $BENCH/features/lidr_stdmetrics/r50 [--exclude '^terrain_|^n_ground$']` |
+| Random forest / gradient boosting probe | not started (user wants linear + RF for the lidR metrics) | add to `eagle_bench/probes.py` |
+| AlphaEarth geography / leakage diagnostics | **plan in working doc**, not run | tests 1, 3, 5 first (location-only baselines, displacement test, lat/lon from AEF) |
 
 ## Pipeline (scripts/baseline_eval/)
 
@@ -52,6 +55,16 @@ User notes and feedback for this work: `benchmarking_working_doc.md` (check it f
    features: `--embeddings <dir>`.
 3. `03_lidar_sites.py` → site table for the shared cookie cache (priority order: small tasks first, SatBird last).
 4. `04_embed_forpt.py` → `$BENCH/embeddings/forpt/r<radius>_<z|hag>/part_*.parquet` (1008-d, resumable).
+
+## Known data issues
+
+- **Noise points are in the cached cookies.** `eagle_als.fetch` drops classes 7/18 with the PDAL filter
+  `Classification![7:7],Classification![18:18]`, but PDAL ORs ranges on the same dimension, so nothing is dropped
+  (seen: 155k high-noise points in one cookie, zmax 256 m). Handled downstream in `05_lidr_metrics.py` and
+  `eagle_bench/forpt.py`. Reported to the user; the fetch code (also used by pre-training) is unchanged pending their call.
+- Open-water and some urban cookies have no ground points: terrain metrics are NaN there, and lidR `zentropy` is NA on
+  flat cookies; the probe fills NaNs with the train median.
+- Stat-ing many files on the iRODS mount is very slow: list cached cookies from the cache manifest, not `Path.exists()`.
 
 ## ForPT facts (from github.com/prs-eth/ForPT, cloned at /home/jovyan/external/ForPT)
 

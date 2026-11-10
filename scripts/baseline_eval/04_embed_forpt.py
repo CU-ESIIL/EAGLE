@@ -21,7 +21,7 @@ import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
-from eagle_als.cache import cookie_path  # noqa: E402
+from eagle_als.cache import cookie_path, read_manifest  # noqa: E402
 from eagle_als.fetch import load_cookie  # noqa: E402
 from eagle_bench import forpt  # noqa: E402
 
@@ -47,7 +47,9 @@ def main():
     done = set()
     for f in out.glob("part_*.parquet"):
         done |= set(pd.read_parquet(f, columns=["als_site_id"])["als_site_id"])
-    todo = [s for s in sites["als_site_id"] if s not in done and cookie_path(a.cache, s).exists()]
+    # cached = status "ok" in the cache manifest (stat-ing 86k files on the iRODS mount takes many minutes)
+    cached = set(read_manifest(a.cache).query("status == 'ok'")["site_id"].astype(str))
+    todo = [s for s in sites["als_site_id"] if s not in done and s in cached]
     if a.limit:
         todo = todo[: a.limit]
     print(f"[forpt] {len(sites)} sites, {len(done)} embedded, {len(todo)} cached cookies to embed -> {out}", flush=True)
