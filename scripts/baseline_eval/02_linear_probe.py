@@ -14,12 +14,19 @@ Reads datasets/raw/aef/points/ (from 01_extract_aef.py). Writes, in scripts/base
     summary.md      the same headline table for reading
 Re-use for another embedding: write a points table with the same `key` + embedding columns, or pass your own
 matrices to `eagle_bench.probes.evaluate(task, X)`.
+
+Lidar embeddings / features keyed by cookie id (e.g. ForPT, from 04_embed_forpt.py): pass a directory of parquet
+shards with an `als_site_id` column; every other numeric column except `n_input` is used as a feature, and rows of a
+task are matched on `task.df.als_site_id` (rows without a cookie count as n_no_embedding):
+
+    python scripts/baseline_eval/02_linear_probe.py --embeddings $BENCH/embeddings/forpt/r50_z --model forpt_r50_z
 """
 
 import argparse
 import sys
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -36,22 +43,34 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--tasks", nargs="*", default=list(TASKS))
     ap.add_argument("--points", default=str(aef.CACHE_DIR / "points"))
-    ap.add_argument("--pooling", nargs="*", default=["disc", "center"], choices=["disc", "center"])
+    ap.add_argument("--pooling", nargs="*", default=["disc", "center"], choices=["disc", "center"])  # AEF only
     ap.add_argument("--min-counts", nargs="*", type=int, default=[20, 1])
     ap.add_argument("--model", default="alphaearth")
     ap.add_argument("--n-jobs", type=int, default=-1)
+    ap.add_argument("--embeddings", default=None, help="dir of parquet shards keyed by als_site_id (lidar features)")
     a = ap.parse_args()
     out = ROOT / "scripts/baseline_eval/results" / a.model
     out.mkdir(parents=True, exist_ok=True)
 
-    points = aef.load_points(a.points)
-    print(f"[probe] {len(points)} extracted points", flush=True)
+    if a.embeddings:
+        emb = pd.concat([pd.read_parquet(f) for f in sorted(Path(a.embeddings).glob("*.parquet"))], ignore_index=True)
+        emb = emb.drop_duplicates("als_site_id").set_index("als_site_id")
+        emb = emb[[c for c in emb.columns if c != "n_input" and pd.api.types.is_numeric_dtype(emb[c])]]
+        a.pooling = ["cookie"]
+        print(f"[probe] {len(emb)} cookie embeddings, {emb.shape[1]} features", flush=True)
+    else:
+        points = aef.load_points(a.points)
+        print(f"[probe] {len(points)} extracted points", flush=True)
     summaries, per_target = [], []
     for name in a.tasks:
         task = load_task(name)
         scenarios = [None] if task.kind == "regression" else a.min_counts
         for pooling, min_count in [(p, m) for p in a.pooling for m in scenarios]:
-            X = aef.matrix_for(task.df, points, pooling)
+            if a.embeddings:
+                ids = task.df["als_site_id"] if "als_site_id" in task.df else pd.Series(index=task.df.index, dtype=object)
+                X = emb.reindex(ids).to_numpy(np.float32)
+            else:
+                X = aef.matrix_for(task.df, points, pooling)
             s, per = probes.evaluate(task, X, n_jobs=a.n_jobs, min_count=min_count)
             s.update(pooling=pooling, frac_year_clipped=task.meta["frac_year_clipped"], description=task.description)
             per.insert(1, "pooling", pooling)

@@ -8,7 +8,7 @@ pixels. Centre pixel only (columns c00..c63); disc columns are not produced, so 
     python scripts/baseline_eval/02_linear_probe.py --points datasets/raw/aef/points_ee --pooling center \
         --model alphaearth_center --n-jobs 4
 
-Output: one shard per task in <out>/part_<task>.parquet (key, lat, lon, emb_year, aef_year, c00..c63).
+Output: one shard per task and run in <out>/part_<task>_<n already done>.parquet (key, lat, lon, emb_year, aef_year, c00..c63).
 Rerunning skips points already extracted.
 """
 
@@ -51,7 +51,7 @@ def main():
         res = pts[["key", "lat", "lon", "emb_year"]].merge(res.drop(columns=["lat", "lon", "emb_year"]), on="key")
         n_nan = int(res["c00"].isna().sum())
         n_other = int(((res["aef_year"] != res["emb_year"]) & (res["aef_year"] > 0)).sum())
-        res.to_parquet(out / f"part_{name}.parquet")
+        res.to_parquet(out / f"part_{name}_{len(done)}.parquet")  # new shard per run: never overwrites earlier points
         print(f"[extract_ee] {name}: wrote {len(res)} points ({n_other} from another year, {n_nan} with no valid pixel)",
               flush=True)
 

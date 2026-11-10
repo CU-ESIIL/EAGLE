@@ -88,6 +88,10 @@ def _table(name, query=None):
     df = registry.read(name)
     if query is not None:
         df = df.query(query)
+    if spec["als_id"] not in df and "product_name_AWS" in df:  # e.g. BLM AIM: cookie id from (tile, lat, lon)
+        from eagle_als.sites import add_site_ids
+
+        df = add_site_ids(df, spec["lat"], spec["lon"]).rename(columns={"als_site_id": spec["als_id"]})
     return df, spec, registry.is_test(df, spec)
 
 
