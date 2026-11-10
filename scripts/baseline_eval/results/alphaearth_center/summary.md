@@ -27,16 +27,16 @@ Test rows only (the datasets' spatial hold-out). `frac clipped` = share of rows 
 
 ## multilabel
 
-| task                    | pooling   |   min_count |   n_train |   n_test |   n_no_embedding |   frac_year_clipped |   mean_auroc |   mean_ap |   mean_prevalence |   n_species |
-|:------------------------|:----------|------------:|----------:|---------:|-----------------:|--------------------:|-------------:|----------:|------------------:|------------:|
-| bbs_occurrence          | center    |          20 |      6450 |     6484 |                0 |               0.215 |        0.884 |     0.221 |             0.036 |         164 |
-| bbs_occurrence          | center    |           1 |      6450 |     6484 |                0 |               0.215 |        0.888 |     0.14  |             0.017 |         358 |
-| butterflies_occurrence  | center    |          20 |       136 |      129 |                0 |               0.343 |        0.662 |     0.57  |             0.408 |          51 |
-| butterflies_occurrence  | center    |           1 |       136 |      129 |                0 |               0.343 |        0.746 |     0.399 |             0.136 |         215 |
-| snapshot_usa_occurrence | center    |          20 |      1595 |     1814 |                0 |               0     |        0.803 |     0.322 |             0.126 |          37 |
-| snapshot_usa_occurrence | center    |           1 |      1595 |     1814 |                0 |               0     |        0.764 |     0.152 |             0.035 |         150 |
-| satbird_occupancy       | center    |          20 |     33632 |    14416 |                0 |               0     |        0.932 |     0.508 |             0.11  |         537 |
-| satbird_occupancy       | center    |           1 |     33632 |    14416 |                0 |               0     |        0.931 |     0.455 |             0.096 |         618 |
+| task                     | pooling   |   min_count |   n_train |   n_test |   n_no_embedding |   frac_year_clipped |   mean_auroc |   mean_ap |   mean_prevalence |   n_species |
+|:-------------------------|:----------|------------:|----------:|---------:|-----------------:|--------------------:|-------------:|----------:|------------------:|------------:|
+| bbs_occurrence           | center    |          20 |      6450 |     6484 |                0 |               0.215 |        0.884 |     0.221 |             0.036 |         164 |
+| bbs_occurrence           | center    |           1 |      6450 |     6484 |                0 |               0.215 |        0.888 |     0.14  |             0.017 |         358 |
+| butterflies_occurrence   | center    |          20 |       136 |      129 |                0 |               0.343 |        0.662 |     0.57  |             0.408 |          51 |
+| butterflies_occurrence   | center    |           1 |       136 |      129 |                0 |               0.343 |        0.746 |     0.399 |             0.136 |         215 |
+| snapshot_usa_occurrence  | center    |          20 |      1595 |     1814 |                0 |               0     |        0.803 |     0.322 |             0.126 |          37 |
+| snapshot_usa_occurrence  | center    |           1 |      1595 |     1814 |                0 |               0     |        0.764 |     0.152 |             0.035 |         150 |
+| satbird_winter_occupancy | center    |          20 |     34327 |     6187 |                0 |               0     |        0.927 |     0.509 |             0.109 |         467 |
+| satbird_winter_occupancy | center    |           1 |     34327 |     6187 |                0 |               0     |        0.922 |     0.428 |             0.087 |         587 |
 
 ## regression
 
