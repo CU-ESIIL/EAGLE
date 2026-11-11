@@ -40,6 +40,8 @@ HEADLINE = dict(multiclass=["bal_acc", "macro_f1", "acc", "chance", "n_classes"]
                 multilabel=["mean_auroc", "mean_ap", "mean_prevalence", "n_species"],
                 regression=["mean_r2", "mean_spearman", "n_targets"])
 
+PRIMARY = dict(multiclass="bal_acc", multilabel="mean_auroc", regression="mean_r2")
+
 
 def main():
     ap = argparse.ArgumentParser()
@@ -88,6 +90,10 @@ def main():
             pd.DataFrame(summaries).to_csv(out / "summary.csv", index=False)  # written as we go
             pd.concat(per_target, ignore_index=True).to_csv(out / "per_target.csv", index=False)
     write_markdown(pd.DataFrame(summaries), out / "summary.md", a.model)
+    from importlib import import_module
+
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import_module("07_unified_summary").main()
 
 
 def impute_train_median(X, is_train):
@@ -103,16 +109,48 @@ def impute_train_median(X, is_train):
     return X
 
 
+# per-target metric(s) whose min-max range is reported next to the macro-averaged headline score
+RANGES = dict(multiclass=[("f1", "f1 range (per class)")],
+              multilabel=[("auroc", "auroc range (per species)"), ("ap", "ap range (per species)")],
+              regression=[("r2", "r2 range (per target)")])
+
+
+def per_target_ranges(per, kind):
+    """One row per (task, pooling, min_count) with 'lo - hi' strings of the per-target metrics."""
+    rows = []
+    for key, g in per.groupby(["task", "pooling", "min_count"], dropna=False):
+        row = dict(zip(["task", "pooling", "min_count"], key))
+        for col, name in RANGES[kind]:
+            v = g[col].dropna()
+            row[name] = f"{v.min():.2f} - {v.max():.2f}" if len(v) else ""
+        rows.append(row)
+    return pd.DataFrame(rows)
+
+
 def write_markdown(df, path, model):
     lines = [f"# {model}: linear probe results", "",
              "Test rows only (the datasets' spatial hold-out). `frac clipped` = share of rows whose survey year is "
-             "outside the imagery years and uses the nearest available year.", ""]
+             "outside the imagery years and uses the nearest available year. `score` is the macro average over "
+             "classes / species / targets; the range columns give the lowest - highest per-class (F1), per-species "
+             "(AUROC, AP) or per-target (R2) value.", ""]
+    per_path = Path(path).parent / "per_target.csv"
+    per = pd.read_csv(per_path) if per_path.exists() else None
     for kind, cols in HEADLINE.items():
         sub = df[df["kind"] == kind]
         if sub.empty:
             continue
-        keep = ["task", "pooling", "min_count", "n_train", "n_test", "n_no_embedding", "frac_year_clipped"] + cols
-        lines += [f"## {kind}", "", sub[[c for c in keep if c in sub]].round(3).to_markdown(index=False), ""]
+        sub = sub.assign(score=sub[PRIMARY[kind]])  # task, score lead each table
+        lead = ["task", "score"] + (["mean_ap"] if kind == "multilabel" else [])
+        range_cols = [n for _, n in RANGES[kind]]
+        if per is not None and not per.empty:
+            r = per_target_ranges(per[per["task"].isin(sub["task"])], kind)
+            sub = sub.merge(r, on=["task", "pooling", "min_count"], how="left") if sub["min_count"].notna().any() \
+                else sub.assign(**{c: np.nan for c in range_cols}).drop(columns=range_cols).merge(
+                    r.drop(columns="min_count"), on=["task", "pooling"], how="left")
+        keep = lead + range_cols + ["min_count", "pooling", "n_train", "n_test", "n_no_embedding",
+                                    "frac_year_clipped"] + [c for c in cols if c not in lead]
+        lines += [f"## {kind} (score = {PRIMARY[kind]})", "",
+                  sub[[c for c in keep if c in sub]].round(3).to_markdown(index=False), ""]
     path.write_text("\n".join(lines))
 
 
