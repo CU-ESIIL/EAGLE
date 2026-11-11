@@ -788,3 +788,16 @@ Build an ingestor for the Clay v1.5 NAIP embeddings on Source Cooperative and ge
 - Listed the bucket (1.2 M files, 6.5 TB) and found that a point's file follows from lat/lon by USGS quarter-quad naming (no STAC search); verified on 10 files against the chip footprints. Chips are 256 m (1 m NAIP) or ~154 m (60 cm).
 - New `src/eagle_bench/naip_clay.py`, `scripts/baseline_eval/09_fetch_naip_clay.py`, `--naip-clay` option in `02_linear_probe.py`. Each file is downloaded, pooled for the points that need it, and dropped; resume checkpoints are per-point weighted sums only.
 - Checks: radius 0 equals the containing chip (max diff 0), 40-point run at 100/250 m has full coverage. Not run: the full fetch (30-45k files, 230-350 GB; ~1.3 files/s from the Mac, so intended for CyVerse) and the probes; radii come from `radius` in `datasets/registry.yaml` (user is filling it in; blank ones stop the run); runbook for another machine in CLAUDE.md.
+
+## 2026-11-11 - Clay NAIP embeddings: NLCD-only trial
+
+### Prompt
+
+Resume the NLCD-only trial of evaluating NAIP embeddings.
+
+### Actions
+
+- Ran `09_fetch_naip_clay.py --tasks nlcd --out ~/naip_clay_nlcd` on the Mac (radius 15 m from the registry): 100-point dry run (0 points without a cell, coverage 1.00, year gap 0), then the full 892 points / 891 files. The laptop slept mid-run and 195 files failed with DNS errors; rerunning the same command retried only those (3.2 min). All 892 points have an embedding.
+- Probe: `02_linear_probe.py --naip-clay ~/naip_clay_nlcd --model naip_clay_nlcd --tasks nlcd --n-jobs 4`: bal. acc. 0.636 (8 classes, min_count=20), 0.499 (15 classes); AlphaEarth centre pixel 0.751. Results in `scripts/baseline_eval/results/naip_clay_nlcd/`. The probe also rewrote the shared `results/summary.md` (adds the NLCD rows).
+- Docs: working doc (NAIP section), CLAUDE.md status table and runbook step 2 (blank radius now falls back to `--default-radius`).
+- Not done: full all-task run (intended for CyVerse); radii for tables still blank in the registry.

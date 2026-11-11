@@ -1,0 +1,24 @@
+task,pooling,min_count,target,n_train,n_test,f1
+nlcd,naip_r15m,20,Cultivated Crops,46,46,0.8085106382978723
+nlcd,naip_r15m,20,Deciduous Forest,36,29,0.5283018867924528
+nlcd,naip_r15m,20,"Developed, Open Space",49,40,0.6744186046511628
+nlcd,naip_r15m,20,Emergent Herbaceous Wetlands,21,31,0.7384615384615385
+nlcd,naip_r15m,20,Evergreen Forest,47,53,0.6666666666666666
+nlcd,naip_r15m,20,Grassland/Herbaceous,43,57,0.6126126126126126
+nlcd,naip_r15m,20,Pasture/Hay,23,24,0.4583333333333333
+nlcd,naip_r15m,20,Shrub/Scrub,54,46,0.5806451612903226
+nlcd,naip_r15m,1,Barren Land,24,8,0.38095238095238093
+nlcd,naip_r15m,1,Cultivated Crops,46,46,0.8
+nlcd,naip_r15m,1,Deciduous Forest,36,29,0.4444444444444444
+nlcd,naip_r15m,1,"Developed, High Intensity",18,11,0.45714285714285713
+nlcd,naip_r15m,1,"Developed, Low Intensity",14,19,0.1875
+nlcd,naip_r15m,1,"Developed, Medium Intensity",19,20,0.36363636363636365
+nlcd,naip_r15m,1,"Developed, Open Space",49,40,0.40476190476190477
+nlcd,naip_r15m,1,Emergent Herbaceous Wetlands,21,31,0.5964912280701754
+nlcd,naip_r15m,1,Evergreen Forest,47,53,0.6095238095238096
+nlcd,naip_r15m,1,Grassland/Herbaceous,43,57,0.5825242718446602
+nlcd,naip_r15m,1,Mixed Forest,16,27,0.37735849056603776
+nlcd,naip_r15m,1,Open Water,14,19,0.55
+nlcd,naip_r15m,1,Pasture/Hay,23,24,0.44
+nlcd,naip_r15m,1,Shrub/Scrub,54,46,0.5681818181818182
+nlcd,naip_r15m,1,Woody Wetlands,19,18,0.391304347826087
