@@ -46,7 +46,7 @@ User notes and feedback for this work: `benchmarking_working_doc.md` (check it f
 | ForPT embedder | **written, smoke-tested on synthetic clouds** | weights `$BENCH/forpt_weights/epoch_30.pth`; run `scripts/baseline_eval/04_embed_forpt.py --limit 200` once cookies exist, then full |
 | ForPT probes | not started | `02_linear_probe.py --embeddings $BENCH/embeddings/forpt/r50_z --model forpt_r50_z --n-jobs 4` |
 | lidR stdmetrics (+terrain) | **pipeline written and trialled** (20 cookies); user approved lidR::stdmetrics with and without terrain, no GEDI | `pixi run --manifest-path envs/eagle-bench/pixi.toml env PYTHONPATH=src python scripts/baseline_eval/05_lidr_metrics.py` (resumable; ~0.18 cookies/s while the cache saturates the CPUs, so best run after it); probe `02_linear_probe.py --embeddings $BENCH/features/lidr_stdmetrics/r50 [--exclude '^terrain_|^n_ground$']` |
-| Clay v1.5 NAIP embeddings | **code written and validated on 40 points; full run waiting for the user's per-task disc radii** (`scripts/baseline_eval/naip_clay_radii.yaml` is a placeholder) | `python scripts/baseline_eval/09_fetch_naip_clay.py --radii scripts/baseline_eval/naip_clay_radii.yaml --workers 16` (resumable; 30-45k files, 230-350 GB download, run on CyVerse) then `02_linear_probe.py --naip-clay datasets/raw/naip_clay --model naip_clay --n-jobs 4`; no tiles kept, output `pooled/<task>.parquet` |
+| Clay v1.5 NAIP embeddings | **code written and validated on ~50 points; full run not started** (too slow from the user's Mac: ~5-7 MB/s). Needs `radius` for every table in `datasets/registry.yaml` | follow "Runbook: Clay NAIP embeddings" below; output `$BENCH/naip_clay/pooled/<task>.parquet`, then probe |
 | Random forest / gradient boosting probe | not started (user wants linear + RF for the lidR metrics) | add to `eagle_bench/probes.py` |
 | AlphaEarth geography / leakage diagnostics | **plan in working doc**, not run | tests 1, 3, 5 first (location-only baselines, displacement test, lat/lon from AEF) |
 
@@ -59,6 +59,24 @@ User notes and feedback for this work: `benchmarking_working_doc.md` (check it f
    features: `--embeddings <dir>`.
 3. `03_lidar_sites.py` → site table for the shared cookie cache (priority order: small tasks first, SatBird last).
 4. `04_embed_forpt.py` → `$BENCH/embeddings/forpt/r<radius>_<z|hag>/part_*.parquet` (1008-d, resumable).
+
+## Runbook: Clay NAIP embeddings (run on a machine with a fast link to AWS us-west-2, e.g. CyVerse)
+
+What it does: for each eval point, averages the Clay v1.5 NAIP chip embeddings (1024-d; chips are 256 m, or ~154 m for 60 cm NAIP) over a disc of the task's radius, using the NAIP year nearest to the survey year. Each 3.6 MB source file
+is downloaded, pooled and dropped: **no tiles or chips are stored** (user requirement), only the pooled embedding per point. Code: `src/eagle_bench/naip_clay.py`, `scripts/baseline_eval/09_fetch_naip_clay.py`; background and checks in the working doc.
+
+1. `git pull --rebase`. Check the user's feedback in `benchmarking_working_doc.md`.
+2. Radii: every table in `datasets/registry.yaml` needs `radius:` (metres). The run stops and lists the blanks, so ask the user rather than inventing values. Radii below ~150 m return the chip under the point. Optional override: `--radii file.yaml` with `{task or table: metres}`.
+3. Env: the CPU env `/home/jovyan/envs/eagle-bench` is enough (needs pandas, pyarrow, shapely (comes with geopandas), scipy, pyyaml). No GPU, no PDAL, no Earth Engine. Do not run it inside the tmux session that fills the lidar cache if the CPUs are saturated; the work is network-bound, but the parsing needs a core or two.
+4. Dry run (about 5 min incl. the index build, ~100 files): `PYTHONPATH=src python scripts/baseline_eval/09_fetch_naip_clay.py --out $BENCH/naip_clay_test --max-points 100 --workers 16`. Expect `0 points touch no cell`, median coverage 1.00 and `|NAIP year - target|` median 0-1 for every task. Then `rm -r $BENCH/naip_clay_test`.
+5. Measure the rate from the dry run (files/s). From the user's Mac it was ~1.3 files/s regardless of threads (network cap). The full run is 30-45k files (230-350 GB, depends on the radii; the plan line prints the exact count and GB), so decide whether it is acceptable and tell the user the estimate.
+6. Full run in tmux (resumable, rerun the same command after any interruption; failed files are listed and retried on the next run):
+   `tmux new -d -s naip_clay 'cd <repo> && PYTHONPATH=src python scripts/baseline_eval/09_fetch_naip_clay.py --out $BENCH/naip_clay --workers 16 2>&1 | tee -a $BENCH/naip_clay/fetch.log'`
+   Progress: the log line `n/N files ... files/s` after every 400 files. First run builds `naip_index.parquet` (3 min, lists the bucket anonymously over HTTPS; no credentials needed). Increase `--workers` (32-64) if throughput scales.
+7. When it finishes it writes `$BENCH/naip_clay/pooled/<task>.parquet` for each task and prints points with an embedding, median coverage and year gap per task. Points in no NAIP-embedded cell (about 0.5%, e.g. outside CONUS) have NaN and count as `n_no_embedding` in the probe.
+8. Probe (4 CPUs): `PYTHONPATH=src python scripts/baseline_eval/02_linear_probe.py --naip-clay $BENCH/naip_clay --model naip_clay --n-jobs 4` (all tasks; writes `results/naip_clay/`).
+9. Record: results table + the per-task radii and timings in the working doc, a `PROMPT_ACTION_LOG.md` entry, update the status table, commit (pooled tables are large data: do not commit them).
+Changing a radius or adding points later only reads the files whose (point, radius) pairs are not in `partial/` yet; changing a radius of an already pooled task re-reads that task's files, because only sums for the old radius were kept.
 
 ## Known data issues
 

@@ -24,7 +24,7 @@ and none needed a year other than its (clipped) survey year.
 
 ### Clay v1.5 NAIP embeddings (`09_fetch_naip_clay.py`)
 
-Pre-computed 1024-d embeddings of 256 x 256 px NAIP chips (256 m at 1 m, ~154 m at 60 cm), averaged over a disc around each point with a radius per task (`naip_clay_radii.yaml`). Files are read whole and dropped; only the pooled
+Pre-computed 1024-d embeddings of 256 x 256 px NAIP chips (256 m at 1 m, ~154 m at 60 cm), averaged over a disc around each point with a radius per task (`radius` in `datasets/registry.yaml`). Run procedure for another machine: CLAUDE.md, section "Runbook: Clay NAIP embeddings". Files are read whole and dropped; only the pooled
 embedding per point is kept (`pooled/<task>.parquet`). Details in `src/eagle_bench/naip_clay.py` and the working doc.
 
 ## Tasks (16 entries, 10 datasets)

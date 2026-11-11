@@ -1,9 +1,10 @@
 """Clay v1.5 NAIP embeddings averaged over a disc around every benchmark point, one disc radius per task.
 
-    python scripts/baseline_eval/09_fetch_naip_clay.py --radii scripts/baseline_eval/naip_clay_radii.yaml
-    python scripts/baseline_eval/02_linear_probe.py --naip-clay datasets/raw/naip_clay --model naip_clay --n-jobs 4
+    python scripts/baseline_eval/09_fetch_naip_clay.py --out $BENCH/naip_clay --workers 16
+    python scripts/baseline_eval/02_linear_probe.py --naip-clay $BENCH/naip_clay --model naip_clay --n-jobs 4
 
-Radii (metres, 0 = the chip under the point) come from the yaml: `default` plus optional per-task entries. A file of
+Radii (metres, 0 = the chip under the point) are the `radius` of each task's table in datasets/registry.yaml (task ->
+table by name prefix: lfrdb_ecosys -> lfrdb); the run stops if one is blank. A file of
 ~3.6 MB is downloaded for every NAIP quarter-quad a disc touches, used for the points that need it and dropped: the
 chips are not stored. What is kept in <out>:
   naip_index.parquet           list of the ~1.2 M files (built once, 3 min)
@@ -26,15 +27,26 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
+from eagle_als import registry  # noqa: E402
 from eagle_bench import aef, naip_clay as N  # noqa: E402
 from eagle_bench.tasks import TASKS, load_task  # noqa: E402
 
 
-def task_radius(cfg, task):
-    r = cfg.get(task, cfg.get("default"))
-    if r is None:
-        raise SystemExit(f"no radius for task {task} and no `default` in the radii file")
-    return float(r)
+def task_radii(tasks, override=None):
+    """{task: disc radius in metres} from the `radius` of the task's registry table (or the override yaml: task or table -> radius)."""
+    reg, over, out, missing = registry.load_registry(), (override or {}), {}, []
+    for t in tasks:
+        table = max((k for k in reg if t.startswith(k)), key=len, default=None)
+        if table is None:
+            raise SystemExit(f"task {t} matches no table in datasets/registry.yaml")
+        r = over.get(t, over.get(table, reg[table].get("radius")))
+        if r is None:
+            missing.append(f"{t} (table {table})")
+        else:
+            out[t] = float(r)
+    if missing:
+        raise SystemExit("no `radius` in datasets/registry.yaml for: " + ", ".join(missing))
+    return out
 
 
 def load_partials(pdir):
@@ -48,7 +60,7 @@ def load_partials(pdir):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--radii", required=True, help="yaml: default + per-task disc radius in metres")
+    ap.add_argument("--radii", default=None, help="optional yaml overriding registry radii: {task or table: metres}")
     ap.add_argument("--tasks", nargs="*", default=list(TASKS))
     ap.add_argument("--out", default=str(N.CACHE_DIR))
     ap.add_argument("--workers", type=int, default=16, help="concurrent downloads")
@@ -59,7 +71,7 @@ def main():
     out = Path(a.out)
     (out / "partial").mkdir(parents=True, exist_ok=True)
     (out / "pooled").mkdir(exist_ok=True)
-    cfg = yaml.safe_load(open(a.radii))
+    radii = task_radii(a.tasks, yaml.safe_load(open(a.radii)) if a.radii else None)
 
     # ---- points: one row per (lat, lon, target year), with every radius some task wants for it
     frames = {}
@@ -67,7 +79,7 @@ def main():
         t = load_task(name, clip_years=N.YEARS)
         df = t.df[["lat", "lon", "emb_year"]].copy()
         df["key"] = aef.point_key(df)
-        df["radius"] = task_radius(cfg, name)
+        df["radius"] = radii[name]
         frames[name] = df
     allp = pd.concat(frames.values(), ignore_index=True)
     pts = allp.drop_duplicates("key").drop(columns="radius").reset_index(drop=True)
@@ -76,7 +88,7 @@ def main():
     want = allp[allp["key"].isin(set(pts["key"]))].drop_duplicates(["key", "radius"])  # (key, radius) to compute
     pts["rmax"] = pts["key"].map(want.groupby("key")["radius"].max())
     print(f"[naip] {len(pts)} points, {len(want)} (point, radius) pairs; radii: "
-          f"{ {n: task_radius(cfg, n) for n in a.tasks} }", flush=True)
+          f"{radii}", flush=True)
 
     index = N.build_index(out) if a.rebuild_index else N.load_index(out)
     cells = N.CellFiles(index)

@@ -786,5 +786,5 @@ Build an ingestor for the Clay v1.5 NAIP embeddings on Source Cooperative and ge
 ### Actions
 
 - Listed the bucket (1.2 M files, 6.5 TB) and found that a point's file follows from lat/lon by USGS quarter-quad naming (no STAC search); verified on 10 files against the chip footprints. Chips are 256 m (1 m NAIP) or ~154 m (60 cm).
-- New `src/eagle_bench/naip_clay.py`, `scripts/baseline_eval/09_fetch_naip_clay.py`, `naip_clay_radii.yaml` (placeholder radii), `--naip-clay` option in `02_linear_probe.py`. Each file is downloaded, pooled for the points that need it, and dropped; resume checkpoints are per-point weighted sums only.
-- Checks: radius 0 equals the containing chip (max diff 0), 40-point run at 100/250 m has full coverage. Not run: the full fetch (30-45k files, 230-350 GB; ~1.3 files/s from the Mac, so intended for CyVerse) and the probes; radii are the user's to set first.
+- New `src/eagle_bench/naip_clay.py`, `scripts/baseline_eval/09_fetch_naip_clay.py`, `--naip-clay` option in `02_linear_probe.py`. Each file is downloaded, pooled for the points that need it, and dropped; resume checkpoints are per-point weighted sums only.
+- Checks: radius 0 equals the containing chip (max diff 0), 40-point run at 100/250 m has full coverage. Not run: the full fetch (30-45k files, 230-350 GB; ~1.3 files/s from the Mac, so intended for CyVerse) and the probes; radii come from `radius` in `datasets/registry.yaml` (user is filling it in; blank ones stop the run); runbook for another machine in CLAUDE.md.
