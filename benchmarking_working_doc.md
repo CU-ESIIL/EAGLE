@@ -87,6 +87,15 @@ SatCLIP is a location encoder trained on satellite imagery.
 
 ### Embeddings of NAIP imagery
 
+**Decision (2026-11-11, user): Clay v1.5 NAIP embeddings** (`source.coop/clay/clay-v1-5-naip-2`, pre-computed for all NAIP 2010-2021); DINOv3-Sat kept as a possible later option.
+Probe input = the embedding averaged over a disc around the point, disc radius per task. No chips/tiles are stored, only the summary per point.
+
+*Claude notes (2026-11-11):*
+- Dataset: 1.2 M parquet files (one per NAIP quarter-quad and year, 3.6 MB), each with one 1024-d embedding (Clay class token) per non-overlapping 256x256 px chip: **256 m chips at 1 m NAIP (2010-2017), ~154 m at 60 cm NAIP (2016+)**. So the finest spatial resolution is a chip; discs below ~150 m mostly return the chip under the point (radius 0 = that chip, and the point can sit at the chip edge). Embeddings are not centred on the point.
+- Code: `src/eagle_bench/naip_clay.py`, `scripts/baseline_eval/09_fetch_naip_clay.py` (radii per task in `naip_clay_radii.yaml`, currently a **placeholder `default: 250`**), probe via `02_linear_probe.py --naip-clay`. File of a point = arithmetic on its lat/lon (USGS quarter-quad naming; checked against the chip footprints), so no STAC search. Year = the NAIP year nearest to the survey year (clipped to 2010-2021; ties to the later), per quarter-quad cell. Disc = sampled grid, each sample takes the chip it falls in, from the file of the cell it falls in (NAIP images overlap their neighbours, so no double counting). Output also has `coverage` and `naip_year`.
+- Validated: radius 0 equals the containing chip exactly (6 points), cells contained in chip footprints (10 files), 40 random points at 100/250 m: coverage 1.00.
+- **Cost:** 88,255 unique points (survey years clipped to 2010-2021). Files to read = download volume (a file is read whole): 29.8k files / 230 GB at radius 0, 31k at 250 m, 37k / 288 GB at 500 m, 45k / 346 GB at 1 km, 62k / 468 GB at 2 km, 118k / 878 GB at 5 km. 99.5% of centre points have NAIP embeddings. From the Mac the network gave only ~5-7 MB/s regardless of threads (~1.3 files/s, 7-10 h): run on CyVerse. Radii must be fixed before the run (a new radius re-reads the files).
+
 ## Status and results (Claude, kept current)
 
 ### 2026-11-10

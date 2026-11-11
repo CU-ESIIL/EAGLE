@@ -22,6 +22,11 @@ Validated against the COG extraction: cosine similarity median 1.000 over the 89
 0.988), same image year for every point, which also settles the orientation check below. No point was masked
 and none needed a year other than its (clipped) survey year.
 
+### Clay v1.5 NAIP embeddings (`09_fetch_naip_clay.py`)
+
+Pre-computed 1024-d embeddings of 256 x 256 px NAIP chips (256 m at 1 m, ~154 m at 60 cm), averaged over a disc around each point with a radius per task (`naip_clay_radii.yaml`). Files are read whole and dropped; only the pooled
+embedding per point is kept (`pooled/<task>.parquet`). Details in `src/eagle_bench/naip_clay.py` and the working doc.
+
 ## Tasks (16 entries, 10 datasets)
 
 | task | kind | rows (train/test) | label | notes |

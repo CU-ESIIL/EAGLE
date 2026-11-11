@@ -12,8 +12,11 @@ User notes and feedback for this work: `benchmarking_working_doc.md` (check it f
   file up to date.
 - Large data never goes in git. Persistent cache: `$BENCH = /home/jovyan/data-store/data/iplant/home/shared/esiil/als/benchmarking`
   (iRODS FUSE mount: fine for large sequential files, slow for many small reads).
-- Downloaded weights: always `torch.load(..., weights_only=True)`. Downloaded code (e.g. `/home/jovyan/external/ForPT`)
-  is read only, never executed.
+- Downloaded weights: always `torch.load(..., weights_only=True)`.
+- Prefer the established open-source implementation (e.g. the official ForPT / SatCLIP code, installed or cloned
+  outside the repo, e.g. `/home/jovyan/external/`) over custom re-implementations: it is more reproducible and
+  scientifically defensible. Re-implement only when the package cannot be used, and say why. (User policy,
+  2026-11-11; this replaces an earlier "downloaded code is read only, never executed" rule.)
 
 ## Machine (CyVerse JupyterHub)
 
@@ -43,6 +46,7 @@ User notes and feedback for this work: `benchmarking_working_doc.md` (check it f
 | ForPT embedder | **written, smoke-tested on synthetic clouds** | weights `$BENCH/forpt_weights/epoch_30.pth`; run `scripts/baseline_eval/04_embed_forpt.py --limit 200` once cookies exist, then full |
 | ForPT probes | not started | `02_linear_probe.py --embeddings $BENCH/embeddings/forpt/r50_z --model forpt_r50_z --n-jobs 4` |
 | lidR stdmetrics (+terrain) | **pipeline written and trialled** (20 cookies); user approved lidR::stdmetrics with and without terrain, no GEDI | `pixi run --manifest-path envs/eagle-bench/pixi.toml env PYTHONPATH=src python scripts/baseline_eval/05_lidr_metrics.py` (resumable; ~0.18 cookies/s while the cache saturates the CPUs, so best run after it); probe `02_linear_probe.py --embeddings $BENCH/features/lidr_stdmetrics/r50 [--exclude '^terrain_|^n_ground$']` |
+| Clay v1.5 NAIP embeddings | **code written and validated on 40 points; full run waiting for the user's per-task disc radii** (`scripts/baseline_eval/naip_clay_radii.yaml` is a placeholder) | `python scripts/baseline_eval/09_fetch_naip_clay.py --radii scripts/baseline_eval/naip_clay_radii.yaml --workers 16` (resumable; 30-45k files, 230-350 GB download, run on CyVerse) then `02_linear_probe.py --naip-clay datasets/raw/naip_clay --model naip_clay --n-jobs 4`; no tiles kept, output `pooled/<task>.parquet` |
 | Random forest / gradient boosting probe | not started (user wants linear + RF for the lidR metrics) | add to `eagle_bench/probes.py` |
 | AlphaEarth geography / leakage diagnostics | **plan in working doc**, not run | tests 1, 3, 5 first (location-only baselines, displacement test, lat/lon from AEF) |
 

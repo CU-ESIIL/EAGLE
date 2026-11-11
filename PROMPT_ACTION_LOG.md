@@ -776,3 +776,15 @@ Check the status of the baseline-evaluation machinery and run the AlphaEarth bas
 - Orientation check (open item in the baseline README) done: EE vs COG centre pixel cosine 1.000 median over 892 NLCD points (5th percentile 0.988); same year for all.
 - Probes: `02_linear_probe.py --points datasets/raw/aef/points_ee --pooling center --model alphaearth_center --n-jobs 4`; results in `scripts/baseline_eval/results/alphaearth_center/`. Headlines (min_count=20): NLCD bal. acc. 0.751; VegBench formation 0.517, group 0.351; LFRDB ecosys 0.564; NPS VMI group 0.566; BBS AUROC 0.884; SatBird AUROC 0.932; SnapShot 0.803; butterflies 0.662; BLM AIM mean R2 0.511; OFO 0.266.
 - Partial COG-route results (NLCD, disc and centre) are in `results/alphaearth/`.
+
+## 2026-11-11 - Clay v1.5 NAIP embeddings ingestor
+
+### Prompt
+
+Build an ingestor for the Clay v1.5 NAIP embeddings on Source Cooperative and get them for the eval tasks; probe input is the embedding averaged over a disc around the coordinate, disc size per task (user to define). Follow-up: do not save the tiles, only the summarised embedding per eval point.
+
+### Actions
+
+- Listed the bucket (1.2 M files, 6.5 TB) and found that a point's file follows from lat/lon by USGS quarter-quad naming (no STAC search); verified on 10 files against the chip footprints. Chips are 256 m (1 m NAIP) or ~154 m (60 cm).
+- New `src/eagle_bench/naip_clay.py`, `scripts/baseline_eval/09_fetch_naip_clay.py`, `naip_clay_radii.yaml` (placeholder radii), `--naip-clay` option in `02_linear_probe.py`. Each file is downloaded, pooled for the points that need it, and dropped; resume checkpoints are per-point weighted sums only.
+- Checks: radius 0 equals the containing chip (max diff 0), 40-point run at 100/250 m has full coverage. Not run: the full fetch (30-45k files, 230-350 GB; ~1.3 files/s from the Mac, so intended for CyVerse) and the probes; radii are the user's to set first.

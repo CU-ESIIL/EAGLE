@@ -21,6 +21,9 @@ filled with the train median), and rows of a
 task are matched on `task.df.als_site_id` (rows without a cookie count as n_no_embedding):
 
     python scripts/baseline_eval/02_linear_probe.py --embeddings $BENCH/embeddings/forpt/r50_z --model forpt_r50_z
+
+Clay v1.5 NAIP embeddings, disc-averaged per point with a radius per task (from 09_fetch_naip_clay.py; the
+radius is read from the pooled tables): `--naip-clay datasets/raw/naip_clay --model naip_clay`.
 """
 
 import argparse
@@ -52,6 +55,7 @@ def main():
     ap.add_argument("--model", default="alphaearth")
     ap.add_argument("--n-jobs", type=int, default=-1)
     ap.add_argument("--embeddings", default=None, help="dir of parquet shards keyed by als_site_id (lidar features)")
+    ap.add_argument("--naip-clay", default=None, help="dir written by 09_fetch_naip_clay.py (pooled/<task>.parquet)")
     ap.add_argument("--exclude", default=None, help="regex of feature columns to leave out (with --embeddings)")
     a = ap.parse_args()
     out = ROOT / "scripts/baseline_eval/results" / a.model
@@ -65,18 +69,24 @@ def main():
         emb = emb.loc[:, emb.notna().any()]  # all-NaN columns carry nothing
         a.pooling = ["cookie"]
         print(f"[probe] {len(emb)} cookie embeddings, {emb.shape[1]} features", flush=True)
+    elif a.naip_clay:
+        a.pooling = ["naip"]
     else:
         points = aef.load_points(a.points)
         print(f"[probe] {len(points)} extracted points", flush=True)
     summaries, per_target = [], []
     for name in a.tasks:
-        task = load_task(name)
+        task = load_task(name, clip_years=(2010, 2021)) if a.naip_clay else load_task(name)  # NAIP years 2010-2021
         scenarios = [None] if task.kind == "regression" else a.min_counts
         for pooling, min_count in [(p, m) for p in a.pooling for m in scenarios]:
             if a.embeddings:
                 ids = task.df["als_site_id"] if "als_site_id" in task.df else pd.Series(index=task.df.index, dtype=object)
                 X = emb.reindex(ids).to_numpy(np.float32)
                 X = impute_train_median(X, ~task.df["is_test"].to_numpy())
+            elif a.naip_clay:
+                tab = pd.read_parquet(Path(a.naip_clay) / "pooled" / f"{name}.parquet").drop_duplicates("key").set_index("key")
+                pooling = f"naip_r{int(tab['radius'].iloc[0])}m"
+                X = tab[[c for c in tab.columns if re.fullmatch(r"e\d{4}", c)]].reindex(aef.point_key(task.df)).to_numpy(np.float32)
             else:
                 X = aef.matrix_for(task.df, points, pooling)
             s, per = probes.evaluate(task, X, n_jobs=a.n_jobs, min_count=min_count)

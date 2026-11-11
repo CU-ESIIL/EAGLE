@@ -1,0 +1,15 @@
+# Disc radius (metres) over which the Clay v1.5 NAIP chip embeddings are averaged, per task. 0 = the chip under the point.
+# Clay chips are 256 m (1 m NAIP) or ~154 m (60 cm NAIP) wide, so radii below ~150 m mostly return the chip under the
+# point. PLACEHOLDERS (all tasks use `default`) until the per-task scales are chosen; fetch/pool with
+# scripts/baseline_eval/09_fetch_naip_clay.py, then probe with 02_linear_probe.py --naip-clay.
+default: 250
+# nlcd: 100
+# ofo_trees: 100
+# blm_aim: 250
+# lfrdb_ecosys: 250
+# nps_vmi_macrogroup: 250
+# vegbench_group: 250
+# butterflies_occurrence: 500
+# snapshot_usa_occurrence: 500
+# satbird_winter_occupancy: 500
+# bbs_occurrence: 1000
