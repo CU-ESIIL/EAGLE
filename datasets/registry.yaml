@@ -18,7 +18,7 @@
 #                 verified = read from the file or the data provider's documentation (cite it in the dataset README)
 #                 assumed  = plain lat/lon columns taken to be WGS84 without a documented datum; confirm and update
 #   notes       anything a user of the table must know
-
+#   radius      radius of the area around each point to be analyzed for the benchmark task (meters, default 50)
 nlcd:
   path: datasets/NLCD_eval/nlcd_lidar_eval.parquet
   lat: lat
@@ -29,6 +29,7 @@ nlcd:
   source_crs: "EPSG:5070 (Albers, WGS84 datum), read from AA2021F.prj"
   crs_status: verified
   notes: use balanced_subset == True for the benchmark task
+  radius: 15
 
 lfrdb:
   path: datasets/LFRDB_eval/lfrdb_eval.parquet
@@ -50,6 +51,7 @@ nps_vmi:
   source_crs: "UTM zone + datum recorded per plot (NAD83 or WGS84), converted in data_cleaning/nps_vmi/coords.py"
   crs_status: verified
   notes: plots whose coordinates were repaired are flagged in vmi_core_events.parquet (location_accuracy_flag)
+  radius: 30
 
 vegbench:
   path: datasets/VegBench_eval/vegbench_eval.parquet
@@ -72,6 +74,7 @@ snapshot_usa:
   source_crs: "lat/lon columns of the SnapShot USA deployment table"
   crs_status: assumed
   notes: place-level table; year is the first deployment year, year_diff_AWS_max is the largest gap
+  radius: 100
 
 satbird_winter:
   path: datasets/SATBIRD_USA_winter_eval/location_occupancy.parquet
@@ -83,6 +86,7 @@ satbird_winter:
   source_crs: "eBird hotspot lat/lon as published in SatBird (HF sammlapp/SatBird-labels); datum not stated"
   crs_status: assumed
   notes: SatBird's own split kept in split (train, val, test); test_split is True for test only. Labels pool Dec-Jan checklists 2010-2023; year is a reference only
+  radius: 300
 
 bbs:
   path: datasets/BBS/BBS_train_test_als_available.parquet
@@ -93,6 +97,7 @@ bbs:
   split: {col: test_split, test: true}
   source_crs: "Latitude/Longitude of Routes.csv (BBS route start)"
   crs_status: assumed
+  radius: 150
 
 butterflies:
   path: datasets/butterflies/species_observations_als_available.parquet
@@ -113,6 +118,7 @@ ofo_trees:
   split: {col: test_split, test: true}
   source_crs: "EPSG:4326, read from ofo_ground-reference_plots.gpkg"
   crs_status: verified
+  radius: 30
 
 blm_aim:
   path: datasets/BLM_AIM/BLM_AIM_plots.gpkg

@@ -38,6 +38,7 @@ tabulate = ">=0.10.0,<0.11"
 tensorboard = ">=2.21.0,<3"
 torch-tb-profiler = ">=0.4.3,<0.5"
 leafmap = ">=0.63.1,<0.64"
+duckdb = ">=2.0.0,<3"
 
 [pypi-dependencies]
 waxwing = ">=0.1.1, <0.2"

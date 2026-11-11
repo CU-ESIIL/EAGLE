@@ -4,7 +4,7 @@
     python scripts/baseline_eval/02_linear_probe.py --naip-clay $BENCH/naip_clay --model naip_clay --n-jobs 4
 
 Radii (metres, 0 = the chip under the point) are the `radius` of each task's table in datasets/registry.yaml (task ->
-table by name prefix: lfrdb_ecosys -> lfrdb); the run stops if one is blank. A file of
+table by name prefix: lfrdb_ecosys -> lfrdb); blank ones use --default-radius (50 m). A file of
 ~3.6 MB is downloaded for every NAIP quarter-quad a disc touches, used for the points that need it and dropped: the
 chips are not stored. What is kept in <out>:
   naip_index.parquet           list of the ~1.2 M files (built once, 3 min)
@@ -32,20 +32,17 @@ from eagle_bench import aef, naip_clay as N  # noqa: E402
 from eagle_bench.tasks import TASKS, load_task  # noqa: E402
 
 
-def task_radii(tasks, override=None):
-    """{task: disc radius in metres} from the `radius` of the task's registry table (or the override yaml: task or table -> radius)."""
-    reg, over, out, missing = registry.load_registry(), (override or {}), {}, []
+def task_radii(tasks, override=None, default=50.0):
+    """{task: disc radius in metres}: the `radius` of the task's registry table (or the override yaml: task or table -> radius), else `default`."""
+    reg, over, out = registry.load_registry(), (override or {}), {}
     for t in tasks:
         table = max((k for k in reg if t.startswith(k)), key=len, default=None)
         if table is None:
             raise SystemExit(f"task {t} matches no table in datasets/registry.yaml")
         r = over.get(t, over.get(table, reg[table].get("radius")))
+        out[t] = float(default if r is None else r)
         if r is None:
-            missing.append(f"{t} (table {table})")
-        else:
-            out[t] = float(r)
-    if missing:
-        raise SystemExit("no `radius` in datasets/registry.yaml for: " + ", ".join(missing))
+            print(f"[naip] no radius for {t} (table {table}) in the registry: using the default {default:.0f} m", flush=True)
     return out
 
 
@@ -66,12 +63,13 @@ def main():
     ap.add_argument("--workers", type=int, default=16, help="concurrent downloads")
     ap.add_argument("--chunk", type=int, default=400, help="files per checkpoint")
     ap.add_argument("--max-points", type=int, default=None, help="random subset of points (testing)")
+    ap.add_argument("--default-radius", type=float, default=50.0, help="metres, for tables without a registry `radius`")
     ap.add_argument("--rebuild-index", action="store_true")
     a = ap.parse_args()
     out = Path(a.out)
     (out / "partial").mkdir(parents=True, exist_ok=True)
     (out / "pooled").mkdir(exist_ok=True)
-    radii = task_radii(a.tasks, yaml.safe_load(open(a.radii)) if a.radii else None)
+    radii = task_radii(a.tasks, yaml.safe_load(open(a.radii)) if a.radii else None, a.default_radius)
 
     # ---- points: one row per (lat, lon, target year), with every radius some task wants for it
     frames = {}

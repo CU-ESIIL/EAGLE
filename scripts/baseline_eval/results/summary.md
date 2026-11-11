@@ -2,33 +2,33 @@
 
 Test rows of the spatial hold-out. `score` names the metric (bal_acc = balanced accuracy, mean_auroc, mean_r2); `min_count` is the class-set scenario (20 = classes with >= 20 rows in train and test, 1 = all). Blank = not run for that feature type. Per-model detail: `results/<model>/summary.md`.
 
-| task                     |   min_count (0 = n/a) | score      |   alphaearth_center |   location_rff |
-|:-------------------------|----------------------:|:-----------|--------------------:|---------------:|
-| nlcd                     |                    20 | bal_acc    |               0.751 |          0.319 |
-| nlcd                     |                     1 | bal_acc    |               0.577 |          0.219 |
-| lfrdb_ecosys             |                    20 | bal_acc    |               0.564 |          0.292 |
-| lfrdb_ecosys             |                     1 | bal_acc    |               0.237 |          0.093 |
-| lfrdb_nvc_group          |                    20 | bal_acc    |               0.445 |          0.135 |
-| lfrdb_nvc_group          |                     1 | bal_acc    |               0.214 |          0.097 |
-| nps_vmi_macrogroup       |                    20 | bal_acc    |               0.483 |          0.267 |
-| nps_vmi_macrogroup       |                     1 | bal_acc    |               0.357 |          0.139 |
-| nps_vmi_group            |                    20 | bal_acc    |               0.566 |          0.265 |
-| nps_vmi_group            |                     1 | bal_acc    |               0.331 |          0.095 |
-| vegbench_formation       |                    20 | bal_acc    |               0.517 |          0.227 |
-| vegbench_formation       |                     1 | bal_acc    |               0.379 |          0.175 |
-| vegbench_division        |                    20 | bal_acc    |               0.469 |          0.197 |
-| vegbench_division        |                     1 | bal_acc    |               0.42  |          0.141 |
-| vegbench_macrogroup      |                    20 | bal_acc    |               0.386 |          0.141 |
-| vegbench_macrogroup      |                     1 | bal_acc    |               0.35  |          0.138 |
-| vegbench_group           |                    20 | bal_acc    |               0.351 |          0.114 |
-| vegbench_group           |                     1 | bal_acc    |               0.269 |          0.131 |
-| bbs_occurrence           |                    20 | mean_auroc |               0.884 |          0.825 |
-| bbs_occurrence           |                     1 | mean_auroc |               0.888 |          0.807 |
-| butterflies_occurrence   |                    20 | mean_auroc |               0.662 |          0.713 |
-| butterflies_occurrence   |                     1 | mean_auroc |               0.746 |          0.804 |
-| snapshot_usa_occurrence  |                    20 | mean_auroc |               0.803 |          0.757 |
-| snapshot_usa_occurrence  |                     1 | mean_auroc |               0.764 |          0.741 |
-| satbird_winter_occupancy |                    20 | mean_auroc |               0.927 |          0.896 |
-| satbird_winter_occupancy |                     1 | mean_auroc |               0.922 |          0.876 |
-| blm_aim                  |                     0 | mean_r2    |               0.511 |          0.192 |
-| ofo_trees                |                     0 | mean_r2    |               0.266 |         -0.004 |
+| task                     |   min_count (0 = n/a) | score      |   alphaearth_center |   location_rff |   naip_clay_nlcd |   satclip_l10 |   satclip_l40 |
+|:-------------------------|----------------------:|:-----------|--------------------:|---------------:|-----------------:|--------------:|--------------:|
+| nlcd                     |                    20 | bal_acc    |               0.751 |          0.319 |            0.636 |         0.402 |         0.393 |
+| nlcd                     |                     1 | bal_acc    |               0.577 |          0.219 |            0.499 |         0.202 |         0.242 |
+| lfrdb_ecosys             |                    20 | bal_acc    |               0.564 |          0.292 |                  |         0.253 |         0.29  |
+| lfrdb_ecosys             |                     1 | bal_acc    |               0.237 |          0.093 |                  |         0.085 |         0.117 |
+| lfrdb_nvc_group          |                    20 | bal_acc    |               0.445 |          0.135 |                  |         0.198 |         0.166 |
+| lfrdb_nvc_group          |                     1 | bal_acc    |               0.214 |          0.097 |                  |         0.099 |         0.09  |
+| nps_vmi_macrogroup       |                    20 | bal_acc    |               0.483 |          0.267 |                  |         0.277 |         0.274 |
+| nps_vmi_macrogroup       |                     1 | bal_acc    |               0.357 |          0.139 |                  |         0.185 |         0.173 |
+| nps_vmi_group            |                    20 | bal_acc    |               0.566 |          0.265 |                  |         0.323 |         0.271 |
+| nps_vmi_group            |                     1 | bal_acc    |               0.331 |          0.095 |                  |         0.128 |         0.129 |
+| vegbench_formation       |                    20 | bal_acc    |               0.517 |          0.227 |                  |         0.257 |         0.24  |
+| vegbench_formation       |                     1 | bal_acc    |               0.379 |          0.175 |                  |         0.175 |         0.195 |
+| vegbench_division        |                    20 | bal_acc    |               0.469 |          0.197 |                  |         0.208 |         0.2   |
+| vegbench_division        |                     1 | bal_acc    |               0.42  |          0.141 |                  |         0.122 |         0.149 |
+| vegbench_macrogroup      |                    20 | bal_acc    |               0.386 |          0.141 |                  |         0.178 |         0.163 |
+| vegbench_macrogroup      |                     1 | bal_acc    |               0.35  |          0.138 |                  |         0.132 |         0.16  |
+| vegbench_group           |                    20 | bal_acc    |               0.351 |          0.114 |                  |         0.144 |         0.139 |
+| vegbench_group           |                     1 | bal_acc    |               0.269 |          0.131 |                  |         0.127 |         0.13  |
+| bbs_occurrence           |                    20 | mean_auroc |               0.884 |          0.825 |                  |         0.868 |         0.853 |
+| bbs_occurrence           |                     1 | mean_auroc |               0.888 |          0.807 |                  |         0.842 |         0.806 |
+| butterflies_occurrence   |                    20 | mean_auroc |               0.662 |          0.713 |                  |         0.703 |         0.716 |
+| butterflies_occurrence   |                     1 | mean_auroc |               0.746 |          0.804 |                  |         0.784 |         0.787 |
+| snapshot_usa_occurrence  |                    20 | mean_auroc |               0.803 |          0.757 |                  |         0.75  |         0.757 |
+| snapshot_usa_occurrence  |                     1 | mean_auroc |               0.764 |          0.741 |                  |         0.736 |         0.718 |
+| satbird_winter_occupancy |                    20 | mean_auroc |               0.927 |          0.896 |                  |         0.903 |         0.905 |
+| satbird_winter_occupancy |                     1 | mean_auroc |               0.922 |          0.876 |                  |         0.897 |         0.89  |
+| blm_aim                  |                     0 | mean_r2    |               0.511 |          0.192 |                  |         0.177 |         0.204 |
+| ofo_trees                |                     0 | mean_r2    |               0.266 |         -0.004 |                  |         0.025 |         0.26  |
