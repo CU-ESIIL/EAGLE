@@ -105,6 +105,16 @@ Probe input = the embedding averaged over a disc around the point, disc radius p
   from the registry). 64 workers on a 32-CPU job: **~11 cookies/s** (vs 1.1 on CyVerse), so ~2.2 h for all sites and ~650 GB.
   94-95% of the first 3,000 sites returned a cookie. pixi could not be installed by the agent here; a conda-forge env from the
   `miniforge3-python` module is used for now (details in CLAUDE.md). `run_lidar_cache.sh` now takes `BENCH`, `EAGLE_ENV`, `WORKERS`.
+- **Cache slowdown fixed:** PDAL's `readers.ept` sized its thread pool from the node's 128 hardware threads, so 64 fetches ran
+  ~5,000 threads on 32 CPUs (load 517) and the rate fell from 11 to 7 cookies/s. New option `EAGLE_PDAL_THREADS` in
+  `eagle_als.fetch` (unset = old behaviour; `run_lidar_cache.sh` sets 4, PDAL's minimum): load ~100, ~10.7 cookies/s while
+  sharing the node with the NAIP jobs. Restarted on the pixi env once the user installed pixi.
+- **Clay NAIP fetch, all tasks (Delta):** 32,593 files (253 GB streamed, nothing stored) in 14 min at ~40 files/s, 0 failed.
+  87,298 of 87,749 points have an embedding (451 touch no NAIP cell; 350 of them in LFRDB, probably plots outside CONUS).
+  Median coverage 1.00 and |NAIP year - target| median 0-1 for every task. Radii from the registry; lfrdb, vegbench,
+  butterflies and blm_aim have no `radius` yet and used the 50 m default (makes no difference for Clay: anything below
+  ~130 m returns the chip under the point). NLCD re-probed at bal. acc. 0.631 vs 0.636 in the Mac trial (same radius;
+  small difference not yet explained). Probe of all tasks running; results to follow.
 
 ### 2026-11-10
 - **Lidar cache running** (tmux `als_cache`, survives the session): ~1.1 cookies/s → ~21 h for 86k sites; cookies ~7.7 MB
