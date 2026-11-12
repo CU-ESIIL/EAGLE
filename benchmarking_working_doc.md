@@ -105,6 +105,9 @@ Probe input = the embedding averaged over a disc around the point, disc radius p
   from the registry). 64 workers on a 32-CPU job: **~11 cookies/s** (vs 1.1 on CyVerse), so ~2.2 h for all sites and ~650 GB.
   94-95% of the first 3,000 sites returned a cookie. pixi could not be installed by the agent here; a conda-forge env from the
   `miniforge3-python` module is used for now (details in CLAUDE.md). `run_lidar_cache.sh` now takes `BENCH`, `EAGLE_ENV`, `WORKERS`.
+- **Lidar eval cache done (04:37 CST):** 86,150 sites: 82,114 cookies (95.3%), 3,892 empty, 98 with too few points,
+  46 rejected by the cookie check for a 3-4 km elevation range (the high-noise points the fetch filter fails to drop; they
+  would come back after the filter fix with `--retry-errors`). The 27 network errors succeeded on retry.
 - **Cache slowdown fixed:** PDAL's `readers.ept` sized its thread pool from the node's 128 hardware threads, so 64 fetches ran
   ~5,000 threads on 32 CPUs (load 517) and the rate fell from 11 to 7 cookies/s. New option `EAGLE_PDAL_THREADS` in
   `eagle_als.fetch` (unset = old behaviour; `run_lidar_cache.sh` sets 4, PDAL's minimum): load ~100, ~10.7 cookies/s while
