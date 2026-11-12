@@ -1,207 +1,164 @@
-Claude: use this doc to keep notes and look for my feedback during this session. 
+# Baseline benchmarking: working doc
 
-Next steps:
-cache the lidar tiles for the evaluation tasks
-embed tiles with ForPT and evaluate linear probing on the benchmark https://github.com/prs-eth/ForPT
-generate a suite of lidar summary metrics / derived products for each tile and evaluate linear probing + random forest on the benchmark
+Claude: use this doc to keep notes and look for my feedback during this session.
+
+Operational state (machines, environments, paths, commands to resume) is in `CLAUDE.md`; this doc holds decisions,
+open questions, results and the dated log. Newest first in each log.
+
+## Open questions for the user
+
+- **Radii missing in `datasets/registry.yaml`** for lfrdb, vegbench, butterflies and blm_aim (the 50 m default is used,
+  with a printed notice). Makes no difference for Clay NAIP (chips are 154-256 m), but it will for the lidar features.
+- **Lidar disc radius.** You suggested 100 m as a starting point for the derived metrics (2026-11-10); the cache, ForPT
+  and the lidR speed test all use the 50 m disc (the cookies are 100 m in radius, so both are possible). Which for the
+  full lidR run: 50, 100, or both?
+- Full ForPT run (~4-5 GPU-h on one A100) and full lidR metrics run (~1.6 h on a 32-CPU node): ready to launch.
+
+## Next steps
+
+1. Rerun AlphaEarth, location and SatCLIP with the torch probe (running 2026-11-12) and fill the comparison table below.
+2. ForPT embeddings of all cached cookies, then the probe (`02_linear_probe.py --embeddings ...`).
+3. lidR stdmetrics (+ terrain) for all cookies, then linear probe and gradient boosting.
+4. AlphaEarth diagnostics (plan at the end), tests 1, 3, 5 first.
+5. Later: lidar-nuisance-only baseline (point density, year, quality level: are labels confounded with acquisition?),
+   AEF + lidar metrics concatenated (does lidar add anything beyond the satellite embedding?).
+
+## Decisions (user)
+
+- **One linear probe for everything (2026-11-12):** `eagle_als.linear_probe`, a single torch `nn.Linear` on standardized
+  features, full-batch L-BFGS from zero weights; class-balanced softmax (multiclass), per-target sigmoid BCE
+  (multilabel), squared error on standardized targets (regression); NaN labels masked; `l2/2 ||W||^2` with l2 from
+  1e2 to 1e-5 chosen by 3-fold CV on train (balanced accuracy / mean AUROC / mean R2). Consistency across experiments
+  matters more than matching sklearn. Used by the benchmark (`eagle_bench.probes`) and the pre-training evaluation
+  (`eagle_als.probe`, `probe_table`). Synthetic check vs sklearn: bal. acc. 0.510 vs 0.506, AUROC 0.925 vs 0.925,
+  R2 0.962 vs 0.962.
+- **Lidar derived metrics (2026-11-10):** `lidR::stdmetrics` (Roussel et al. 2020) on height above ground in the
+  analysis disc, with and without a few terrain metrics (elevation, slope, aspect from ground points; TWI from a
+  provider). No intensity, no GEDI simulation. Probes: linear and gradient boosting. `lidRmetrics` (Tompalski et al.)
+  is a later candidate. Reason: standard feature sets over custom code.
+- **NAIP imagery (2026-11-11):** Clay v1.5 NAIP embeddings, averaged over a disc of the task's radius; nothing but the
+  pooled vector per point is stored. DINOv3-Sat is a possible later option.
+- **Official implementations (2026-11-11):** use the authors' code (ForPT, SatCLIP), cloned or installed outside the
+  repo, rather than re-implementations.
+- **Sites at collection edges (2026-11-12):** accepted and documented, not rematched (see Known data issues).
 
 ## Feature sets
 
-### AlphaEarth
-AlphaEarth is an embedding model that was trained on satellite imagery, geo-referenced text, Radar/SAR, thermal landsat, GEDI lidar, climate variables; at inference time 
-center-point embedding, 64 dim -> linear probing
-accessed via google earth engine
-cached in `/home/jovyan/data-store/data/iplant/home/shared/esiil/als/benchmarking/aef/points_ee/` (repo path `datasets/raw/aef/points_ee` via symlink)
+| model | input | dim | state |
+|---|---|---|---|
+| AlphaEarth (AEF) | annual embedding, centre pixel (Earth Engine) | 64 | extracted for all tasks; torch-probe rerun running |
+| Location (RFF) | lat/lon, random Fourier features at several km scales | | torch-probe rerun running |
+| SatCLIP L10 / L40 | lat/lon, official package + Hugging Face checkpoints | 256 | torch-probe rerun running |
+| Clay v1.5 NAIP | NAIP chip embeddings averaged over the task disc | 1024 | **done** (results below) |
+| ForPT | 3DEP cookie, 50 m disc, frozen LitePT-S teacher | 1008 | 1,491 of 82,160 cookies embedded (speed test) |
+| lidR stdmetrics | 3DEP cookie, HAG in the disc (+ 7 terrain columns) | 56 (+7) | speed test only |
 
-### ForPT Embeddings
-The ForPT model pre-trains LitePT Point Transformer self-supervised, and demonstrated better transfer to forest ecology tasks than task-specific models. It can be fine-tuned, but here we use it only as a frozen backbone for feature extraction. 
-Lidar point cloud cookie -> 1d embedding vector
+Notes per model:
 
-*Claude notes (2026-11-10):*
-- Pretrained backbone: `prs-eth/ForPT` on Hugging Face, `00_ssl_pretrain/pretrain-forpt/model/epoch_30.pth` (LitePT-S, 12.4M params), cached in `benchmarking/forpt_weights/`. Its teacher backbone loads into EAGLE's vendored LitePT with every key matching, so no ForPT code is needed.
-- Recipe copied from ForPT's own linear-probe configs: xyz only (no intensity / returns), CenterShift (z from the lowest point), 5 cm grid, features of all 5 encoder stages up-cast and concatenated (1008-d), mean over points.
-- Our choices (to compare): crop radius (default 50 m disc, like the EAGLE probes), z = elevation (ForPT) vs height above ground.
-- Domain gap: ForPT pretrained on dense forest scans (ALS/ULS/MLS); 3DEP is 2-30 pts/m² and covers non-forest too. Expect it to do best on forest-structure tasks (OFO, forest VegBench classes).
-- Code: `src/eagle_bench/forpt.py`, `scripts/baseline_eval/04_embed_forpt.py`. Smoke-tested on synthetic clouds; waiting for the lidar cache (needs PDAL).
+- **AlphaEarth:** trained on Sentinel-1/2, Landsat, GEDI, DEM, climate and geotagged text. Year = survey year clipped to
+  2017-2025. Validated against the COG files (cosine median 1.000). Points on Delta: `$WORK/benchmarking/aef/points_ee`
+  (repo symlink `datasets/raw/aef`).
+- **ForPT** (`prs-eth/ForPT`, `epoch_30.pth`, LitePT-S 12.4M params): the teacher backbone loads into EAGLE's vendored
+  LitePT with every key matching. Recipe from ForPT's linear-probe configs: xyz only, CenterShift, 5 cm grid, all 5
+  encoder stages up-cast and concatenated, mean over points. Domain gap: pretrained on dense forest scans (ALS/ULS/MLS);
+  3DEP is 2-30 pts/m² and mostly not forest, so expect it to do best on forest-structure tasks.
+- **Clay NAIP:** one 1024-d embedding per non-overlapping 256x256 px chip: 256 m at 1 m NAIP (2010-2017), ~154 m at
+  60 cm (2016+). Discs below ~150 m return the chip under the point, not centred on it. Year = NAIP year nearest the
+  survey year (clipped to 2010-2021). File of a point = arithmetic on lat/lon (USGS quarter-quads), no STAC search.
+  Code: `src/eagle_bench/naip_clay.py`, `scripts/baseline_eval/09_fetch_naip_clay.py`.
 
-### Lidar Derived Metrics
+## Results
 
-**Decision (2026-11-10, user): use `lidR::stdmetrics`** (Roussel et al. 2020), on height above ground in the central 50 m
-disc, with and without a small set of lidR terrain/ground metrics (elevation, slope, aspect from the ground points or fetched from a provider; TWI fetched from a provider).
-No GEDI simulation. `lidRmetrics` (Tompalski et al.) kept as a future candidate. The custom proposal below is superseded
-except for the location-only and acquisition-only baselines, which are kept. 
+### Comparison, torch probe (test split, min_count=20)
 
-<details><summary>Superseded: custom-metrics proposal</summary>
+To fill when the reruns finish (AlphaEarth, location, SatCLIP), then ForPT and lidR. Combined table:
+`scripts/baseline_eval/results/summary.md` (`07_unified_summary.py`).
 
-**Claude proposal for review (2026-11-10).** Hand-crafted structure metrics per cookie, computed from the cached points
-(central 50 m disc by default, with 25 m and 100 m versions to test scale), then linear probe and random forest / gradient
-boosting on the same splits. About 120 features; all from xyz, height above ground (HAG), return numbers and class.
+### Clay NAIP, all tasks (torch probe, 2026-11-12)
 
-1. Height distribution (points with HAG > 2 m, i.e. vegetation; also first returns only): percentiles p05-p99, max, mean,
-   SD, CV, skewness, kurtosis, canopy relief ratio (mean - min) / (max - min). Standard area-based forest inventory metrics,
-   the counterpart of `lidR::stdmetrics`.
-2. Cover and gaps: share of first returns above 1, 2, 5, 10, 20 m (canopy cover at several thresholds); gap fraction;
-   from a 1 m canopy height model (CHM): share of cells < 2 m, size of the largest gap.
-3. Vertical profile: share of returns in height bins (0-0.5, 0.5-1, 1-2, 2-5, 5-10, 10-20, 20-30, > 30 m), foliage
-   height diversity (Shannon entropy of the bins), vertical complexity index, leaf/plant area density per bin and total
-   plant area index (MacArthur-Horn gap-fraction method).
-4. Understory: share of returns in 0.5-2 m and 2-5 m among returns that reach below that height (relative density,
-   corrects for occlusion by the canopy).
-5. Canopy surface texture (1 m CHM): mean, SD, rumple index (surface area / ground area), local maxima per ha
-   (tree density), crown size distribution from a simple watershed or local-maximum segmentation.
-6. Terrain (ground points, 1 m DEM): mean elevation, slope, northness / eastness, curvature, topographic position
-   (cookie centre vs. mean), roughness. Terrain is a big driver of vegetation and birds and is not in ForPT's input.
-7. Returns: share of single returns, mean number of returns, share of last-of-many returns (penetration).
-   Intensity left out by default (uncalibrated across 3DEP collections); a within-cookie-ranked intensity version is optional.
-8. Class shares where reliable: ground, building (6), water (9) fractions.
+`scripts/baseline_eval/results/naip_clay/summary.md`.
 
-Additions: Topographic Wetness Index TWI (derived from a larger-area DEM than our tiles, but I imagine we can just pull the TWI directly as a derived product from somewhere)
+| task | radius | metric | score | chance / prevalence |
+|---|---|---|---|---|
+| nlcd | 15 m | bal. acc. | 0.606 | 0.125 |
+| lfrdb_ecosys | 50 m* | bal. acc. | 0.370 | 0.045 |
+| lfrdb_nvc_group | 50 m* | bal. acc. | 0.264 | 0.037 |
+| nps_vmi_macrogroup | 30 m | bal. acc. | 0.365 | 0.042 |
+| nps_vmi_group | 30 m | bal. acc. | 0.395 | 0.043 |
+| vegbench_formation | 50 m* | bal. acc. | 0.412 | 0.091 |
+| vegbench_division | 50 m* | bal. acc. | 0.382 | 0.062 |
+| vegbench_macrogroup | 50 m* | bal. acc. | 0.330 | 0.037 |
+| vegbench_group | 50 m* | bal. acc. | 0.237 | 0.024 |
+| bbs_occurrence (163 spp.) | 150 m | mean AUROC / AP | 0.863 / 0.197 | AP 0.037 |
+| butterflies_occurrence (51 spp.) | 50 m* | mean AUROC / AP | 0.683 / 0.577 | AP 0.408 |
+| snapshot_usa_occurrence (37 spp.) | 100 m | mean AUROC / AP | 0.752 / 0.287 | AP 0.128 |
+| satbird_winter_occupancy (467 spp.) | 300 m | mean AUROC / AP | 0.915 / 0.483 | AP 0.109 |
+| blm_aim (12 targets) | 50 m* | mean R2 | 0.458 | |
+| ofo_trees (2 targets) | 30 m | mean R2 | 0.249 | |
 
-Covariates reported but not used as features (for confound checks): point density, pulse density, collection year,
-quality level, leaf-on/off, years between lidar and survey.
+\* no radius in the registry, 50 m default (no effect for Clay below ~130 m). NAIP years were clipped to 2021 for all
+SatBird rows, 67% of OFO and 45% of LFRDB. 87,298 of 87,749 points have an embedding (451 touch no NAIP cell, 350 of
+them LFRDB plots, probably outside CONUS). OFO needed the strong end of the l2 grid (l2 0.1 gave R2 -1.2).
 
-**Baselines worth adding alongside** (cheap, and important for interpreting everything else):
-- *Location only*: lat, lon (and elevation) with the same probes / random forest. With spatial hold-outs this shows how
-  much of each task is geography rather than structure. SatCLIP (above) is the learned version of this.
-- *Lidar nuisance only*: point density, collection year, quality level. If these score well, the labels are confounded with
-  acquisition, and the lidar features need checking.
-- *AEF + lidar metrics* concatenated: does lidar add information beyond the satellite embedding?
+## Known data issues
 
-Implementation: numpy / scipy on the cached cookies, CPU only (~0.2-1 s per cookie: 5-20 h on 4 CPUs for 86k cookies;
-run per task, small tasks first). Random forest: scikit-learn `RandomForestClassifier/Regressor` (500 trees, class-balanced),
-hyperparameters fixed or tuned by CV on train only, like the linear probes.
+Details and paths in `CLAUDE.md` (Known data issues).
 
-</details>
+- **Noise points:** the old PDAL filter `Classification![7:7],Classification![18:18]` dropped nothing (PDAL ORs ranges
+  on one dimension). Fixed 2026-11-12 with `eagle_als.fetch.NOISE_FILTER` (`filters.expression`), also used by the
+  pre-training data code and `scripts/3dep/dataset.py`. Most of the Delta cache was fetched before the fix, so the
+  feature scripts keep dropping classes 7/18.
+- **Sites at collection edges:** matching uses footprint polygons, which are coarser than the point clouds, so a site
+  can get a cookie with points on one side only or none in the disc. `10_cookie_qc.py` flags cookies with fewer than
+  50% of the 3DEP minimum points (QL0/1 8, QL2 2, QL3/unknown 0.5 pulses/m² x disc area): 1,702 of 82,160 (SatBird
+  3.2%, others <= 1.5%), 436 with an empty disc. 1,263 of the flagged cover < 50% of the disc's 5 m cells (edges);
+  208 cover >= 90% but are sparse (mostly open water, a real signal), so flagged cookies are not dropped automatically.
+  Empty discs give no ForPT / lidR features (`n_no_embedding` in the probe).
+- Open water and some urban cookies have no ground points: terrain metrics NaN, lidR `zentropy` NA on flat cookies;
+  the probe fills NaNs with the train median.
 
-*Questions for you (still open):* (a) is the 50 m disc the right default scale (plot data vs. BBS routes / eBird hotspots, which are much
-larger)? (b) include intensity? (c) random forest or gradient boosting (HistGradientBoosting is faster on 4 CPUs)?
-Let's try 100 m radius as a starting point
-Leave out intensity from derived metrics
-Gradient boost works. 
-Main critique: lots of custom code; is there a standard feature set or sets that are available, or that existing packages extract? 
-
-
-### SatCLIP
-SatCLIP is a location encoder trained on satellite imagery. 
-(lat, lon) -> embedding
-
-### Embeddings of NAIP imagery
-
-**Decision (2026-11-11, user): Clay v1.5 NAIP embeddings** (`source.coop/clay/clay-v1-5-naip-2`, pre-computed for all NAIP 2010-2021); DINOv3-Sat kept as a possible later option.
-Probe input = the embedding averaged over a disc around the point, disc radius per task. No chips/tiles are stored, only the summary per point.
-
-*Claude notes (2026-11-11):*
-- Dataset: 1.2 M parquet files (one per NAIP quarter-quad and year, 3.6 MB), each with one 1024-d embedding (Clay class token) per non-overlapping 256x256 px chip: **256 m chips at 1 m NAIP (2010-2017), ~154 m at 60 cm NAIP (2016+)**. So the finest spatial resolution is a chip; discs below ~150 m mostly return the chip under the point (radius 0 = that chip, and the point can sit at the chip edge). Embeddings are not centred on the point.
-- Code: `src/eagle_bench/naip_clay.py`, `scripts/baseline_eval/09_fetch_naip_clay.py` (disc radius per task = `radius` of the task's table in `datasets/registry.yaml`; tables without a `radius` use `--default-radius`, 50 m), probe via `02_linear_probe.py --naip-clay`. File of a point = arithmetic on its lat/lon (USGS quarter-quad naming; checked against the chip footprints), so no STAC search. Year = the NAIP year nearest to the survey year (clipped to 2010-2021; ties to the later), per quarter-quad cell. Disc = sampled grid, each sample takes the chip it falls in, from the file of the cell it falls in (NAIP images overlap their neighbours, so no double counting). Output also has `coverage` and `naip_year`.
-- Validated: radius 0 equals the containing chip exactly (6 points), cells contained in chip footprints (10 files), 40 random points at 100/250 m: coverage 1.00.
-- **Cost:** 88,255 unique points (survey years clipped to 2010-2021). Files to read = download volume (a file is read whole): 29.8k files / 230 GB at radius 0, 31k at 250 m, 37k / 288 GB at 500 m, 45k / 346 GB at 1 km, 62k / 468 GB at 2 km, 118k / 878 GB at 5 km. 99.5% of centre points have NAIP embeddings. From the Mac the network gave only ~5-7 MB/s regardless of threads (~1.3 files/s, 7-10 h): run on CyVerse. Radii must be fixed before the run (a new radius re-reads the files).
-- **NLCD-only trial (2026-11-11, run on the Mac, `--tasks nlcd`, radius 15 m from the registry):** 892 points, 891 files (~3 GB), all 892 points with an embedding, median coverage 1.00, |NAIP year - target| median 0 (9.4% of rows clipped to 2010-2021). Probe (`--tasks nlcd --model naip_clay_nlcd`, test split n=449): **bal. acc. 0.636** (8 classes, min_count=20; macro-F1 0.633; chance 0.125), 0.499 over all 15 classes. AlphaEarth centre pixel: 0.751 on the same task. Caveat: 15 m is far below the chip size (~154-256 m), so each point gets the embedding of the chip it falls in; this probably limits Clay here. Results: `scripts/baseline_eval/results/naip_clay_nlcd/`; pooled table in `~/naip_clay_nlcd` (not in git).
-- Operational note: the first run lost 195 of 794 files to DNS errors (laptop slept, network dropped); the rerun of the same command retried only those (3.2 min). Rate ~0.9-1.0 files/s. Use `caffeinate -i` for long runs on the Mac. The progress lines are lost if the command is piped through `tail`; use `tee` to a log.
-
-## Status and results (Claude, kept current)
+## Log
 
 ### 2026-11-12 (NCSA Delta)
-- **Speed tests (Delta):** ForPT on one A100: ~5.5 cookies/s (GPU busy ~47%: CPU preprocessing limits it), so ~4-5
-  GPU-h for the 82k cookies. lidR stdmetrics: ~1.4 s/cookie in R, single-threaded; with batches in parallel
-  (`05_lidr_metrics.py --workers 28`) 14 cookies/s, ~1.6 h for all cookies on a 32-CPU node.
-- **Sites at collection edges (accepted, documented):** 9 of the first 1,500 ForPT cookies had no point in the 50 m disc.
-  The site lies inside the matched product's footprint polygon but outside its point cloud (footprints are coarser
-  than the data): e.g. points only 87-100 m to the north. Coverage check of all 82,160 cookies (`10_cookie_qc.py`,
-  `als_cache/qc_r50.parquet`): 1,702 (2.1%) have fewer than 50% of the 3DEP minimum points (QL0/1 8, QL2 2,
-  QL3/unknown 0.5 pulses/m2 x disc area; QL unknown for 36% of cookies), 436 have an empty disc; SatBird 3.2%,
-  other datasets <= 1.5%. 1,263 flagged cookies cover < 50% of the disc's 5 m cells (edges); 208 cover >= 90% but
-  are sparse (mostly open water, a real signal, so flagged cookies are not dropped automatically). Empty discs give
-  no ForPT / lidR features (counted as `n_no_embedding` in the probe). Not rematched to another collection.
-- **One linear probe for everything (user decision):** `eagle_als.linear_probe` = a single torch `nn.Linear` on standardized
-  features, full-batch L-BFGS from zero weights, class-balanced softmax (multiclass) / per-target sigmoid BCE (multilabel) /
-  squared error on standardized targets (regression), NaN labels masked, `l2/2 ||W||^2` on the per-row mean loss with l2 from
-  1e2 to 1e-5 chosen by 3-fold CV on train (bal. acc. / mean AUROC / mean R2). Used by the benchmark (`eagle_bench.probes`)
-  and the pre-training evaluation (`eagle_als.probe`, `probe_table`). One fit covers all species of a task, so bird tasks no
-  longer need hundreds of separate fits. Synthetic check vs sklearn: bal. acc. 0.510 vs 0.506, AUROC 0.925 vs 0.925,
-  R2 0.962 vs 0.962. NAIP Clay: NLCD 0.606 (sklearn probe 0.631), OFO mean R2 0.249 (needed the strong end of the grid;
-  0.1 gave -1.2), BLM AIM 0.458. **All earlier probe results (AEF, location, SatCLIP) must be rerun to be comparable.**
-- **Clay NAIP probe, all tasks (torch probe, 05:09-05:49 CST, 32 CPUs; the sklearn version had done 8 of 15 tasks in
-  1.5 h).** Test split; min_count=20 unless noted. `results/naip_clay/summary.md`.
 
-  | task | radius | metric | score | chance / prevalence |
-  |---|---|---|---|---|
-  | nlcd | 15 m | bal. acc. | 0.606 | 0.125 |
-  | lfrdb_ecosys | 50 m* | bal. acc. | 0.370 | 0.045 |
-  | lfrdb_nvc_group | 50 m* | bal. acc. | 0.264 | 0.037 |
-  | nps_vmi_macrogroup | 30 m | bal. acc. | 0.365 | 0.042 |
-  | nps_vmi_group | 30 m | bal. acc. | 0.395 | 0.043 |
-  | vegbench_formation | 50 m* | bal. acc. | 0.412 | 0.091 |
-  | vegbench_division | 50 m* | bal. acc. | 0.382 | 0.062 |
-  | vegbench_macrogroup | 50 m* | bal. acc. | 0.330 | 0.037 |
-  | vegbench_group | 50 m* | bal. acc. | 0.237 | 0.024 |
-  | bbs_occurrence (163 spp.) | 150 m | mean AUROC / AP | 0.863 / 0.197 | AP 0.037 |
-  | butterflies_occurrence (51 spp.) | 50 m* | mean AUROC / AP | 0.683 / 0.577 | AP 0.408 |
-  | snapshot_usa_occurrence (37 spp.) | 100 m | mean AUROC / AP | 0.752 / 0.287 | AP 0.128 |
-  | satbird_winter_occupancy (467 spp.) | 300 m | mean AUROC / AP | 0.915 / 0.483 | AP 0.109 |
-  | blm_aim (12 targets) | 50 m* | mean R2 | 0.458 | |
-  | ofo_trees (2 targets) | 30 m | mean R2 | 0.249 | |
+- **Torch-probe reruns** of AlphaEarth centre, location RFF and SatCLIP L10/L40 started (AEF points copied from
+  CyVerse by the user; SatCLIP in its own pixi env `envs/satclip`, checkpoints in `$WORK/benchmarking/satclip_weights`).
+- **Speed tests:** ForPT on one A100 ~5.5 cookies/s, GPU busy ~47% (CPU preprocessing limits it) -> ~4-5 GPU-h for
+  82k cookies. lidR stdmetrics ~1.4 s/cookie in R single-threaded; batches in parallel (`05_lidr_metrics.py
+  --workers 28`) give 14 cookies/s, ~1.6 h for all cookies.
+- **Cookie coverage QC** (`10_cookie_qc.py`), see Known data issues. Found because 9 of the first 1,500 ForPT cookies
+  had no point in the disc (points only 87-100 m to the north of the site).
+- **Clay NAIP fetch and probe**, all tasks: 32,593 files (253 GB streamed, nothing stored) in 14 min at ~40 files/s,
+  0 failed; probe 40 min on 32 CPUs (torch). NLCD 0.606 vs 0.631 with the old sklearn probe and 0.636 in the Mac trial.
+- **Lidar eval cache done** in `$WORK/benchmarking/als_cache`: 86,150 sites -> 82,160 cookies, 3,892 empty, 98 too
+  few points, 0 errors (the 46 sites rejected for a 3-4 km elevation range were noise; all fetched after the filter
+  fix). ~11 cookies/s with 64 workers on 32 CPUs (1.1/s on CyVerse), ~650 GB.
+- **PDAL thread oversubscription:** `readers.ept` sizes its thread pool from the node's 128 hardware threads (load 517,
+  rate 11 -> 7 cookies/s). `EAGLE_PDAL_THREADS` (set to 4 by `run_lidar_cache.sh`) fixes it.
 
-  \* no radius in the registry, default 50 m (no effect for Clay below ~130 m). All SatBird rows use clipped NAIP years
-  (survey years after 2021 -> 2021 imagery); LFRDB 45%, OFO 67%. Not yet comparable with AlphaEarth / SatCLIP / location
-  until those are rerun with the torch probe.
-- **Lidar eval cache restarted on Delta** in `/work/hdd/bjud/sammlapp/benchmarking/als_cache` (same 86,150-site table, rebuilt
-  from the registry). 64 workers on a 32-CPU job: **~11 cookies/s** (vs 1.1 on CyVerse), so ~2.2 h for all sites and ~650 GB.
-  94-95% of the first 3,000 sites returned a cookie. pixi could not be installed by the agent here; a conda-forge env from the
-  `miniforge3-python` module is used for now (details in CLAUDE.md). `run_lidar_cache.sh` now takes `BENCH`, `EAGLE_ENV`, `WORKERS`.
-- **Lidar eval cache done (04:37 CST):** 86,150 sites: 82,114 cookies (95.3%), 3,892 empty, 98 with too few points,
-  46 rejected by the cookie check for a 3-4 km elevation range (the high-noise points the fetch filter fails to drop; they
-  would come back after the filter fix with `--retry-errors`). The 27 network errors succeeded on retry.
-- **Noise filter fixed (user request, 2026-11-12):** `eagle_als.fetch.NOISE_FILTER` = `filters.expression`
-  `Classification != 7 && Classification != 18` (also in `eagle_als.coreg.data`). Checked on a rejected Sonoma site: old
-  filter kept 29,858 class-7 points (z range 3,504 m), new one keeps none (19 m). All 46 rejected sites then fetched OK:
-  cache = **82,160 cookies**, 0 errors. Cookies fetched earlier still contain noise; the downstream drop stays.
-- **Cache slowdown fixed:** PDAL's `readers.ept` sized its thread pool from the node's 128 hardware threads, so 64 fetches ran
-  ~5,000 threads on 32 CPUs (load 517) and the rate fell from 11 to 7 cookies/s. New option `EAGLE_PDAL_THREADS` in
-  `eagle_als.fetch` (unset = old behaviour; `run_lidar_cache.sh` sets 4, PDAL's minimum): load ~100, ~10.7 cookies/s while
-  sharing the node with the NAIP jobs. Restarted on the pixi env once the user installed pixi.
-- **Clay NAIP fetch, all tasks (Delta):** 32,593 files (253 GB streamed, nothing stored) in 14 min at ~40 files/s, 0 failed.
-  87,298 of 87,749 points have an embedding (451 touch no NAIP cell; 350 of them in LFRDB, probably plots outside CONUS).
-  Median coverage 1.00 and |NAIP year - target| median 0-1 for every task. Radii from the registry; lfrdb, vegbench,
-  butterflies and blm_aim have no `radius` yet and used the 50 m default (makes no difference for Clay: anything below
-  ~130 m returns the chip under the point). NLCD re-probed at bal. acc. 0.631 vs 0.636 in the Mac trial (same radius;
-  small difference not yet explained).
-- **Probe speed-up (user request):** the probe's C selection now runs every (C, fold) fit, and for bird tasks every
-  (C, species, fold) fit, as one parallel batch (`_cv_grid` in `eagle_bench/probes.py`). Before, only 3 folds ran at a
-  time, and the bird-task CV (15 species x 3 C x 3 folds) ran serially. Identical scores to `cross_val_score`
-  (checked on synthetic multiclass and multilabel data, max difference 0). Slowness was fitting (1024-d logistic
-  regressions), not data loading: pooled embeddings load in seconds. Partial results of the first run (min_count=20,
-  bal. acc.): NLCD 0.631, LFRDB ecosys 0.350, LFRDB NVC group 0.258, NPS VMI macrogroup 0.366, NPS VMI group 0.396,
-  VegBench formation 0.407, division 0.384, macrogroup 0.323. Full run now a Slurm job on a CPU node
-  (`probe_delta.sbatch`, 256 CPU-h max), results to follow.
+### 2026-11-11
+
+- Clay NAIP chosen; code written and validated (radius 0 = containing chip; 40 random points at 100/250 m: coverage
+  1.00). NLCD-only trial on the Mac: bal. acc. 0.636 (AlphaEarth 0.751). Download from the Mac was network-capped
+  (~1.3 files/s), so the full run moved to a cluster.
 
 ### 2026-11-10
-- **Lidar cache running** (tmux `als_cache`, survives the session): ~1.1 cookies/s → ~21 h for 86k sites; cookies ~7.7 MB
-  (~650 GB total on the data store). 1,434 ok / 63 empty after the first 25 min; 99% of cookies have ground points.
-- **Bug found (pre-training code too): noise points are not removed.** `eagle_als.fetch` uses
-  `Classification![7:7],Classification![18:18]`; PDAL keeps a point if it passes *any* range of a dimension, so classes
-  7 and 18 stay (one NLCD water cookie: 155k high-noise points, max height 256 m). The benchmark drops them downstream.
-  Fix in fetch.py: one expression `Classification[0:6],Classification[8:17],Classification[19:255]` (still ORed, but
-  the ranges now cover exactly the kept classes) or a `filters.expression` `Classification != 7 && Classification != 18`.
-  Your call, since it changes pre-training data.
-- **lidR stdmetrics pipeline trialled** (20 cookies): 56 stdmetrics + 7 terrain columns. Heights < 0 clamped to 0
-  (lidR convention). Open water: no ground → terrain NaN; zentropy NA on flat cookies → train-median imputation in the probe.
-- **AlphaEarth (centre pixel, Earth Engine): done for all tasks.** Results: `scripts/baseline_eval/results/alphaearth_center/summary.md`.
-  Validated against the COG files (cosine 1.000 median). Re-extracted after the SatBird → USA winter change.
-- **Lidar cookie cache: blocked on PDAL.** Site table ready (86,150 unique sites, `benchmarking/als_cache/sites.parquet`);
-  PDAL has no pip wheel, and the pixi installer download was not approved. Needs: pixi (preferred) or conda for `python-pdal`.
-- **ForPT: embedder ready**, weights cached, smoke-tested on synthetic clouds (1008-d, 0.75 GB GPU per 50k-point cloud).
-  Waiting for cookies.
-- **Lidar metrics: proposal above**, waiting for your review.
 
-## Why does AlphaEarth classify so well? (diagnostics plan, 2026-11-10)
+- AlphaEarth centre pixel extracted through Earth Engine for all tasks (~7 min for 95k points; the COG route would read
+  ~1 TB) and probed with the old sklearn probe. Re-extracted after SatBird changed to the USA winter task.
+- ForPT embedder written and smoke-tested; lidR stdmetrics pipeline trialled on 20 cookies (56 stdmetrics + 7 terrain
+  columns; heights < 0 clamped to 0).
+- Lidar cache started on CyVerse (~1.1 cookies/s); moved to Delta on 2026-11-12.
+
+## Why does AlphaEarth classify so well? (diagnostics plan, 2026-11-10, not run)
 
 Two hypotheses: (H1) the embedding mostly encodes geographic position / regional context; (H2) label information leaked
 in through AEF's training data (secondary summaries of the AEF paper list GBIF species records and geotagged Wikipedia
 as text sources, alongside Sentinel-1/2, Landsat, GEDI, DEM, ERA5-Land, GRACE; to confirm in arXiv 2507.22291).
 
 Tests for H1 (geography):
-1. *Location-only baselines* on the same splits: lat/lon through random Fourier features / spherical harmonics + the
-   same linear probe, and kNN / random forest on lat/lon. AEF minus location-only = what AEF adds beyond position.
+1. *Location-only baselines* on the same splits (location RFF and SatCLIP, now being rerun). AEF minus location-only =
+   what AEF adds beyond position.
 2. *AEF + location* vs location: incremental gain; and AEF residualized on location features.
 3. *Displacement test* (cheap with Earth Engine): use AEF from points moved 30 m, 100 m, 500 m, 2 km, 10 km in a random
    direction at test time (train on true positions). Scores that survive 2-10 km displacement are regional context,

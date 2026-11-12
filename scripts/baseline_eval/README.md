@@ -4,7 +4,7 @@ Scores frozen embeddings with a linear probe on the whole benchmark suite, as a 
 encoder. First baseline: **AlphaEarth Foundations (AEF) annual embeddings** (64-d, 10 m, 2017-2025). Reusable
 code is in `src/eagle_bench/` (see its README); scripts here only wire it together.
 
-**Status (2026-11-10): done for all 15 tasks, centre pixel, through Google Earth Engine** (results in
+**Status: extracted for all 15 tasks, centre pixel, through Google Earth Engine (2026-11-10); probe rerun with the torch probe 2026-11-12** (results in
 `results/alphaearth_center/`). The COG route below was only run for NLCD (`results/alphaearth/`, disc and centre).
 
 ### Earth Engine route (recommended)
@@ -54,8 +54,10 @@ SatBird encounter rate is not included (occupancy only); the class-set scenarios
   survey year; SnapShot: midpoint of first/last year; SatBird: 2022).
 - **Pooling.** `disc` = mean of the valid pixels within 50 m of the point (matches the lidar probe's central 50 m
   disc), renormalised to unit length; `center` = the single pixel. Both are reported.
-- **Probe.** Standardise on train, then logistic regression (class-balanced, C in {0.01, 0.1, 1} by 3-fold CV on
-  train) or ridge (RidgeCV). Multiclass classes are scored if they have >= 20 train and >= 5 test rows
+- **Probe.** The shared torch linear probe (`src/eagle_als/linear_probe.py`, since 2026-11-12): standardise on train,
+  one `nn.Linear` fitted with L-BFGS, class-balanced softmax / per-target sigmoid / squared error, L2 penalty from
+  1e2 to 1e-5 by 3-fold CV on train. (Before 2026-11-12: sklearn logistic regression / RidgeCV; those results are not
+  comparable.) Multiclass classes are scored if they have >= 20 train and >= 5 test rows
   (`test_rows_scored_frac` says how much of the test set that covers); species if >= 20 positives in each split
   (1 for `satbird_winter_occupancy`). Rows with no embedding (masked pixels) are excluded and counted in `n_no_embedding`.
 - Metrics: multiclass balanced accuracy, macro F1, accuracy (chance = 1/classes); multilabel mean AUROC and

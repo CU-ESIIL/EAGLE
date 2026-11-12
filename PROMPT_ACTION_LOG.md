@@ -867,3 +867,15 @@ Test the speed of ForPT embedding with a short GPU job and of the lidR metrics o
 - ForPT weights downloaded to `$WORK/benchmarking/forpt_weights/`; `04_embed_forpt.py --weights`; new `scripts/baseline_eval/embed_forpt_delta.sbatch` (one A100, GPU utilisation logged). Test job 23828507: 1,491 of 1,500 cookies at ~5.5 cookies/s, GPU ~47% busy.
 - `05_lidr_metrics.py --workers`: batches in parallel (R was 1.4 s/cookie single-threaded): 14 cookies/s with 28 workers.
 - The 9 ForPT failures had no point in the disc: sites at collection edges (footprint polygon contains the site, the point cloud does not). New `eagle_als.cookie_qc` + `scripts/baseline_eval/10_cookie_qc.py`: 1,702 of 82,160 cookies below 50% of the 3DEP minimum, 436 empty. User: accept and document (match.py docstring, CLAUDE.md known data issues, working doc).
+
+## 2026-11-12 - Clean up the working doc and README
+
+### Prompt
+
+The benchmarking working doc starts with mostly stale notes: clean it up (original notes can go where no longer needed); make sure README.md is up to date.
+
+### Actions
+
+- `benchmarking_working_doc.md` reorganised: open questions, next steps, user decisions, feature-set table, results, known data issues, condensed dated log, AEF diagnostics plan. Removed the superseded custom-metrics proposal and stale status notes (e.g. "PDAL blocked", "noise filter: your call"); answered questions folded into Decisions; open questions (missing registry radii, 50 vs 100 m lidar disc) listed at the top.
+- `README.md`: benchmark described as 15 tasks / 10 datasets; new "Baseline benchmark" section (probe, feature sets, lidar cookies, envs, where results are); pointers to the working doc / CLAUDE.md; validation probe is now the shared torch linear probe; ForPT code is released.
+- `scripts/baseline_eval/README.md`: probe description updated to the torch probe.

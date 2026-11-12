@@ -4,11 +4,16 @@
 
 EAGLE pre-trains a point-cloud encoder (LitePT-S, 12.4M parameters) on USGS 3DEP aerial lidar with
 self-supervised learning, so that a 100 m-radius patch of lidar ("cookie") can be summarised as an
-embedding useful for ecology. The embeddings are evaluated on labeled sites: VegBank habitat
-classification (main target), Breeding Bird Survey routes, butterfly observations and OFO forest plots.
+embedding useful for ecology. The embeddings are evaluated on a benchmark of 15 tasks from 10
+labeled datasets (vegetation classification, bird, butterfly and mammal occurrence, rangeland and
+forest-plot regression; see "Baseline benchmark" below), against baselines from satellite, aerial
+imagery, location and lidar.
 
-Detailed, dated working notes (measurements, decisions, open issues) live in the project's working
-notes document; `PROMPT_ACTION_LOG.md` records each change to the code.
+Pre-training runs on PSC Bridges-2; the baseline benchmark runs on NCSA Delta. Notes:
+
+- `benchmarking_working_doc.md`: benchmark decisions, open questions, results and dated log.
+- `CLAUDE.md`: operational state of the benchmark (machines, environments, paths, how to resume).
+- `PROMPT_ACTION_LOG.md`: one entry per change to the code.
 
 ## Pre-training design
 
@@ -147,7 +152,8 @@ eval_tasks = [dict(type="classification", name="nlcd", table="datasets/NLCD_eval
 
 `id_col` (default `als_site_id`) is the cookie's id in the cache. Classes with fewer than 5 cached
 cookies are dropped. Rank 0 embeds every cookie (one fixed view: 8 pts/m², central 50 m disc, no
-augmentation, mean of the up-cast point features) and fits logistic regression and cosine kNN. In
+augmentation, mean of the up-cast point features) and fits the shared linear probe
+(`src/eagle_als/linear_probe.py`, see below) and cosine kNN. In
 TensorBoard, `eval/<name>/` holds balanced accuracy and macro F1 of each probe, and `eval_<name>/`
 holds the F1 of each class. Keep a task to roughly 2,000 cookies or fewer. Its table must be listed in
 `datasets/registry.yaml` (which `squares.EVAL_SITES` reads), so pre-training never sees its sites. To add a new kind of task, subclass `EvalTask`
@@ -160,16 +166,39 @@ and point features are (effective rank, cosine similarity). Its curves are `eval
 same check on the saved checkpoints of a run, use `python scripts/litePT/check_embeddings.py
 $EAGLE_SCRATCH/runs/<run_name> --cache $EAGLE_SCRATCH/cache/nlcd` on a GPU.
 
+## Baseline benchmark
+
+`scripts/baseline_eval/` scores frozen features of every evaluation site with the same probe on each
+dataset's stored spatial hold-out, as a reference for the EAGLE encoder. Its README lists the tasks,
+splits and metrics; `datasets/registry.yaml` lists the datasets and the analysis radius of each.
+
+- **Probe.** One implementation for all probing (`src/eagle_als/linear_probe.py`): a single
+  `torch.nn.Linear` on standardized features, fitted full-batch with L-BFGS; class-balanced softmax
+  (multiclass), per-target sigmoid (multilabel, all species of a task in one fit) or squared error
+  (regression); L2 penalty chosen by 3-fold CV on the training split.
+- **Feature sets.** AlphaEarth annual embeddings (centre pixel, Earth Engine); location only (random
+  Fourier features of lat/lon) and SatCLIP; Clay v1.5 NAIP embeddings averaged over a disc; ForPT
+  (frozen LitePT-S teacher) embeddings of 3DEP cookies; `lidR::stdmetrics` of the cookies.
+- **Lidar cookies.** `03_lidar_sites.py` builds the site table (86,150 sites) and
+  `run_lidar_cache.sh` fetches a 100 m-radius cookie per site from 3DEP EPT (`src/eagle_als/fetch.py`),
+  dropping noise classes 7 and 18. `10_cookie_qc.py` flags cookies with too few points in the
+  analysis disc (sites at collection edges).
+- **Environments.** pixi manifests in `envs/`: `eagle-bench` (CPU, PDAL, probes), `lidr` (R + lidR),
+  `litept-gpu` (GPU, ForPT and pre-training), `satclip`.
+
+Results per model: `scripts/baseline_eval/results/<model>/summary.md`; all models side by side:
+`scripts/baseline_eval/results/summary.md`.
+
 ## Planned experiments
 
 1. **Baseline pre-training** with the current config (`ssl_s_pool_v1`).
-2. **Downstream evaluation** of frozen and fine-tuned embeddings (linear probe, kNN, fine-tuning):
-   VegBank habitat classification first, then BBS, butterflies and OFO.
+2. **Downstream evaluation** of frozen and fine-tuned embeddings (linear probe, kNN, fine-tuning)
+   on the benchmark tasks, compared with the baselines above.
 3. **Height inputs:** z and HAG together vs z only vs HAG only.
 4. **Return features:** a 4-way one-hot (only, first of many, intermediate, last of many) plus a
    clipped number of returns, vs the current encoding.
-5. **ForPT details** to confirm against the authors' code when it is released: warmups, Sinkhorn
-   targets, and whether local views are matched to one or both global views.
+5. **ForPT details** to confirm against the authors' code (now released, github.com/prs-eth/ForPT):
+   warmups, Sinkhorn targets, and whether local views are matched to one or both global views.
 6. **Data efficiency:** reading coarser EPT levels for dense tiles; reuse per square
    (`pool_uses_per_square`).
 7. **Further ideas:** a landscape-context view (e.g. 1 km × 1 km at ~0.1 pts/m²) alongside the
