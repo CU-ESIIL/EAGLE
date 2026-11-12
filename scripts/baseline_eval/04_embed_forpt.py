@@ -39,6 +39,7 @@ def main():
     ap.add_argument("--shard-size", type=int, default=500)
     ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--io-workers", type=int, default=3)
+    ap.add_argument("--weights", default=str(forpt.WEIGHTS), help="ForPT epoch_30.pth (download: forpt.FORPT_URL)")
     a = ap.parse_args()
 
     out = Path(a.out) / f"r{a.radius_m:g}_{a.height}"
@@ -58,7 +59,7 @@ def main():
 
     import torch
 
-    model = forpt.load_backbone(device="cuda")
+    model = forpt.load_backbone(a.weights, device="cuda")
 
     def prep(sid):
         try:

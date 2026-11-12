@@ -101,6 +101,17 @@ Probe input = the embedding averaged over a disc around the point, disc radius p
 ## Status and results (Claude, kept current)
 
 ### 2026-11-12 (NCSA Delta)
+- **Speed tests (Delta):** ForPT on one A100: ~5.5 cookies/s (GPU busy ~47%: CPU preprocessing limits it), so ~4-5
+  GPU-h for the 82k cookies. lidR stdmetrics: ~1.4 s/cookie in R, single-threaded; with batches in parallel
+  (`05_lidr_metrics.py --workers 28`) 14 cookies/s, ~1.6 h for all cookies on a 32-CPU node.
+- **Sites at collection edges (accepted, documented):** 9 of the first 1,500 ForPT cookies had no point in the 50 m disc.
+  The site lies inside the matched product's footprint polygon but outside its point cloud (footprints are coarser
+  than the data): e.g. points only 87-100 m to the north. Coverage check of all 82,160 cookies (`10_cookie_qc.py`,
+  `als_cache/qc_r50.parquet`): 1,702 (2.1%) have fewer than 50% of the 3DEP minimum points (QL0/1 8, QL2 2,
+  QL3/unknown 0.5 pulses/m2 x disc area; QL unknown for 36% of cookies), 436 have an empty disc; SatBird 3.2%,
+  other datasets <= 1.5%. 1,263 flagged cookies cover < 50% of the disc's 5 m cells (edges); 208 cover >= 90% but
+  are sparse (mostly open water, a real signal, so flagged cookies are not dropped automatically). Empty discs give
+  no ForPT / lidR features (counted as `n_no_embedding` in the probe). Not rematched to another collection.
 - **One linear probe for everything (user decision):** `eagle_als.linear_probe` = a single torch `nn.Linear` on standardized
   features, full-batch L-BFGS from zero weights, class-balanced softmax (multiclass) / per-target sigmoid BCE (multilabel) /
   squared error on standardized targets (regression), NaN labels masked, `l2/2 ||W||^2` on the per-row mean loss with l2 from

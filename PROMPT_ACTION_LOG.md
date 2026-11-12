@@ -854,3 +854,16 @@ Use a single torch linear layer as the universal, efficient probe for all probin
 - Slurm probe job cancelled; NAIP Clay probe running in tmux `naip_probe` on the interactive node (32 threads).
 - Earlier results from the sklearn probes (AEF, location, SatCLIP) need rerunning to be comparable.
 - NAIP Clay probe of all 15 tasks finished in 40 min on the interactive node (32 CPUs); results in `results/naip_clay/` and the working doc.
+
+## 2026-11-12 - ForPT and lidR speed tests on Delta; cookie coverage QC
+
+### Prompt
+
+Test the speed of ForPT embedding with a short GPU job and of the lidR metrics on CPU. Follow-ups: why do some cookies have 0 points in the 50 m disc; flag cookies with fewer than 50% of the expected lower bound of points; edge cases accepted if documented.
+
+### Actions
+
+- Installed `envs/lidr` and `envs/litept-gpu` with pixi on Delta; removed the tracked, Bridges-2-only `envs/litept-gpu/.pixi/config.toml` and `.pixi/envs` symlink (a project-local config overrides every machine); the install location is now a per-cluster user setting, documented in the env's pixi.toml.
+- ForPT weights downloaded to `$WORK/benchmarking/forpt_weights/`; `04_embed_forpt.py --weights`; new `scripts/baseline_eval/embed_forpt_delta.sbatch` (one A100, GPU utilisation logged). Test job 23828507: 1,491 of 1,500 cookies at ~5.5 cookies/s, GPU ~47% busy.
+- `05_lidr_metrics.py --workers`: batches in parallel (R was 1.4 s/cookie single-threaded): 14 cookies/s with 28 workers.
+- The 9 ForPT failures had no point in the disc: sites at collection edges (footprint polygon contains the site, the point cloud does not). New `eagle_als.cookie_qc` + `scripts/baseline_eval/10_cookie_qc.py`: 1,702 of 82,160 cookies below 50% of the 3DEP minimum, 436 empty. User: accept and document (match.py docstring, CLAUDE.md known data issues, working doc).

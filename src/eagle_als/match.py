@@ -9,6 +9,11 @@ Adds `product_name_AWS`, `collection_year_AWS`, `year_diff_AWS` (absolute gap, y
 per unique (lat, lon, year). A lookup that raises (a footprint without a collection year) counts as no match.
 `gaps` is the table to save as catalog/year_gap_counts.csv: rows surviving for N = 0..5.
 
+Coverage edge case (accepted, user 2026-11-12): a site is matched to a product whose footprint polygon contains it, and
+footprints are coarser than the point clouds, so at collection edges the cookie can hold few or no points around the site
+(benchmark eval cache: 436 of 82,160 cookies have no point within 50 m, 1,702 have < 50% of the 3DEP minimum density).
+Such sites are not rematched; eagle_als.cookie_qc flags them (scripts/baseline_eval/10_cookie_qc.py).
+
 Pooled labels (eBird encounter rates, long-term counts) have no single survey year; compute the gap to the pooled
 period yourself, as in data_cleaning/satbird/02_filter_and_match_als.py, and document the rule.
 """

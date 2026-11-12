@@ -1,7 +1,10 @@
-# GPU environment for LitePT pre-training / fine-tuning on Bridges-2.
-# Environments are installed on /ocean (see .pixi/config.toml) because $HOME is too small.
+# GPU environment for LitePT pre-training / fine-tuning and ForPT embeddings (Bridges-2, NCSA Delta).
+# The env is ~14 GB. Where it goes is machine configuration, not repo configuration (a project-local
+# .pixi/config.toml would override every machine), so set it per cluster in the user-level pixi config if $HOME is small:
+#   Bridges-2:  pixi config set --global detached-environments /ocean/projects/bio260075p/sammlapp/pixi_envs
+#   Delta:      not needed (home quota 100 GB); installs into envs/litept-gpu/.pixi
 # Install (from a CPU node, CUDA must be mocked):
-#   export PIXI_CACHE_DIR=/ocean/projects/bio260075p/sammlapp/.pixi_cache
+#   export PIXI_CACHE_DIR=<big scratch>/.pixi_cache   # Bridges-2: /ocean/projects/bio260075p/sammlapp/.pixi_cache
 #   CONDA_OVERRIDE_CUDA=12.6 pixi install --manifest-path envs/litept-gpu/pixi.toml
 [workspace]
 channels = ["conda-forge"]

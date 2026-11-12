@@ -27,8 +27,8 @@ User notes and feedback for this work: `benchmarking_working_doc.md` (check it f
   16 cores x 4 h = 64 CPU-h max by default). AGENTS.md compute policy:
   ask the user before a job over 300 CPU-h or 30 GPU-h, or when a partition's credits are 80% used (`accounts`).
 - `$WORK = /work/hdd/bjud/sammlapp` (1.5 TB project quota) holds the cache: `$WORK/benchmarking` plays the role of `$BENCH`.
-- No pixi on Delta yet (installing it via `curl | bash` was blocked for the agent; the user can install it). Meanwhile the
-  CPU env is a conda prefix built from the `miniforge3-python` module (`module load` does not set PATH in agent shells; use
+- pixi: `~/.pixi/bin/pixi` (installed by the user). Envs `envs/eagle-bench`, `envs/lidr`, `envs/litept-gpu` (13 GB; GPU env needs
+  `CONDA_OVERRIDE_CUDA=12.6` for `pixi install`/`pixi run` on CPU nodes). Older fallback, no longer used: a conda prefix built from the `miniforge3-python` module (`module load` does not set PATH in agent shells; use
   `/sw/rh9.4/python/miniforge3/bin/mamba` directly):
   `CONDA_PKGS_DIRS=$WORK/conda_pkgs mamba create -p $WORK/envs/eagle-bench -c conda-forge --override-channels python=3.12 "python-pdal>=3.5,<4" pdal gdal rasterio pyproj shapely geopandas pandas pyarrow numpy scipy scikit-learn joblib tabulate pyyaml`.
   Unactivated use needs `PROJ_DATA=$WORK/envs/eagle-bench/share/proj` (the run script sets it). The PDAL HDF-plugin load
@@ -60,9 +60,9 @@ User notes and feedback for this work: `benchmarking_working_doc.md` (check it f
 | Lidar site table | **done**: 86,150 unique sites in `$BENCH/als_cache/sites.parquet` | rerun `scripts/baseline_eval/03_lidar_sites.py` when a dataset changes |
 | Lidar cookie cache (Delta) | **done** 2026-11-12 04:43 CST in `$WORK/benchmarking/als_cache`: 82,160 ok, 3,892 empty, 98 too few points, 0 errors (the 46 noise-rejected sites were refetched with the fixed noise filter) | rerun `run_lidar_cache.sh` (BENCH=$WORK/benchmarking) only when the site table changes; next: ForPT embeddings and lidR metrics on Delta |
 | Lidar cookie cache (CyVerse) | started 2026-11-10 in tmux `als_cache` on CyVerse (~1.1 cookies/s); state unknown from Delta | separate copy under the CyVerse `$BENCH`; large-data work now on Delta/Bridges-2 (AGENTS.md) |
-| ForPT embedder | **written, smoke-tested on synthetic clouds** | weights `$BENCH/forpt_weights/epoch_30.pth`; run `scripts/baseline_eval/04_embed_forpt.py --limit 200` once cookies exist, then full |
+| ForPT embedder | **speed-tested on Delta** 2026-11-12: 1,500 cookies on one A100 (job 23828507) at ~5.5 cookies/s, GPU busy ~47% (CPU preprocessing limits it) -> ~4-5 GPU-h for all 82k; weights `$WORK/benchmarking/forpt_weights/epoch_30.pth` | full run: `sbatch -p gpuA100x4 -t 06:00:00 scripts/baseline_eval/embed_forpt_delta.sbatch` (resumable; output `$WORK/benchmarking/embeddings/forpt/r50_z`, 1,491 done) |
 | ForPT probes | not started | `02_linear_probe.py --embeddings $BENCH/embeddings/forpt/r50_z --model forpt_r50_z --n-jobs 4` |
-| lidR stdmetrics (+terrain) | **pipeline written and trialled** (20 cookies); user approved lidR::stdmetrics with and without terrain, no GEDI | `pixi run --manifest-path envs/eagle-bench/pixi.toml env PYTHONPATH=src python scripts/baseline_eval/05_lidr_metrics.py` (resumable; ~0.18 cookies/s while the cache saturates the CPUs, so best run after it); probe `02_linear_probe.py --embeddings $BENCH/features/lidr_stdmetrics/r50 [--exclude '^terrain_|^n_ground$']` |
+| lidR stdmetrics (+terrain) | **speed-tested on Delta** 2026-11-12: 3,100 cookies; R takes ~1.4 s/cookie single-threaded, so `05_lidr_metrics.py` now runs batches in parallel (`--workers`): 14 cookies/s with 28 workers -> ~1.6 h for all 82k on a 32-CPU node | `pixi run --manifest-path envs/eagle-bench/pixi.toml env PYTHONPATH=src python scripts/baseline_eval/05_lidr_metrics.py --cache $WORK/benchmarking/als_cache --out $WORK/benchmarking/features/lidr_stdmetrics --workers 28` (test output in `$WORK/benchmarking/speedtest/lidr`, not the real output dir) |
 | Clay v1.5 NAIP embeddings | **done** 2026-11-12 on Delta: fetch (32,593 files / 253 GB streamed, 0 failed; 87,298/87,749 points with an embedding; pooled tables `$WORK/benchmarking/naip_clay/pooled/`) and probe with the torch linear probe (all 15 tasks, 40 min on 32 CPUs) | `results/naip_clay/summary.md`; results table in the working doc |
 | Linear probe = torch (2026-11-12) | **all probes now use `eagle_als.linear_probe`** (one `nn.Linear`, full-batch L-BFGS, class-balanced, l2 from 1e2..1e-5 by 3-fold CV). Results made with the old sklearn probes (alphaearth_center, location_rff, satclip_*) are **not comparable** until rerun | rerun 02/06/08 for every model (AEF points are on CyVerse: copy `aef/points_ee` to Delta first) |
 | Random forest / gradient boosting probe | not started (user wants linear + RF for the lidR metrics) | add to `eagle_bench/probes.py` |
@@ -103,6 +103,13 @@ Changing a radius or adding points later only reads the files whose (point, radi
   `eagle_als.fetch.NOISE_FILTER` (`filters.expression`, also used by `eagle_als.coreg.data`). The Delta eval cache was
   fetched with the old filter except the 46 sites retried after the fix, so `05_lidr_metrics.py` and `eagle_bench/forpt.py`
   must keep dropping 7/18 downstream. `scripts/3dep/dataset.py` uses the same filter.
+- **Sites at collection edges (accepted, documented; user 2026-11-12).** Matching (`eagle_als.match`) uses footprint
+  polygons, which are coarser than the point clouds, so a site can get a cookie with points on one side only or none in
+  the disc. `scripts/baseline_eval/10_cookie_qc.py` -> `$WORK/benchmarking/als_cache/qc_r50.parquet` (`low_points` =
+  fewer than 50% of the 3DEP minimum: QL0/1 8, QL2 2, QL3/unknown 0.5 pulses/m2 x disc area; `cell_coverage` = share
+  of 5 m cells with a point). 1,702 of 82,160 flagged (SatBird 3.2%, others <= 1.5%), 436 with an empty disc.
+  Empty discs give no ForPT / lidR row (missing embedding in the probe, `n_no_embedding`); partly covered ones are
+  kept. Open water is also flagged (few returns), so do not drop flagged cookies blindly.
 - Open-water and some urban cookies have no ground points: terrain metrics are NaN there, and lidR `zentropy` is NA on
   flat cookies; the probe fills NaNs with the train median.
 - Stat-ing many files on the iRODS mount is very slow: list cached cookies from the cache manifest, not `Path.exists()`.
