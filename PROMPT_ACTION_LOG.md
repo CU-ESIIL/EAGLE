@@ -801,3 +801,17 @@ Resume the NLCD-only trial of evaluating NAIP embeddings.
 - Probe: `02_linear_probe.py --naip-clay ~/naip_clay_nlcd --model naip_clay_nlcd --tasks nlcd --n-jobs 4`: bal. acc. 0.636 (8 classes, min_count=20), 0.499 (15 classes); AlphaEarth centre pixel 0.751. Results in `scripts/baseline_eval/results/naip_clay_nlcd/`. The probe also rewrote the shared `results/summary.md` (adds the NLCD rows).
 - Docs: working doc (NAIP section), CLAUDE.md status table and runbook step 2 (blank radius now falls back to `--default-radius`).
 - Not done: full all-task run (intended for CyVerse); radii for tables still blank in the registry.
+
+## 2026-11-12 - Lidar eval cookie cache on NCSA Delta
+
+### Prompt
+
+Review the repo guidance and benchmarking working doc, then launch the lidar cookie eval cache download to $WORK=/work/hdd/bjud/sammlapp/ on NCSA Delta (8 h, 32-CPU job).
+
+### Actions
+
+- pixi is not on Delta and the `curl | bash` installer was blocked for the agent; built a conda-forge env with python-pdal 3.5.5 at `$WORK/envs/eagle-bench` via the `miniforge3-python` module instead.
+- Rebuilt the site table with `03_lidar_sites.py --out $WORK/benchmarking/als_cache/sites.parquet` (86,150 sites, matches CyVerse).
+- `run_lidar_cache.sh` now takes `BENCH`, `EAGLE_ENV` (conda prefix instead of pixi) and `WORKERS`; CyVerse defaults unchanged.
+- Launched in tmux `als_cache` (64 workers, `--max-hours 7.3`): ~11 cookies/s after 3,000 sites, ~7.7 MB/cookie, so ~2.2 h / ~650 GB expected.
+- Docs: CLAUDE.md (Delta machine section, status table), working doc status.

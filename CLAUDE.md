@@ -18,6 +18,18 @@ User notes and feedback for this work: `benchmarking_working_doc.md` (check it f
   scientifically defensible. Re-implement only when the package cannot be used, and say why. (User policy,
   2026-11-11; this replaces an earlier "downloaded code is read only, never executed" rule.)
 
+## Machine: NCSA Delta (from 2026-11-12)
+
+- Interactive Slurm jobs (e.g. 8 h, 32 CPUs, CPU partition, ~250 GB RAM). Everything dies at the job's end time
+  (`scontrol show job $SLURM_JOB_ID | grep EndTime`), so long runs use `--max-hours` and are resumed in the next job.
+- `$WORK = /work/hdd/bjud/sammlapp` (1.5 TB project quota) holds the cache: `$WORK/benchmarking` plays the role of `$BENCH`.
+- No pixi on Delta yet (installing it via `curl | bash` was blocked for the agent; the user can install it). Meanwhile the
+  CPU env is a conda prefix built from the `miniforge3-python` module (`module load` does not set PATH in agent shells; use
+  `/sw/rh9.4/python/miniforge3/bin/mamba` directly):
+  `CONDA_PKGS_DIRS=$WORK/conda_pkgs mamba create -p $WORK/envs/eagle-bench -c conda-forge --override-channels python=3.12 "python-pdal>=3.5,<4" pdal gdal rasterio pyproj shapely geopandas pandas pyarrow numpy scipy scikit-learn joblib tabulate pyyaml`.
+  Unactivated use needs `PROJ_DATA=$WORK/envs/eagle-bench/share/proj` (the run script sets it). The PDAL HDF-plugin load
+  errors at import are harmless.
+
 ## Machine (CyVerse JupyterHub)
 
 - **4 CPUs** (cgroup quota; `nproc` misleadingly says 128): pass `--n-jobs 4` / `--workers` accordingly.
@@ -42,7 +54,8 @@ User notes and feedback for this work: `benchmarking_working_doc.md` (check it f
 | AlphaEarth, centre pixel, all tasks | **done** 2026-11-10 | `results/alphaearth_center/`; embeddings `$BENCH/aef/points_ee` (via symlink `datasets/raw/aef`) |
 | AlphaEarth after SatBird → `satbird_winter_occupancy` | re-extracted (18,379 new points); probes rerun | check `results/alphaearth_center/summary.md` has `satbird_winter_occupancy` |
 | Lidar site table | **done**: 86,150 unique sites in `$BENCH/als_cache/sites.parquet` | rerun `scripts/baseline_eval/03_lidar_sites.py` when a dataset changes |
-| Lidar cookie cache | **running** since 2026-11-10 13:51 UTC in tmux session `als_cache` (`scripts/baseline_eval/run_lidar_cache.sh`); ~1.1 cookies/s, ~21 h, ~7.7 MB/cookie (~650 GB) | check: `tmux ls`; log `$BENCH/als_cache/logs/`; progress = manifest status counts (see the script header). If it died: rerun the same tmux command (resumes) |
+| Lidar cookie cache (Delta) | **running** since 2026-11-12 02:01 CST on Delta node cn104, tmux `als_cache`, 64 workers, `--max-hours 7.3` (job ends 09:34 CST); ~11 cookies/s (CPU-bound, load ~100 on 32 CPUs), so ~2.2 h and ~650 GB expected; site table `$WORK/benchmarking/als_cache/sites.parquet` (86,150 sites, same as CyVerse) | log `$WORK/benchmarking/als_cache/logs/`. Resume in a new job: `tmux new -d -s als_cache "BENCH=$WORK/benchmarking EAGLE_ENV=$WORK/envs/eagle-bench WORKERS=64 bash scripts/baseline_eval/run_lidar_cache.sh --max-hours <job hours - 0.5>"` |
+| Lidar cookie cache (CyVerse) | started 2026-11-10 in tmux `als_cache` on CyVerse (~1.1 cookies/s); state unknown from Delta | separate copy under the CyVerse `$BENCH`; large-data work now on Delta/Bridges-2 (AGENTS.md) |
 | ForPT embedder | **written, smoke-tested on synthetic clouds** | weights `$BENCH/forpt_weights/epoch_30.pth`; run `scripts/baseline_eval/04_embed_forpt.py --limit 200` once cookies exist, then full |
 | ForPT probes | not started | `02_linear_probe.py --embeddings $BENCH/embeddings/forpt/r50_z --model forpt_r50_z --n-jobs 4` |
 | lidR stdmetrics (+terrain) | **pipeline written and trialled** (20 cookies); user approved lidR::stdmetrics with and without terrain, no GEDI | `pixi run --manifest-path envs/eagle-bench/pixi.toml env PYTHONPATH=src python scripts/baseline_eval/05_lidr_metrics.py` (resumable; ~0.18 cookies/s while the cache saturates the CPUs, so best run after it); probe `02_linear_probe.py --embeddings $BENCH/features/lidr_stdmetrics/r50 [--exclude '^terrain_|^n_ground$']` |

@@ -100,6 +100,12 @@ Probe input = the embedding averaged over a disc around the point, disc radius p
 
 ## Status and results (Claude, kept current)
 
+### 2026-11-12 (NCSA Delta)
+- **Lidar eval cache restarted on Delta** in `/work/hdd/bjud/sammlapp/benchmarking/als_cache` (same 86,150-site table, rebuilt
+  from the registry). 64 workers on a 32-CPU job: **~11 cookies/s** (vs 1.1 on CyVerse), so ~2.2 h for all sites and ~650 GB.
+  94-95% of the first 3,000 sites returned a cookie. pixi could not be installed by the agent here; a conda-forge env from the
+  `miniforge3-python` module is used for now (details in CLAUDE.md). `run_lidar_cache.sh` now takes `BENCH`, `EAGLE_ENV`, `WORKERS`.
+
 ### 2026-11-10
 - **Lidar cache running** (tmux `als_cache`, survives the session): ~1.1 cookies/s → ~21 h for 86k sites; cookies ~7.7 MB
   (~650 GB total on the data store). 1,434 ok / 63 empty after the first 25 min; 99% of cookies have ground points.
