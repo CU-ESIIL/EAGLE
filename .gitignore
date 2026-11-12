@@ -67,3 +67,5 @@ src/streaming/3dep/mpc_copc.ipynb
 
 
 scripts/3dep/*.laz
+# core dumps (e.g. PDAL worker aborts on Delta)
+core.*

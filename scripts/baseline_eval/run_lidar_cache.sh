@@ -15,6 +15,9 @@
 #   BENCH=/work/hdd/bjud/sammlapp/benchmarking EAGLE_ENV=/work/hdd/bjud/sammlapp/envs/eagle-bench WORKERS=64 \
 #     bash scripts/baseline_eval/run_lidar_cache.sh --max-hours 7
 set -uo pipefail
+# PDAL occasionally aborts a worker (eagle_als.cache records it and moves on); Delta allows unlimited core dumps,
+# which wrote 1.5-2.9 GB per crash into the working directory. Do not write them.
+ulimit -c 0
 cd "$(dirname "$0")/../.."
 BENCH=${BENCH:-/home/jovyan/data-store/data/iplant/home/shared/esiil/als/benchmarking}
 WORKERS=${WORKERS:-12}
