@@ -45,6 +45,24 @@ def _logreg(C):
     return LogisticRegression(C=C, class_weight="balanced", max_iter=1000)
 
 
+def _fold_score(C, X, y, fit_idx, val_idx, scoring):
+    """Score of one CV fold (what cross_val_score computes per fold)."""
+    from sklearn.metrics import get_scorer
+
+    return get_scorer(scoring)(_logreg(C).fit(X[fit_idx], y[fit_idx]), X[val_idx], y[val_idx])
+
+
+def _cv_grid(X, ys, cv, scoring, n_jobs):
+    """Mean CV score per C in C_GRID, averaged over folds and then over the targets in `ys`.
+
+    All (C, target, fold) fits run as one flat parallel batch: the same folds and scorer as calling
+    cross_val_score per C and target, but parallel over everything instead of 3 folds at a time.
+    """
+    jobs = [(C, y, a, b) for C in C_GRID for y in ys for a, b in cv.split(X, y)]
+    s = Parallel(n_jobs=n_jobs)(delayed(_fold_score)(C, X, y, a, b, scoring) for C, y, a, b in jobs)
+    return np.asarray(s).reshape(len(C_GRID), len(ys), -1).mean(2).mean(1)
+
+
 def evaluate(task, X, n_jobs=-1, seed=0, min_count=None):
     ok = np.isfinite(X).all(1)
     tr, te = ok & ~task.df["is_test"].to_numpy(), ok & task.df["is_test"].to_numpy()
@@ -58,7 +76,7 @@ def evaluate(task, X, n_jobs=-1, seed=0, min_count=None):
 
 def _multiclass(task, X, tr, te, n_jobs, seed, min_count):
     from sklearn.metrics import accuracy_score, balanced_accuracy_score, f1_score
-    from sklearn.model_selection import StratifiedKFold, cross_val_score
+    from sklearn.model_selection import StratifiedKFold
 
     y = task.y["label"].to_numpy()
     n_tr, n_te = pd.Series(y[tr]).value_counts(), pd.Series(y[te]).value_counts()
@@ -69,8 +87,7 @@ def _multiclass(task, X, tr, te, n_jobs, seed, min_count):
     tr, te = tr & np.isin(y, classes), te & np.isin(y, classes)
     Xtr, Xte = _scale(X[tr], X[te])
     cv = StratifiedKFold(3, shuffle=True, random_state=seed)
-    scores = [cross_val_score(_logreg(C), Xtr, y[tr], cv=cv, scoring="balanced_accuracy", n_jobs=n_jobs).mean()
-              for C in C_GRID]
+    scores = _cv_grid(Xtr, [y[tr]], cv, "balanced_accuracy", n_jobs)
     C = C_GRID[int(np.argmax(scores))]
     pred = _logreg(C).fit(Xtr, y[tr]).predict(Xte)
     f1 = f1_score(y[te], pred, labels=classes, average=None, zero_division=0)
@@ -93,7 +110,7 @@ def _fit_species(Xtr, ytr, Xte, yte, C):
 
 
 def _multilabel(task, X, tr, te, n_jobs, seed, min_count):
-    from sklearn.model_selection import StratifiedKFold, cross_val_score
+    from sklearn.model_selection import StratifiedKFold
 
     Y = task.y.to_numpy()
     min_tr = min_te = 20 if min_count is None else min_count
@@ -105,8 +122,7 @@ def _multilabel(task, X, tr, te, n_jobs, seed, min_count):
     Ytr, Yte = Y[tr], Y[te]
     common = keep[np.argsort(-pos_tr[keep])[: min(15, len(keep))]]  # C is chosen on the most common species
     cv = StratifiedKFold(3, shuffle=True, random_state=seed)
-    scores = [np.mean([cross_val_score(_logreg(C), Xtr, Ytr[:, j], cv=cv, scoring="roc_auc").mean()
-                       for j in common]) for C in C_GRID]
+    scores = _cv_grid(Xtr, [Ytr[:, j] for j in common], cv, "roc_auc", n_jobs)
     C = C_GRID[int(np.argmax(scores))]
     res = Parallel(n_jobs=n_jobs)(delayed(_fit_species)(Xtr, Ytr[:, j], Xte, Yte[:, j], C) for j in keep)
     auc, ap = np.array(res).T

@@ -815,3 +815,16 @@ Review the repo guidance and benchmarking working doc, then launch the lidar coo
 - `run_lidar_cache.sh` now takes `BENCH`, `EAGLE_ENV` (conda prefix instead of pixi) and `WORKERS`; CyVerse defaults unchanged.
 - Launched in tmux `als_cache` (64 workers, `--max-hours 7.3`): ~11 cookies/s after 3,000 sites, ~7.7 MB/cookie, so ~2.2 h / ~650 GB expected.
 - Docs: CLAUDE.md (Delta machine section, status table), working doc status.
+
+## 2026-11-12 - Clay NAIP fetch on Delta, PDAL thread fix, probe parallelisation and Slurm job
+
+### Prompt
+
+pixi is installed; kick off the NAIP embedding fetch and probing. Follow-ups: is the NAIP task slow only once (data ingestion)? Parallelise the probe and run probes as a Slurm job on a CPU node (new compute policy in AGENTS.md).
+
+### Actions
+
+- Built the pixi env `envs/eagle-bench` on Delta; restarted the lidar cache on it.
+- Lidar cache slowdown (11 → 7 cookies/s, load 517): PDAL `readers.ept` sized its thread pool from the node's 128 hardware threads. New `EAGLE_PDAL_THREADS` option in `eagle_als.fetch`; `run_lidar_cache.sh` sets 4. Rate back to ~10-11 cookies/s while sharing the node.
+- NAIP Clay: dry run, then full fetch of all tasks (32,593 files, 253 GB streamed, 14 min, 0 failed). Four tables without a registry radius used the 50 m default (no effect for Clay below ~130 m).
+- Probe: the slowness is the 1024-d logistic-regression fits, not ingestion. `eagle_bench.probes._cv_grid` runs all (C, [species,] fold) CV fits in one parallel batch; verified identical scores to `cross_val_score`. New `scripts/baseline_eval/probe_delta.sbatch` (64 cores, 4 h); submitted the NAIP probe as job 23826684 and stopped the in-session run.

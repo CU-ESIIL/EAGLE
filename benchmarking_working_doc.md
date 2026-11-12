@@ -114,7 +114,15 @@ Probe input = the embedding averaged over a disc around the point, disc radius p
   Median coverage 1.00 and |NAIP year - target| median 0-1 for every task. Radii from the registry; lfrdb, vegbench,
   butterflies and blm_aim have no `radius` yet and used the 50 m default (makes no difference for Clay: anything below
   ~130 m returns the chip under the point). NLCD re-probed at bal. acc. 0.631 vs 0.636 in the Mac trial (same radius;
-  small difference not yet explained). Probe of all tasks running; results to follow.
+  small difference not yet explained).
+- **Probe speed-up (user request):** the probe's C selection now runs every (C, fold) fit, and for bird tasks every
+  (C, species, fold) fit, as one parallel batch (`_cv_grid` in `eagle_bench/probes.py`). Before, only 3 folds ran at a
+  time, and the bird-task CV (15 species x 3 C x 3 folds) ran serially. Identical scores to `cross_val_score`
+  (checked on synthetic multiclass and multilabel data, max difference 0). Slowness was fitting (1024-d logistic
+  regressions), not data loading: pooled embeddings load in seconds. Partial results of the first run (min_count=20,
+  bal. acc.): NLCD 0.631, LFRDB ecosys 0.350, LFRDB NVC group 0.258, NPS VMI macrogroup 0.366, NPS VMI group 0.396,
+  VegBench formation 0.407, division 0.384, macrogroup 0.323. Full run now a Slurm job on a CPU node
+  (`probe_delta.sbatch`, 256 CPU-h max), results to follow.
 
 ### 2026-11-10
 - **Lidar cache running** (tmux `als_cache`, survives the session): ~1.1 cookies/s → ~21 h for 86k sites; cookies ~7.7 MB
