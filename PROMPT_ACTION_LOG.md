@@ -853,3 +853,4 @@ Use a single torch linear layer as the universal, efficient probe for all probin
 - Checks: synthetic data vs sklearn (same scores within 0.004); the first grid (max l2 0.1) gave OFO R2 -1.2, so the grid was extended to 1e2.
 - Slurm probe job cancelled; NAIP Clay probe running in tmux `naip_probe` on the interactive node (32 threads).
 - Earlier results from the sklearn probes (AEF, location, SatCLIP) need rerunning to be comparable.
+- NAIP Clay probe of all 15 tasks finished in 40 min on the interactive node (32 CPUs); results in `results/naip_clay/` and the working doc.

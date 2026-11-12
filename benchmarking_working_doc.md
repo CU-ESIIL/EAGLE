@@ -109,6 +109,30 @@ Probe input = the embedding averaged over a disc around the point, disc radius p
   longer need hundreds of separate fits. Synthetic check vs sklearn: bal. acc. 0.510 vs 0.506, AUROC 0.925 vs 0.925,
   R2 0.962 vs 0.962. NAIP Clay: NLCD 0.606 (sklearn probe 0.631), OFO mean R2 0.249 (needed the strong end of the grid;
   0.1 gave -1.2), BLM AIM 0.458. **All earlier probe results (AEF, location, SatCLIP) must be rerun to be comparable.**
+- **Clay NAIP probe, all tasks (torch probe, 05:09-05:49 CST, 32 CPUs; the sklearn version had done 8 of 15 tasks in
+  1.5 h).** Test split; min_count=20 unless noted. `results/naip_clay/summary.md`.
+
+  | task | radius | metric | score | chance / prevalence |
+  |---|---|---|---|---|
+  | nlcd | 15 m | bal. acc. | 0.606 | 0.125 |
+  | lfrdb_ecosys | 50 m* | bal. acc. | 0.370 | 0.045 |
+  | lfrdb_nvc_group | 50 m* | bal. acc. | 0.264 | 0.037 |
+  | nps_vmi_macrogroup | 30 m | bal. acc. | 0.365 | 0.042 |
+  | nps_vmi_group | 30 m | bal. acc. | 0.395 | 0.043 |
+  | vegbench_formation | 50 m* | bal. acc. | 0.412 | 0.091 |
+  | vegbench_division | 50 m* | bal. acc. | 0.382 | 0.062 |
+  | vegbench_macrogroup | 50 m* | bal. acc. | 0.330 | 0.037 |
+  | vegbench_group | 50 m* | bal. acc. | 0.237 | 0.024 |
+  | bbs_occurrence (163 spp.) | 150 m | mean AUROC / AP | 0.863 / 0.197 | AP 0.037 |
+  | butterflies_occurrence (51 spp.) | 50 m* | mean AUROC / AP | 0.683 / 0.577 | AP 0.408 |
+  | snapshot_usa_occurrence (37 spp.) | 100 m | mean AUROC / AP | 0.752 / 0.287 | AP 0.128 |
+  | satbird_winter_occupancy (467 spp.) | 300 m | mean AUROC / AP | 0.915 / 0.483 | AP 0.109 |
+  | blm_aim (12 targets) | 50 m* | mean R2 | 0.458 | |
+  | ofo_trees (2 targets) | 30 m | mean R2 | 0.249 | |
+
+  \* no radius in the registry, default 50 m (no effect for Clay below ~130 m). All SatBird rows use clipped NAIP years
+  (survey years after 2021 -> 2021 imagery); LFRDB 45%, OFO 67%. Not yet comparable with AlphaEarth / SatCLIP / location
+  until those are rerun with the torch probe.
 - **Lidar eval cache restarted on Delta** in `/work/hdd/bjud/sammlapp/benchmarking/als_cache` (same 86,150-site table, rebuilt
   from the registry). 64 workers on a 32-CPU job: **~11 cookies/s** (vs 1.1 on CyVerse), so ~2.2 h for all sites and ~650 GB.
   94-95% of the first 3,000 sites returned a cookie. pixi could not be installed by the agent here; a conda-forge env from the
