@@ -205,3 +205,28 @@ def _ofo():
     df, spec, is_test = _table("ofo_trees", query="product_name_AWS.notna()")
     return Task("ofo_trees", "regression", _std(df, spec, is_test), df[OFO_TARGETS],
                 "Open Forest Observatory plots: basal area (m2/ha) and tree count per plot")
+
+
+# Lidar features use the task's disc radius capped at the cached cookie's radius (decision 2026-11-12: 100 m for this
+# evaluation run; BBS 150 m and SatBird 300 m are capped, see benchmarking_working_doc.md).
+LIDAR_MAX_RADIUS = 100.0
+
+
+def lidar_radius(task_or_table, cap=LIDAR_MAX_RADIUS):
+    """Disc radius (m) of the lidar features for a task (or registry table): its registry radius, capped."""
+    reg = registry.load_registry()
+    table = task_or_table if task_or_table in reg else registry.table_of_task(task_or_table)
+    return min(registry.table_radius(table), cap)
+
+
+def lidar_site_radii(cap=LIDAR_MAX_RADIUS):
+    """DataFrame (als_site_id, radius_m): every (cookie, disc radius) pair the benchmark needs. A site shared by
+    tables with different radii appears once per radius."""
+    parts = []
+    for name in registry.load_registry():
+        df, spec, _ = _table(name)
+        if spec["als_id"] not in df:
+            continue
+        ids = df[spec["als_id"]].dropna().astype(str).unique()
+        parts.append(pd.DataFrame({"als_site_id": ids, "radius_m": lidar_radius(name, cap)}))
+    return pd.concat(parts, ignore_index=True).drop_duplicates()

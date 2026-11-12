@@ -2,7 +2,8 @@
 # ForPT embeddings of the cached eval cookies (04_embed_forpt.py) on one NCSA Delta A100. Arguments go to the script;
 # it is resumable (cookies already in a shard are skipped), so a time-out just needs a resubmit.
 #   sbatch scripts/baseline_eval/embed_forpt_delta.sbatch --limit 1500 --shard-size 100           # speed test
-#   sbatch -p gpuA100x4 -t 12:00:00 scripts/baseline_eval/embed_forpt_delta.sbatch               # full run
+#   sbatch -p gpuA100x4 -t 04:00:00 scripts/baseline_eval/embed_forpt_delta.sbatch --radius-m task --radii 15,30,50
+#   sbatch -p gpuA100x4 -t 16:00:00 scripts/baseline_eval/embed_forpt_delta.sbatch --radius-m task --radii 100
 # GPU utilisation is sampled every 10 s into the job log (lines starting with "#gpu") to show whether the GPU or the
 # CPU-side preprocessing limits the rate. Env: envs/litept-gpu (see its pixi.toml). AGENTS.md: ask before > 30 GPU-h.
 #SBATCH --job-name=forpt-embed

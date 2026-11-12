@@ -1,11 +1,14 @@
 """Embed every cached benchmark cookie with the frozen ForPT backbone (GPU; resumable).
 
-    python scripts/baseline_eval/04_embed_forpt.py                            # default variant: 50 m disc, z
+    python scripts/baseline_eval/04_embed_forpt.py --radius-m task            # each task's radius, capped at 100 m
+    python scripts/baseline_eval/04_embed_forpt.py --radius-m task --radii 100  # only the sites needing 100 m
+    python scripts/baseline_eval/04_embed_forpt.py                            # one disc for every site: 50 m, z
     python scripts/baseline_eval/04_embed_forpt.py --height hag --radius-m 50   # variant: height above ground
     python scripts/baseline_eval/04_embed_forpt.py --limit 200                  # quick trial
 
 Reads cookies from <cache>/cookies (eagle_als.cache layout, built from 03_lidar_sites.py's table) and writes
-<out>/<variant>/part_*.parquet: als_site_id, n_input (points after crop + 5 cm grid), f0000..f1007.
+<out>/r<radius>_<height>/part_*.parquet (one directory per radius; `--radius-m task` fills r15, r30, r50, r100 with
+the sites of the tables using that radius, eagle_bench.tasks.lidar_site_radii): als_site_id, n_input (points after crop + 5 cm grid), f0000..f1007.
 Cookies already in a shard are skipped. Cookies are packed into forward passes of up to --point-budget points
 (the per-pass overhead dominates on small clouds). See eagle_bench/forpt.py for the preprocessing.
 """
@@ -24,6 +27,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from eagle_als.cache import cookie_path, read_manifest  # noqa: E402
 from eagle_als.fetch import load_cookie  # noqa: E402
 from eagle_bench import forpt  # noqa: E402
+from eagle_bench.tasks import lidar_site_radii  # noqa: E402
 
 BENCH = Path("/home/jovyan/data-store/data/iplant/home/shared/esiil/als/benchmarking")
 
@@ -32,7 +36,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--cache", default=str(BENCH / "als_cache"))
     ap.add_argument("--out", default=str(BENCH / "embeddings/forpt"))
-    ap.add_argument("--radius-m", type=float, default=50.0)
+    ap.add_argument("--radius-m", default="50", help="disc radius in m, or 'task' (registry radius per task, capped)")
+    ap.add_argument("--radii", default=None, help="with --radius-m task: only these radii (comma list)")
     ap.add_argument("--height", default="z", choices=["z", "hag"])
     ap.add_argument("--max-points", type=int, default=400_000, help="thin denser crops before the grid")
     ap.add_argument("--point-budget", type=int, default=200_000, help="points per forward pass")
@@ -42,28 +47,39 @@ def main():
     ap.add_argument("--weights", default=str(forpt.WEIGHTS), help="ForPT epoch_30.pth (download: forpt.FORPT_URL)")
     a = ap.parse_args()
 
-    out = Path(a.out) / f"r{a.radius_m:g}_{a.height}"
-    out.mkdir(parents=True, exist_ok=True)
     sites = pd.read_parquet(Path(a.cache) / "sites.parquet")
-    done = set()
-    for f in out.glob("part_*.parquet"):
-        done |= set(pd.read_parquet(f, columns=["als_site_id"])["als_site_id"])
+    if a.radius_m == "task":
+        pairs = lidar_site_radii()
+        if a.radii:
+            pairs = pairs[pairs.radius_m.isin([float(r) for r in a.radii.split(",")])]
+    else:
+        pairs = pd.DataFrame({"als_site_id": sites["als_site_id"], "radius_m": float(a.radius_m)})
     # cached = status "ok" in the cache manifest (stat-ing 86k files on the iRODS mount takes many minutes)
     cached = set(read_manifest(a.cache).query("status == 'ok'")["site_id"].astype(str))
-    todo = [s for s in sites["als_site_id"] if s not in done and s in cached]
-    if a.limit:
-        todo = todo[: a.limit]
-    print(f"[forpt] {len(sites)} sites, {len(done)} embedded, {len(todo)} cached cookies to embed -> {out}", flush=True)
-    if not todo:
-        return
+    model = None
+    for radius, grp in pairs.groupby("radius_m"):
+        out = Path(a.out) / f"r{radius:g}_{a.height}"
+        out.mkdir(parents=True, exist_ok=True)
+        done = set()
+        for f in out.glob("part_*.parquet"):
+            done |= set(pd.read_parquet(f, columns=["als_site_id"])["als_site_id"])
+        todo = [s for s in grp["als_site_id"] if s not in done and s in cached]
+        if a.limit:
+            todo = todo[: a.limit]
+        print(f"[forpt] r={radius:g} m: {len(grp)} sites, {len(done)} embedded, {len(todo)} cached cookies to embed "
+              f"-> {out}", flush=True)
+        if todo:
+            if model is None:
+                model = forpt.load_backbone(a.weights, device="cuda")
+            embed(a, model, radius, todo, out)
 
+
+def embed(a, model, radius, todo, out):
     import torch
-
-    model = forpt.load_backbone(a.weights, device="cuda")
 
     def prep(sid):
         try:
-            return sid, forpt.preprocess(load_cookie(cookie_path(a.cache, sid))[0], a.radius_m, a.height, a.max_points)
+            return sid, forpt.preprocess(load_cookie(cookie_path(a.cache, sid))[0], radius, a.height, a.max_points)
         except Exception as e:  # unreadable cookie or empty crop: skipped, reported
             print(f"[forpt] {sid}: {type(e).__name__}: {e}", flush=True)
             return sid, None

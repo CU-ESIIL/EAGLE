@@ -36,9 +36,7 @@ def task_radii(tasks, override=None, default=50.0):
     """{task: disc radius in metres}: the `radius` of the task's registry table (or the override yaml: task or table -> radius), else `default`."""
     reg, over, out = registry.load_registry(), (override or {}), {}
     for t in tasks:
-        table = max((k for k in reg if t.startswith(k)), key=len, default=None)
-        if table is None:
-            raise SystemExit(f"task {t} matches no table in datasets/registry.yaml")
+        table = registry.table_of_task(t)
         r = over.get(t, over.get(table, reg[table].get("radius")))
         out[t] = float(default if r is None else r)
         if r is None:

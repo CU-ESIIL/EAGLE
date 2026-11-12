@@ -21,6 +21,8 @@ filled with the train median), and rows of a
 task are matched on `task.df.als_site_id` (rows without a cookie count as n_no_embedding):
 
     python scripts/baseline_eval/02_linear_probe.py --embeddings $BENCH/embeddings/forpt/r50_z --model forpt_r50_z
+    python scripts/baseline_eval/02_linear_probe.py --embeddings '$BENCH/embeddings/forpt/r{radius}_z' --model forpt
+        ("{radius}" = each task's lidar radius: registry radius capped at 100 m, eagle_bench.tasks.lidar_radius)
 
 Clay v1.5 NAIP embeddings, disc-averaged per point with a radius per task (from 09_fetch_naip_clay.py; the
 radius is read from the pooled tables): `--naip-clay datasets/raw/naip_clay --model naip_clay`.
@@ -37,7 +39,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 from eagle_bench import aef, probes  # noqa: E402
-from eagle_bench.tasks import TASKS, load_task  # noqa: E402
+from eagle_bench.tasks import TASKS, lidar_radius, load_task  # noqa: E402
 
 HEADLINE = dict(multiclass=["bal_acc", "macro_f1", "acc", "chance", "n_classes"],
                 multilabel=["mean_auroc", "mean_ap", "mean_prevalence", "n_species"],
@@ -62,13 +64,20 @@ def main():
     out.mkdir(parents=True, exist_ok=True)
 
     if a.embeddings:
-        emb = pd.concat([pd.read_parquet(f) for f in sorted(Path(a.embeddings).glob("*.parquet"))], ignore_index=True)
-        emb = emb.drop_duplicates("als_site_id").set_index("als_site_id")
-        emb = emb[[c for c in emb.columns if c != "n_input" and pd.api.types.is_numeric_dtype(emb[c])
-                   and not (a.exclude and re.search(a.exclude, c))]]
-        emb = emb.loc[:, emb.notna().any()]  # all-NaN columns carry nothing
+        emb_cache = {}
+
+        def cookie_embeddings(d):
+            """Feature table (index als_site_id) of one directory of shards, loaded once."""
+            if d not in emb_cache:
+                emb = pd.concat([pd.read_parquet(f) for f in sorted(Path(d).glob("*.parquet"))], ignore_index=True)
+                emb = emb.drop_duplicates("als_site_id").set_index("als_site_id")
+                emb = emb[[c for c in emb.columns if c != "n_input" and pd.api.types.is_numeric_dtype(emb[c])
+                           and not (a.exclude and re.search(a.exclude, c))]]
+                emb_cache[d] = emb.loc[:, emb.notna().any()]  # all-NaN columns carry nothing
+                print(f"[probe] {d}: {len(emb)} cookie embeddings, {emb_cache[d].shape[1]} features", flush=True)
+            return emb_cache[d]
+
         a.pooling = ["cookie"]
-        print(f"[probe] {len(emb)} cookie embeddings, {emb.shape[1]} features", flush=True)
     elif a.naip_clay:
         a.pooling = ["naip"]
     else:
@@ -81,6 +90,10 @@ def main():
         for pooling, min_count in [(p, m) for p in a.pooling for m in scenarios]:
             if a.embeddings:
                 ids = task.df["als_site_id"] if "als_site_id" in task.df else pd.Series(index=task.df.index, dtype=object)
+                # "{radius}" in the path = the task's lidar disc radius (registry radius capped at 100 m)
+                d = a.embeddings.format(radius=f"{lidar_radius(name):g}")
+                pooling = f"cookie_r{lidar_radius(name):g}m" if "{radius}" in a.embeddings else "cookie"
+                emb = cookie_embeddings(d)
                 X = emb.reindex(ids).to_numpy(np.float32)
                 X = impute_train_median(X, ~task.df["is_test"].to_numpy())
             elif a.naip_clay:

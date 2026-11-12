@@ -2,7 +2,8 @@
 
     pixi run --manifest-path envs/eagle-bench/pixi.toml python scripts/baseline_eval/05_lidr_metrics.py
     ... --limit 50                      # trial
-    ... --radius-m 50                   # analysis disc (default 50 m, as for ForPT and the EAGLE probes)
+    ... --radius-m 50                   # one analysis disc for every site (default 50 m)
+    ... --radius-m task                 # each task's registry radius, capped at 100 m (r15, r30, r50, r100 dirs)
     ... --workers 28                    # batches in parallel (one single-threaded Rscript each; ~1.4 s/cookie in R)
 
 For each batch of cookies: crop to the disc, drop noise points (classes 7, 18), clamp heights below ground to 0, write the points to a local temporary parquet, run
@@ -30,6 +31,7 @@ ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 from eagle_als.cache import cookie_path, read_manifest  # noqa: E402
 from eagle_als.fetch import load_cookie  # noqa: E402
+from eagle_bench.tasks import lidar_site_radii  # noqa: E402
 
 BENCH = Path("/home/jovyan/data-store/data/iplant/home/shared/esiil/als/benchmarking")
 PIXI = Path.home() / ".pixi/bin/pixi"
@@ -54,24 +56,37 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--cache", default=str(BENCH / "als_cache"))
     ap.add_argument("--out", default=str(BENCH / "features/lidr_stdmetrics"))
-    ap.add_argument("--radius-m", type=float, default=50.0)
+    ap.add_argument("--radius-m", default="50", help="disc radius in m, or 'task' (registry radius per task, capped)")
+    ap.add_argument("--radii", default=None, help="with --radius-m task: only these radii (comma list)")
     ap.add_argument("--batch", type=int, default=100)
     ap.add_argument("--limit", type=int, default=None)
     ap.add_argument("--workers", type=int, default=1, help="batches processed in parallel")
     a = ap.parse_args()
 
-    out = Path(a.out) / f"r{a.radius_m:g}"
-    out.mkdir(parents=True, exist_ok=True)
-    done = set()
-    for f in out.glob("part_*.parquet"):
-        done |= set(pd.read_parquet(f, columns=["als_site_id"])["als_site_id"])
     sites = pd.read_parquet(Path(a.cache) / "sites.parquet")["als_site_id"]
+    if a.radius_m == "task":
+        pairs = lidar_site_radii()
+        if a.radii:
+            pairs = pairs[pairs.radius_m.isin([float(r) for r in a.radii.split(",")])]
+    else:
+        pairs = pd.DataFrame({"als_site_id": sites, "radius_m": float(a.radius_m)})
     # cached = status "ok" in the cache manifest (stat-ing 86k files on the iRODS mount takes many minutes)
     cached = set(read_manifest(a.cache).query("status == 'ok'")["site_id"].astype(str))
-    todo = [s for s in sites if s not in done and s in cached]
-    if a.limit:
-        todo = todo[: a.limit]
-    print(f"[lidr] {len(done)} done, {len(todo)} cached cookies to process -> {out}", flush=True)
+    for radius, grp in pairs.groupby("radius_m"):
+        out = Path(a.out) / f"r{radius:g}"
+        out.mkdir(parents=True, exist_ok=True)
+        done = set()
+        for f in out.glob("part_*.parquet"):
+            done |= set(pd.read_parquet(f, columns=["als_site_id"])["als_site_id"])
+        todo = [s for s in grp["als_site_id"] if s not in done and s in cached]
+        if a.limit:
+            todo = todo[: a.limit]
+        print(f"[lidr] r={radius:g} m: {len(done)} done, {len(todo)} cached cookies to process -> {out}", flush=True)
+        if todo:
+            process(a, radius, todo, out)
+
+
+def process(a, radius, todo, out):
     t0, first_shard = time.time(), len(list(out.glob("part_*.parquet")))
     batches = [todo[s : s + a.batch] for s in range(0, len(todo), a.batch)]
     env = dict(os.environ, OMP_NUM_THREADS="1")  # one core per Rscript; parallelism comes from --workers
@@ -80,7 +95,7 @@ def main():
         frames = []
         for sid in ids:
             try:
-                frames.append(cookie_points(sid, a.cache, a.radius_m))
+                frames.append(cookie_points(sid, a.cache, radius))
             except Exception as e:  # unreadable cookie: skipped, reported
                 print(f"[lidr] {sid}: {type(e).__name__}: {e}", flush=True)
         if not frames:

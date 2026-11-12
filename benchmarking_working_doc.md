@@ -7,15 +7,13 @@ open questions, results and the dated log. Newest first in each log.
 
 ## Open questions for the user
 
-- **Lidar radius per task (proposal below, not decided):** cap at 100 m (the cached cookie) or tile and aggregate
-  for BBS (150 m) and SatBird (300 m).
-- Full ForPT run (~4-5 GPU-h on one A100) and full lidR metrics run (~1.6 h on a 32-CPU node): ready to launch.
+- **Tiling vs capping for BBS (150 m) and SatBird (300 m)** in a later run (proposal below); this run caps at 100 m.
 
 ## Next steps
 
 1. Rerun AlphaEarth, location and SatCLIP with the torch probe (running 2026-11-12) and fill the comparison table below.
-2. ForPT embeddings of all cached cookies, then the probe (`02_linear_probe.py --embeddings ...`).
-3. lidR stdmetrics (+ terrain) for all cookies, then linear probe and gradient boosting.
+2. ForPT embeddings at the task radii (running, Slurm 23829140 r15/30/50 and 23829141 r100), then the probe.
+3. lidR stdmetrics (+ terrain) at the task radii (Slurm 23829139), then linear probe and gradient boosting.
 4. AlphaEarth diagnostics (plan at the end), tests 1, 3, 5 first.
 5. Later: lidar-nuisance-only baseline (point density, year, quality level: are labels confounded with acquisition?),
    AEF + lidar metrics concatenated (does lidar add anything beyond the satellite embedding?).
@@ -25,6 +23,12 @@ open questions, results and the dated log. Newest first in each log.
 - **Radius (2026-11-12):** one radius per task for every area-based feature set (point-only ones, AEF centre pixel
   and location/SatCLIP, excepted), following the task's `radius` in `datasets/registry.yaml`; tables without one use
   the documented 50 m default.
+- **Lidar capped at 100 m for this evaluation run (2026-11-12):** ForPT and lidR features use each task's registry
+  radius capped at the cached cookie's 100 m (`eagle_bench.tasks.lidar_radius`): nlcd 15 m; nps_vmi, ofo_trees 30 m;
+  lfrdb, vegbench, butterflies, blm_aim 50 m (default); snapshot_usa 100 m; **bbs 100 m (registry 150 m) and
+  satbird_winter 100 m (registry 300 m) are capped**, so on those two tasks lidar sees a smaller area than Clay NAIP.
+  Features are computed from the points in the disc only (crop, then embed / compute metrics). Output dirs per radius
+  (`r15`, `r30`, `r50`, `r100`); the probe picks each task's with `--embeddings '<dir>/r{radius}...'`.
 - **One linear probe for everything (2026-11-12):** `eagle_als.linear_probe`, a single torch `nn.Linear` on standardized
   features, full-batch L-BFGS from zero weights; class-balanced softmax (multiclass), per-target sigmoid BCE
   (multilabel), squared error on standardized targets (regression); NaN labels masked; `l2/2 ||W||^2` with l2 from
@@ -140,6 +144,10 @@ Details and paths in `CLAUDE.md` (Known data issues).
 ## Log
 
 ### 2026-11-12 (NCSA Delta)
+
+- **ForPT and lidR full runs submitted at the task radii (capped at 100 m).** lidR on 100 m discs costs ~7 core-s per
+  cookie vs ~1.2 at 50 m (smoke test of 40 cookies per radius), so ~125 core-h in all: one 96-core job, 3 h limit.
+  ForPT on two A100s: r15/30/50 (~32k cookies, 4 h limit) and r100 (~54k cookies, 16 h limit); at most 20 GPU-h.
 
 - **Torch-probe reruns** of AlphaEarth centre, location RFF and SatCLIP L10/L40 started (AEF points copied from
   CyVerse by the user; SatCLIP in its own pixi env `envs/satclip`, checkpoints in `$WORK/benchmarking/satclip_weights`).

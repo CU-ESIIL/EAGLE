@@ -879,3 +879,17 @@ The benchmarking working doc starts with mostly stale notes: clean it up (origin
 - `benchmarking_working_doc.md` reorganised: open questions, next steps, user decisions, feature-set table, results, known data issues, condensed dated log, AEF diagnostics plan. Removed the superseded custom-metrics proposal and stale status notes (e.g. "PDAL blocked", "noise filter: your call"); answered questions folded into Decisions; open questions (missing registry radii, 50 vs 100 m lidar disc) listed at the top.
 - `README.md`: benchmark described as 15 tasks / 10 datasets; new "Baseline benchmark" section (probe, feature sets, lidar cookies, envs, where results are); pointers to the working doc / CLAUDE.md; validation probe is now the shared torch linear probe; ForPT code is released.
 - `scripts/baseline_eval/README.md`: probe description updated to the torch probe.
+
+## 2026-11-12 - Lidar features at the task radii (capped at 100 m); full ForPT and lidR runs
+
+### Prompt
+
+Document the choice to cap lidar at 100 m radius for this eval run, and launch Slurm jobs for ForPT and lidR (a CPU node with many CPUs is fine). Earlier: one radius per task across comparisons (point-only feature sets excepted); missing registry radius = 50 m default.
+
+### Actions
+
+- `eagle_als.registry`: `DEFAULT_RADIUS`, `table_of_task`, `table_radius`, `task_radius` (shared; `09_fetch_naip_clay.py` uses `table_of_task`). `eagle_bench.tasks`: `LIDAR_MAX_RADIUS = 100`, `lidar_radius(task)`, `lidar_site_radii()` (every (cookie, radius) pair; 626 sites need two radii).
+- `04_embed_forpt.py`, `05_lidr_metrics.py`: `--radius-m task` (and `--radii` to split work) writes one directory per radius (r15, r30, r50, r100). `02_linear_probe.py --embeddings '<dir>/r{radius}...'` picks each task's directory (pooling label `cookie_r<R>m`).
+- Smoke test (40 cookies per radius): lidR ~7 core-s per 100 m cookie vs ~1.2 at 50 m. New `lidr_metrics_delta.sbatch` (96 cores, 3 h, <= 288 CPU-h).
+- Submitted: lidR 23829139; ForPT 23829140 (r15/30/50, 4 h) and 23829141 (r100, 16 h) on gpuA100x4 (<= 20 GPU-h).
+- Decision recorded in the working doc (Decisions) and CLAUDE.md status.
