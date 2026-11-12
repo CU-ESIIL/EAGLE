@@ -893,3 +893,14 @@ Document the choice to cap lidar at 100 m radius for this eval run, and launch S
 - Smoke test (40 cookies per radius): lidR ~7 core-s per 100 m cookie vs ~1.2 at 50 m. New `lidr_metrics_delta.sbatch` (96 cores, 3 h, <= 288 CPU-h).
 - Submitted: lidR 23829139; ForPT 23829140 (r15/30/50, 4 h) and 23829141 (r100, 16 h) on gpuA100x4 (<= 20 GPU-h).
 - Decision recorded in the working doc (Decisions) and CLAUDE.md status.
+
+## 2026-11-12 - Pre-training working notes moved to training_working_doc.md
+
+### Prompt
+
+Agents do not keep the claude.ai working-notes artifact up to date, and CLAUDE.md covered only benchmarking. Ingest the artifact into a local `training_working_doc.md`, bring it up to date, and update CLAUDE.md and README.md.
+
+### Actions
+
+- New `training_working_doc.md`: status table, plan, Bridges-2 env, streaming data design and measurements, eval datasets/registry notes, in-training validation, results (checkpoint scores, `ssl_s_2gpu_2` at step 9,200), model and ForPT differences, alternative architectures, next steps, the user's future ideas, dated log. Corrected for later changes (VegBench, SatBird rework, sPlotOpen dropped, leaf-on season rule, registry-based EVAL_SITES, frozen splits incl. the NLCD re-split, `probe_table`, torch linear probe, ForPT code release, noise filter fix). Run state after 2026-10-09 is marked unverified: /ocean is not mounted on Delta.
+- `CLAUDE.md`: now a handoff for both workstreams (table of workstreams and docs, shared components, a Bridges-2 pre-training section). `README.md`: notes list, `probe_table` paragraph, pointer to the training doc in "Planned experiments". `AGENTS.md`: points to the two local docs instead of the artifact.

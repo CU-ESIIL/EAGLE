@@ -1,15 +1,41 @@
-# CLAUDE.md: benchmarking session handoff
+# CLAUDE.md: session handoff
 
-Read `AGENTS.md` (repo rules) and `README.md` (project) first. This file is the operational state of the
-**baseline benchmarking** work on CyVerse, kept current so another agent can resume mid-experiment.
-User notes and feedback for this work: `benchmarking_working_doc.md` (check it for new feedback at the start).
+Read `AGENTS.md` (repo rules) and `README.md` (project) first. The project has two workstreams, each with a
+local working doc that holds its status, decisions, results, next steps and the user's feedback. **Read the
+doc for the workstream you are on at the start (check it for new user feedback), and update it before you
+finish**: status table, results, ticked/removed next steps, a dated log line. Stale notes are worse than none.
 
-## Conventions for this work
+| workstream | machine | working doc | operational notes |
+|---|---|---|---|
+| **Pre-training** the LitePT-S encoder (SSL on streamed 3DEP) | PSC Bridges-2 (H100) | `training_working_doc.md` | "Pre-training (Bridges-2)" below; `README.md` (running, monitoring) |
+| **Baseline benchmark** (frozen features + linear probe on 15 tasks) | NCSA Delta (was CyVerse) | `benchmarking_working_doc.md` | the rest of this file |
+
+Both share the evaluation datasets (`datasets/registry.yaml`), the eval-site exclusion, the cookie code
+(`eagle_als.fetch`/`cache`) and the linear probe (`eagle_als.linear_probe`). A change to any of these affects
+both: note it in both docs. (The claude.ai working-notes artifact is retired as of 2026-11-12.)
+
+## Conventions
 
 - Commit regularly with descriptive messages (user's git identity is set in the repo config); pull before
   starting (`git pull --rebase`): the user pushes dataset changes in parallel.
-- Append a `PROMPT_ACTION_LOG.md` entry after meaningful changes; keep `benchmarking_working_doc.md` notes and this
-  file up to date.
+- Append a `PROMPT_ACTION_LOG.md` entry after meaningful changes; keep the working doc and this file up to date.
+
+## Pre-training (Bridges-2)
+
+- `$EAGLE_SCRATCH = /ocean/projects/bio260075p/sammlapp/eagle` (runs, logs, eval cookie caches). /ocean is not
+  mounted on Delta, so run state can only be checked on Bridges-2.
+- Env: `source scripts/litePT/env.sh` (pixi env `envs/litept-gpu`, installed on /ocean; see the working doc).
+- Submit / resume: `sbatch scripts/litePT/slurm/pretrain.sbatch run_name=<name> [key=value ...]`; resubmitting the
+  same `run_name` resumes. Settings go as arguments, not environment variables. Config:
+  `scripts/litePT/configs/ssl_litept_s.py`.
+- Monitor: TensorBoard on `$EAGLE_SCRATCH/runs`, `scripts/litePT/TENSORBOARD.md`; judge runs on the `eval/*`
+  probes and `eval/embed/*`, not the loss. Score old checkpoints with `scripts/litePT/eval_checkpoints.py`.
+- Eval caches for in-training tasks: `scripts/litePT/build_eval_caches.py` (rerun when an eval table changes).
+- GPU runs over 30 GPU-h need the user's go-ahead (AGENTS.md); the user usually submits the full runs.
+
+## Benchmark conventions
+
+- User notes and feedback: `benchmarking_working_doc.md`.
 - Large data never goes in git. Persistent cache: `$BENCH = /home/jovyan/data-store/data/iplant/home/shared/esiil/als/benchmarking`
   (iRODS FUSE mount: fine for large sequential files, slow for many small reads).
 - Downloaded weights: always `torch.load(..., weights_only=True)`.

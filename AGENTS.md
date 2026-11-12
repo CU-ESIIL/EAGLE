@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Keep this working document up to date with progress, planned next steps, completed items, and open questions https://claude.ai/artifact/EFgGjrP8qF2D9DBFKSHvWR#493afc30-cbe3.mbxzwrsrb67.6263
+Keep the working documents up to date with progress, planned next steps, completed items, and open questions: `training_working_doc.md` (pre-training) and `benchmarking_working_doc.md` (baseline benchmark). They replace the claude.ai working-notes artifact (retired 2026-11-12).
 
 use pixi for environment management
 

@@ -11,8 +11,9 @@ imagery, location and lidar.
 
 Pre-training runs on PSC Bridges-2; the baseline benchmark runs on NCSA Delta. Notes:
 
+- `training_working_doc.md`: pre-training status, runs and results, design decisions, next steps and dated log.
 - `benchmarking_working_doc.md`: benchmark decisions, open questions, results and dated log.
-- `CLAUDE.md`: operational state of the benchmark (machines, environments, paths, how to resume).
+- `CLAUDE.md`: agent handoff for both workstreams (machines, environments, paths, how to resume).
 - `PROMPT_ACTION_LOG.md`: one entry per change to the code.
 
 ## Pre-training design
@@ -162,7 +163,11 @@ run, use `python scripts/litePT/eval_checkpoints.py $EAGLE_SCRATCH/runs/<run_nam
 
 An `embedding_check` task (`src/eagle_als/embedding_check.py`, task `embed`) needs no labels. It
 checks the encoder for collapse on 256 held-out NLCD cookies: how spread out the cookie embeddings
-and point features are (effective rank, cosine similarity). Its curves are `eval/embed/*`. To run the
+and point features are (effective rank, cosine similarity). Its curves are `eval/embed/*`.
+
+A `probe_table` task (`src/eagle_als/probe_table.py`) scores several targets (classification,
+regression, species presence) on one labeled table; build its cookie cache with
+`scripts/litePT/build_eval_caches.py`. It is not in the default `eval_tasks` yet. To run the
 same check on the saved checkpoints of a run, use `python scripts/litePT/check_embeddings.py
 $EAGLE_SCRATCH/runs/<run_name> --cache $EAGLE_SCRATCH/cache/nlcd` on a GPU.
 
@@ -191,7 +196,11 @@ Results per model: `scripts/baseline_eval/results/<model>/summary.md`; all model
 
 ## Planned experiments
 
+Status of each, and the results so far, are in `training_working_doc.md`.
+
 1. **Baseline pre-training** with the current config (`ssl_s_pool_v1`).
+   A 2-GPU run (`ssl_s_2gpu_2`) showed the NLCD probes drifting below init after ~6k steps without collapse;
+   an EMA momentum ramp to 1.0 (as in Sonata) is the first fix to test.
 2. **Downstream evaluation** of frozen and fine-tuned embeddings (linear probe, kNN, fine-tuning)
    on the benchmark tasks, compared with the baselines above.
 3. **Height inputs:** z and HAG together vs z only vs HAG only.
