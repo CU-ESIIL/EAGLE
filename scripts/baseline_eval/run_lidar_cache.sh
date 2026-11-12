@@ -22,6 +22,8 @@ OUT=$BENCH/als_cache
 mkdir -p "$OUT/logs"
 LOG="$OUT/logs/cache_$(date +%Y%m%d_%H%M%S).log"
 export PROJ_NETWORK=OFF PYTHONPATH=src OMP_NUM_THREADS=1
+# cap PDAL readers.ept threads per fetch (default would be one per hardware thread of the node; see eagle_als.fetch)
+export EAGLE_PDAL_THREADS=${EAGLE_PDAL_THREADS:-4}
 if [ -n "${EAGLE_ENV:-}" ]; then
     export PROJ_DATA=$EAGLE_ENV/share/proj GDAL_DATA=$EAGLE_ENV/share/gdal
     PY=("$EAGLE_ENV/bin/python")

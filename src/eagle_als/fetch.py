@@ -13,6 +13,7 @@ centered on the query location (x=y=0), and saved as an uncompressed `.npz` with
 """
 
 import json
+import os
 import time
 from pathlib import Path
 
@@ -90,6 +91,10 @@ def _fetch_region(tile_name, lat, lon, size, shape, timeout=None):
     ]
     if timeout is not None:
         stages[0]["timeout"] = int(timeout)
+    # readers.ept sizes its thread pool from the machine's hardware threads (128 on Delta/CyVerse nodes), not the
+    # job's CPU allocation: with many parallel fetches that oversubscribes the CPUs badly. PDAL's minimum is 4.
+    if os.environ.get("EAGLE_PDAL_THREADS"):
+        stages[0]["threads"] = int(os.environ["EAGLE_PDAL_THREADS"])
     pipeline = pdal.Pipeline(json.dumps({"pipeline": stages}))
     pipeline.execute(allowed_dims=DIMS)
     arrays = pipeline.arrays
