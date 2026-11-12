@@ -29,12 +29,12 @@ Target kinds (rows with a missing label are left out of that target only):
   `classification` task (eagle_als.probe): <target>_<probe>_bal_acc, <target>_<probe>_f1, per-class
   F1 in eval_<task>/<target>_<probe>_f1/<class>, and <target>_chance.
 - regression: `col`, or `expr` (pandas eval on the table, e.g. "trees_s1 / plot_area_ha"), optionally
-  `transform="log1p"` (fitted and scored on the transformed scale). Ridge regression on standardized
-  embeddings (alpha by leave-one-out CV) and cosine kNN regression: <target>_<probe>_r2 on the test rows.
+  `transform="log1p"` (fitted and scored on the transformed scale). Linear probe (eagle_als.linear_probe,
+  l2 by 3-fold CV) and cosine kNN regression: <target>_<probe>_r2 on the test rows.
 - presence: one binary label per column; `cols` is a list or a regex on the column names, value > 0 =
   present (`strip`: optional regex removed from column names in metric tags). A column is kept if it
   has at least `min_per_split` presences and absences in both splits.
-  One class-balanced logistic regression per column (C = 1, the sklearn default, fitted jointly) and
+  Linear probe with one class-balanced sigmoid output per column (eagle_als.linear_probe, l2 by CV) and
   cosine kNN (similarity-weighted share of present neighbours). Headline <target>_<probe>_auc (mean
   ROC AUC over columns) and <target>_<probe>_ap (mean average precision), per column
   eval_<task>/<target>_<probe>_auc/<column>, and <target>_n (number of columns kept).
@@ -50,6 +50,7 @@ import torch.nn.functional as F
 
 from .cache import cookie_path
 from .evaluation import EvalTask, register
+from .linear_probe import fit_select
 from .probe import REPO_ROOT, embed, prepare_samples, probe_scores
 from .sites import add_site_ids, read_table
 
@@ -200,52 +201,17 @@ def _cosine_neighbours(train_x, test_x, k):
 
 
 def regression_scores(x, y, is_test, probes=("linear", "knn"), knn_k=20):
-    """R2 on the test rows of ridge regression (standardized inputs, LOO-chosen alpha) and kNN regression."""
-    from sklearn.linear_model import RidgeCV
+    """R2 on the test rows of the linear probe (eagle_als.linear_probe) and of kNN regression."""
     from sklearn.metrics import r2_score
-    from sklearn.pipeline import make_pipeline
-    from sklearn.preprocessing import StandardScaler
 
     tr, te = ~is_test, is_test
     out = {}
     if "linear" in probes:
-        reg = make_pipeline(StandardScaler(), RidgeCV(alphas=np.logspace(-1, 5, 13)))
-        reg.fit(x[tr], y[tr])
-        out["linear_r2"] = r2_score(y[te], reg.predict(x[te]))
+        out["linear_r2"] = r2_score(y[te], fit_select(x[tr], y[tr], "regression").scores(x[te])[:, 0])
     if "knn" in probes:
         w, idx = _cosine_neighbours(x[tr], x[te], knn_k)
         out["knn_r2"] = r2_score(y[te], (w * y[tr][idx]).sum(1))
     return out
-
-
-def fit_presence_logistic(x, y, C=1.0, max_iter=200):
-    """Class-balanced L2 logistic regression for every column of y (0/1, NaN = unknown) at once.
-
-    Minimizes, per column, C * sum_i w_i * logloss_i + ||coef||^2 / 2 with sklearn's "balanced" weights,
-    i.e. the same model as LogisticRegression(class_weight="balanced") fitted column by column.
-    Returns a predict function: test x -> scores (n, columns).
-    """
-    mu, sd = x.mean(0), x.std(0) + 1e-6
-    X = torch.from_numpy((x - mu) / sd).double()
-    Y = torch.from_numpy(np.nan_to_num(y)).double()
-    known = torch.from_numpy(np.isfinite(y)).double()
-    n, n_pos = known.sum(0), (Y * known).sum(0)
-    wts = known * (Y * (n / (2 * n_pos)) + (1 - Y) * (n / (2 * (n - n_pos))))
-    W = torch.zeros(X.shape[1], Y.shape[1], dtype=torch.float64, requires_grad=True)
-    b = torch.zeros(Y.shape[1], dtype=torch.float64, requires_grad=True)
-    opt = torch.optim.LBFGS([W, b], max_iter=max_iter, line_search_fn="strong_wolfe", tolerance_grad=1e-6)
-
-    def closure():
-        opt.zero_grad()
-        loss = C * (wts * F.binary_cross_entropy_with_logits(X @ W + b, Y, reduction="none")).sum() \
-            + 0.5 * (W ** 2).sum()
-        loss.backward()
-        return loss
-
-    with torch.enable_grad():
-        opt.step(closure)
-    W, b = W.detach(), b.detach()
-    return lambda xt: (torch.from_numpy((xt - mu) / sd).double() @ W + b).numpy()
 
 
 def presence_scores(x, y, is_test, probes=("linear", "knn"), knn_k=20, col_tags=None):
@@ -257,7 +223,7 @@ def presence_scores(x, y, is_test, probes=("linear", "knn"), knn_k=20, col_tags=
     out = dict(n=y.shape[1])
     for name in probes:
         if name == "linear":
-            score = fit_presence_logistic(x[tr], y[tr])(x[te])
+            score = fit_select(x[tr], y[tr], "multilabel").scores(x[te])
         else:
             w, idx = _cosine_neighbours(x[tr], x[te], knn_k)
             ytr = y[tr]

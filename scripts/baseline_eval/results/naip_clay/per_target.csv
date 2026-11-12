@@ -1,0 +1,712 @@
+task,pooling,min_count,target,n_train,n_test,f1
+nlcd,naip_r15m,20,Cultivated Crops,46,46,0.8085106382978723
+nlcd,naip_r15m,20,Deciduous Forest,36,29,0.5283018867924528
+nlcd,naip_r15m,20,"Developed, Open Space",49,40,0.6666666666666666
+nlcd,naip_r15m,20,Emergent Herbaceous Wetlands,21,31,0.7384615384615385
+nlcd,naip_r15m,20,Evergreen Forest,47,53,0.6666666666666666
+nlcd,naip_r15m,20,Grassland/Herbaceous,43,57,0.6126126126126126
+nlcd,naip_r15m,20,Pasture/Hay,23,24,0.425531914893617
+nlcd,naip_r15m,20,Shrub/Scrub,54,46,0.5806451612903226
+nlcd,naip_r15m,1,Barren Land,24,8,0.38095238095238093
+nlcd,naip_r15m,1,Cultivated Crops,46,46,0.8
+nlcd,naip_r15m,1,Deciduous Forest,36,29,0.4444444444444444
+nlcd,naip_r15m,1,"Developed, High Intensity",18,11,0.45714285714285713
+nlcd,naip_r15m,1,"Developed, Low Intensity",14,19,0.1875
+nlcd,naip_r15m,1,"Developed, Medium Intensity",19,20,0.36363636363636365
+nlcd,naip_r15m,1,"Developed, Open Space",49,40,0.40476190476190477
+nlcd,naip_r15m,1,Emergent Herbaceous Wetlands,21,31,0.5964912280701754
+nlcd,naip_r15m,1,Evergreen Forest,47,53,0.6095238095238096
+nlcd,naip_r15m,1,Grassland/Herbaceous,43,57,0.5825242718446602
+nlcd,naip_r15m,1,Mixed Forest,16,27,0.37735849056603776
+nlcd,naip_r15m,1,Open Water,14,19,0.55
+nlcd,naip_r15m,1,Pasture/Hay,23,24,0.44
+nlcd,naip_r15m,1,Shrub/Scrub,54,46,0.5681818181818182
+nlcd,naip_r15m,1,Woody Wetlands,19,18,0.391304347826087
+lfrdb_ecosys,naip_r50m,20,California Coastal Closed-Cone Conifer Forest and Woodland,61,33,0.4383561643835616
+lfrdb_ecosys,naip_r50m,20,California Coastal Live Oak Woodland and Savanna,142,40,0.12345679012345678
+lfrdb_ecosys,naip_r50m,20,California Coastal Redwood Forest,110,89,0.53
+lfrdb_ecosys,naip_r50m,20,California Mesic Chaparral,34,41,0.15217391304347827
+lfrdb_ecosys,naip_r50m,20,"California Ruderal Grassland, Meadow & Scrub",194,96,0.20952380952380953
+lfrdb_ecosys,naip_r50m,20,Californian Ruderal Forest,89,31,0.11363636363636363
+lfrdb_ecosys,naip_r50m,20,Central Interior Highlands Calcareous Glade and Barrens,45,24,0.2702702702702703
+lfrdb_ecosys,naip_r50m,20,Laurentian-Acadian Northern Hardwood Forest,30,59,0.4
+lfrdb_ecosys,naip_r50m,20,Laurentian-Acadian Wet Meadow-Shrub Swamp,52,45,0.0
+lfrdb_ecosys,naip_r50m,20,Mediterranean California Mixed Evergreen Forest,220,181,0.41904761904761906
+lfrdb_ecosys,naip_r50m,20,Mediterranean California Mixed Oak Woodland,42,29,0.2857142857142857
+lfrdb_ecosys,naip_r50m,20,None,35,30,0.028985507246376812
+lfrdb_ecosys,naip_r50m,20,Northern & Central Native Ruderal Flooded & Swamp Forest,42,21,0.2909090909090909
+lfrdb_ecosys,naip_r50m,20,Northern California Coastal Scrub,105,41,0.18018018018018017
+lfrdb_ecosys,naip_r50m,20,Northern and Central California Dry-Mesic Chaparral,272,53,0.10810810810810811
+lfrdb_ecosys,naip_r50m,20,Ozark-Ouachita Dry-Mesic Oak Forest,183,68,0.7862068965517242
+lfrdb_ecosys,naip_r50m,20,Southeastern Native Ruderal Forest,115,203,0.7191601049868767
+lfrdb_ecosys,naip_r50m,20,Southeastern Ruderal Grassland & Shrubland,60,87,0.579185520361991
+lfrdb_ecosys,naip_r50m,20,Southern California Coastal Scrub,202,163,0.4984984984984985
+lfrdb_ecosys,naip_r50m,20,Southern California Dry-Mesic Chaparral,37,52,0.2535211267605634
+lfrdb_ecosys,naip_r50m,20,Temperate Pacific Subalpine-Montane Wet Meadow,62,41,0.16901408450704225
+lfrdb_ecosys,naip_r50m,20,Temperate Pacific Tidal Salt and Brackish Marsh,84,64,0.8115942028985508
+lfrdb_ecosys,naip_r50m,1,Acadian-Appalachian Montane Spruce-Fir Forest,6,1,0.6666666666666666
+lfrdb_ecosys,naip_r50m,1,Atlantic Coastal Plain Blackwater Stream Floodplain Forest,1,2,0.0
+lfrdb_ecosys,naip_r50m,1,Atlantic Coastal Plain Streamhead Seepage Swamp-Pocosin-Baygall,15,12,0.125
+lfrdb_ecosys,naip_r50m,1,Boreal-Laurentian Conifer Acidic Swamp and Treed Poor Fen,3,4,0.0
+lfrdb_ecosys,naip_r50m,1,Boreal-Laurentian-Acadian Acidic Basin Fen,2,1,0.0
+lfrdb_ecosys,naip_r50m,1,California Annual Grassland,13,12,0.0
+lfrdb_ecosys,naip_r50m,1,California Central Valley Mixed Oak Savanna,9,1,0.0
+lfrdb_ecosys,naip_r50m,1,California Central Valley Riparian Woodland and Shrubland,3,5,0.2857142857142857
+lfrdb_ecosys,naip_r50m,1,California Central Valley and Southern Coastal Grassland,18,9,0.024096385542168676
+lfrdb_ecosys,naip_r50m,1,California Coastal Closed-Cone Conifer Forest and Woodland,61,33,0.21428571428571427
+lfrdb_ecosys,naip_r50m,1,California Coastal Live Oak Woodland and Savanna,142,40,0.034482758620689655
+lfrdb_ecosys,naip_r50m,1,California Coastal Redwood Forest,110,89,0.5483870967741935
+lfrdb_ecosys,naip_r50m,1,California Lower Montane Blue Oak-Foothill Pine Woodland and Savanna,204,10,0.0
+lfrdb_ecosys,naip_r50m,1,California Maritime Chaparral,18,10,0.03278688524590164
+lfrdb_ecosys,naip_r50m,1,California Mesic Chaparral,34,41,0.1568627450980392
+lfrdb_ecosys,naip_r50m,1,California Mesic Serpentine Grassland,2,2,0.0
+lfrdb_ecosys,naip_r50m,1,California Montane Jeffrey Pine-(Ponderosa Pine) Woodland,1,1,0.0
+lfrdb_ecosys,naip_r50m,1,California Northern Coastal Grassland,41,15,0.0
+lfrdb_ecosys,naip_r50m,1,"California Ruderal Grassland, Meadow & Scrub",194,96,0.05555555555555555
+lfrdb_ecosys,naip_r50m,1,California Xeric Serpentine Chaparral,29,11,0.09302325581395349
+lfrdb_ecosys,naip_r50m,1,Californian Ruderal Forest,89,31,0.18604651162790697
+lfrdb_ecosys,naip_r50m,1,Central Interior Highlands Calcareous Glade and Barrens,45,24,0.06060606060606061
+lfrdb_ecosys,naip_r50m,1,Central Interior Highlands Dry Acidic Glade and Barrens,32,4,0.375
+lfrdb_ecosys,naip_r50m,1,Eastern Great Plains Wet Meadow-Prairie-Marsh,30,9,0.0
+lfrdb_ecosys,naip_r50m,1,Great Basin & Intermountain Introduced Annual Grassland,2,4,0.0
+lfrdb_ecosys,naip_r50m,1,Great Basin & Intermountain Introduced Annual and Biennial Forbland,1,13,0.0
+lfrdb_ecosys,naip_r50m,1,Great Basin & Intermountain Ruderal Shrubland,3,2,0.0
+lfrdb_ecosys,naip_r50m,1,Great Basin Pinyon-Juniper Woodland,4,26,0.044444444444444446
+lfrdb_ecosys,naip_r50m,1,Inter-Mountain Basins Mixed Salt Desert Scrub,2,89,0.0
+lfrdb_ecosys,naip_r50m,1,Inter-Mountain Basins Montane Sagebrush Steppe,1,40,0.0
+lfrdb_ecosys,naip_r50m,1,Inter-Mountain Basins Semi-Desert Grassland,1,291,0.0
+lfrdb_ecosys,naip_r50m,1,Inter-Mountain Basins Volcanic Rock and Cinder Land,7,22,0.028169014084507043
+lfrdb_ecosys,naip_r50m,1,Interior West Ruderal Riparian Forest & Scrub,5,2,0.0
+lfrdb_ecosys,naip_r50m,1,Interior Western North American Temperate Ruderal Grassland & Shrubland,2,1,0.0
+lfrdb_ecosys,naip_r50m,1,Laurentian Jack Pine-Red Pine Forest,1,5,0.0
+lfrdb_ecosys,naip_r50m,1,Laurentian Pine-Oak Barrens,1,26,0.0
+lfrdb_ecosys,naip_r50m,1,Laurentian-Acadian Alkaline Conifer-Hardwood Swamp,7,14,0.17391304347826086
+lfrdb_ecosys,naip_r50m,1,Laurentian-Acadian Freshwater Marsh,2,15,0.0
+lfrdb_ecosys,naip_r50m,1,Laurentian-Acadian Northern Hardwood Forest,30,59,0.16666666666666666
+lfrdb_ecosys,naip_r50m,1,Laurentian-Acadian Northern Pine-(Oak) Forest,2,37,0.0
+lfrdb_ecosys,naip_r50m,1,Laurentian-Acadian Pine-Hemlock-Hardwood Forest,5,2,0.6666666666666666
+lfrdb_ecosys,naip_r50m,1,Laurentian-Acadian Wet Meadow-Shrub Swamp,52,45,0.0
+lfrdb_ecosys,naip_r50m,1,Mediterranean California Coastal Bluff,2,6,0.0
+lfrdb_ecosys,naip_r50m,1,Mediterranean California Dry-Mesic Mixed Conifer Forest and Woodland,6,5,0.2222222222222222
+lfrdb_ecosys,naip_r50m,1,Mediterranean California Foothill and Lower Montane Riparian Woodland and Shrubland,56,6,0.0
+lfrdb_ecosys,naip_r50m,1,Mediterranean California Lower Montane Black Oak-Conifer Forest and Woodland,8,15,0.0
+lfrdb_ecosys,naip_r50m,1,Mediterranean California Mesic Serpentine Woodland and Chaparral,23,7,0.0392156862745098
+lfrdb_ecosys,naip_r50m,1,Mediterranean California Mixed Evergreen Forest,220,181,0.33460076045627374
+lfrdb_ecosys,naip_r50m,1,Mediterranean California Mixed Oak Woodland,42,29,0.25806451612903225
+lfrdb_ecosys,naip_r50m,1,Mediterranean California Northern Coastal Dune,10,3,0.25
+lfrdb_ecosys,naip_r50m,1,Mediterranean California Serpentine Foothill and Lower Montane Riparian Woodland and Seep,7,5,0.0
+lfrdb_ecosys,naip_r50m,1,Mediterranean California Subalpine Meadow,16,12,0.0
+lfrdb_ecosys,naip_r50m,1,None,35,30,0.03773584905660377
+lfrdb_ecosys,naip_r50m,1,North American Arid West Emergent Marsh,4,6,0.0
+lfrdb_ecosys,naip_r50m,1,North Pacific Maritime Coastal Sand Dune Ruderal Scrub & Herb Vegetation,7,1,0.0
+lfrdb_ecosys,naip_r50m,1,North Pacific Oak Woodland,17,14,0.0
+lfrdb_ecosys,naip_r50m,1,North-Central Interior Dry-Mesic Oak Forest and Woodland,11,43,0.27972027972027974
+lfrdb_ecosys,naip_r50m,1,North-Central Interior Floodplain,42,6,0.0
+lfrdb_ecosys,naip_r50m,1,North-Central Interior Freshwater Marsh,7,9,0.0
+lfrdb_ecosys,naip_r50m,1,North-Central Interior Maple-Basswood Forest,2,7,0.0
+lfrdb_ecosys,naip_r50m,1,North-Central Interior Oak Savanna,2,2,0.0
+lfrdb_ecosys,naip_r50m,1,Northeastern Interior Dry-Mesic Oak Forest,12,1,0.0
+lfrdb_ecosys,naip_r50m,1,Northern & Central Native Ruderal Flooded & Swamp Forest,42,21,0.35
+lfrdb_ecosys,naip_r50m,1,Northern & Central Native Ruderal Forest,127,15,0.0
+lfrdb_ecosys,naip_r50m,1,Northern & Central Ruderal Meadow & Shrubland,27,1,0.0
+lfrdb_ecosys,naip_r50m,1,Northern & Central Ruderal Wet Meadow & Marsh,7,26,0.3333333333333333
+lfrdb_ecosys,naip_r50m,1,Northern California Claypan Vernal Pool,6,9,0.24
+lfrdb_ecosys,naip_r50m,1,Northern California Coastal Scrub,105,41,0.1391304347826087
+lfrdb_ecosys,naip_r50m,1,Northern and Central California Dry-Mesic Chaparral,272,53,0.0
+lfrdb_ecosys,naip_r50m,1,Ozark-Ouachita Dry Oak Woodland,15,2,0.0
+lfrdb_ecosys,naip_r50m,1,Ozark-Ouachita Dry-Mesic Oak Forest,183,68,0.5074626865671642
+lfrdb_ecosys,naip_r50m,1,Ozark-Ouachita Mesic Hardwood Forest,21,9,0.0
+lfrdb_ecosys,naip_r50m,1,Ozark-Ouachita Riparian,107,19,0.23333333333333334
+lfrdb_ecosys,naip_r50m,1,Ozark-Ouachita Shortleaf Pine-Oak Forest and Woodland,108,13,0.0
+lfrdb_ecosys,naip_r50m,1,Sierra Nevada Cliff and Canyon,17,4,0.0
+lfrdb_ecosys,naip_r50m,1,Sonora-Mojave Semi-Desert Chaparral,4,3,0.0
+lfrdb_ecosys,naip_r50m,1,South-Central Interior Mesophytic Forest,3,19,0.0
+lfrdb_ecosys,naip_r50m,1,Southeastern Great Plains Tallgrass Prairie,15,8,0.0
+lfrdb_ecosys,naip_r50m,1,Southeastern Native Ruderal Forest,115,203,0.3723849372384937
+lfrdb_ecosys,naip_r50m,1,Southeastern North American Temperate Forest Plantation,7,3,0.0
+lfrdb_ecosys,naip_r50m,1,Southeastern Ruderal Grassland & Shrubland,60,87,0.45121951219512196
+lfrdb_ecosys,naip_r50m,1,Southeastern Ruderal Wet Meadow & Marsh,1,1,0.0
+lfrdb_ecosys,naip_r50m,1,Southern Atlantic Coastal Plain Dune and Maritime Grassland,1,5,0.0
+lfrdb_ecosys,naip_r50m,1,Southern Atlantic Coastal Plain Maritime Forest,11,16,0.4444444444444444
+lfrdb_ecosys,naip_r50m,1,Southern Atlantic Coastal Plain Nonriverine Swamp and Wet Hardwood Forest,4,2,0.0
+lfrdb_ecosys,naip_r50m,1,Southern Atlantic Coastal Plain Wet Pine Savanna and Flatwoods,1,8,0.0
+lfrdb_ecosys,naip_r50m,1,Southern California Coastal Scrub,202,163,0.4271186440677966
+lfrdb_ecosys,naip_r50m,1,Southern California Dry-Mesic Chaparral,37,52,0.24691358024691357
+lfrdb_ecosys,naip_r50m,1,Southern California Oak Woodland and Savanna,3,7,0.0
+lfrdb_ecosys,naip_r50m,1,Southern Coastal Plain Mesic Slope Forest,1,2,0.0
+lfrdb_ecosys,naip_r50m,1,Southern Piedmont Dry Oak-(Pine) Forest,19,228,0.45161290322580644
+lfrdb_ecosys,naip_r50m,1,Southern Piedmont Mesic Forest,5,9,0.0
+lfrdb_ecosys,naip_r50m,1,Temperate Pacific Freshwater Emergent Marsh,13,13,0.0
+lfrdb_ecosys,naip_r50m,1,Temperate Pacific Subalpine-Montane Wet Meadow,62,41,0.18181818181818182
+lfrdb_ecosys,naip_r50m,1,Temperate Pacific Tidal Salt and Brackish Marsh,84,64,0.7518796992481203
+lfrdb_ecosys,naip_r50m,1,"Western North American Ruderal Wet Shrubland, Meadow & Marsh",6,7,0.0
+lfrdb_nvc_group,naip_r50m,20,Appalachian Oak / Chestnut Forest,172,73,0.0
+lfrdb_nvc_group,naip_r50m,20,California Broadleaf Forest & Woodland,412,100,0.03773584905660377
+lfrdb_nvc_group,naip_r50m,20,California Coastal Redwood Forest,101,80,0.4919786096256685
+lfrdb_nvc_group,naip_r50m,20,California Conifer Forest & Woodland,79,43,0.328125
+lfrdb_nvc_group,naip_r50m,20,California Mesic & Pre-montane Chaparral,38,41,0.15789473684210525
+lfrdb_nvc_group,naip_r50m,20,California North Coastal & Mesic Scrub,110,48,0.19298245614035087
+lfrdb_nvc_group,naip_r50m,20,California Ruderal Scrub,99,43,0.07692307692307693
+lfrdb_nvc_group,naip_r50m,20,"California Ruderal Scrub, Grassland & Forb Meadow",90,52,0.19607843137254902
+lfrdb_nvc_group,naip_r50m,20,California Xeric Chaparral,345,117,0.15483870967741936
+lfrdb_nvc_group,naip_r50m,20,Californian Moist Coastal Mixed Evergreen Forest,166,134,0.36507936507936506
+lfrdb_nvc_group,naip_r50m,20,Californian Ruderal Forest,88,31,0.16494845360824742
+lfrdb_nvc_group,naip_r50m,20,Cascadian Oregon White Oak - Conifer Forest & Woodland,29,27,0.3516483516483517
+lfrdb_nvc_group,naip_r50m,20,Central & Southern California Coastal Sage Scrub,196,159,0.4672897196261682
+lfrdb_nvc_group,naip_r50m,20,Chinkapin Oak-Shumard Oak-Blue Ash Alkaline Forest,54,49,0.15151515151515152
+lfrdb_nvc_group,naip_r50m,20,Laurentian & Acadian Hardwood Forest,31,62,0.2857142857142857
+lfrdb_nvc_group,naip_r50m,20,Laurentian & Northeast Wet Meadow,44,28,0.0
+lfrdb_nvc_group,naip_r50m,20,None,35,34,0.024096385542168676
+lfrdb_nvc_group,naip_r50m,20,Northern & Central Native Ruderal Flooded & Swamp Forest,42,21,0.2857142857142857
+lfrdb_nvc_group,naip_r50m,20,Northern & Central Shrub Swamp,28,26,0.08333333333333333
+lfrdb_nvc_group,naip_r50m,20,Oak - Sweetgum Floodplain Forest,36,48,0.08421052631578947
+lfrdb_nvc_group,naip_r50m,20,Shortleaf Pine - Oak Forest,108,46,0.0
+lfrdb_nvc_group,naip_r50m,20,South-Central Interior Oak Forest & Woodland,169,120,0.23783783783783785
+lfrdb_nvc_group,naip_r50m,20,Southeastern Native Ruderal Forest,112,198,0.4892086330935252
+lfrdb_nvc_group,naip_r50m,20,Southeastern Ruderal Grassland & Shrubland,60,83,0.5416666666666666
+lfrdb_nvc_group,naip_r50m,20,Temperate Pacific Tidal Salt & Brackish Marsh,86,65,0.8120300751879699
+lfrdb_nvc_group,naip_r50m,20,Unclassified Forest and Woodland,30,46,0.043010752688172046
+lfrdb_nvc_group,naip_r50m,20,Vancouverian & Rocky Mountain Montane Wet Meadow & Marsh,62,49,0.14814814814814814
+lfrdb_nvc_group,naip_r50m,1,Appalachian & Allegheny Northern Hardwood - Conifer Forest,149,1,0.0
+lfrdb_nvc_group,naip_r50m,1,Appalachian & Interior Mesic Forest,9,28,0.0
+lfrdb_nvc_group,naip_r50m,1,Appalachian & Interior Riverscour Barrens & Prairie,30,3,0.19047619047619047
+lfrdb_nvc_group,naip_r50m,1,Appalachian Oak / Chestnut Forest,172,73,0.0
+lfrdb_nvc_group,naip_r50m,1,Atlantic & Gulf Coast Saline Flat & Panne,1,1,0.0
+lfrdb_nvc_group,naip_r50m,1,Baja Semi-Desert Coastal Succulent Scrub,5,1,0.0
+lfrdb_nvc_group,naip_r50m,1,California Annual Grassland,28,12,0.0
+lfrdb_nvc_group,naip_r50m,1,California Broadleaf Forest & Woodland,412,100,0.015151515151515152
+lfrdb_nvc_group,naip_r50m,1,California Coastal & Foothill Seral Scrub,1,5,0.0
+lfrdb_nvc_group,naip_r50m,1,California Coastal Beach & Dune Scrub,11,4,0.36363636363636365
+lfrdb_nvc_group,naip_r50m,1,California Coastal Redwood Forest,101,80,0.48936170212765956
+lfrdb_nvc_group,naip_r50m,1,California Conifer Forest & Woodland,79,43,0.2524271844660194
+lfrdb_nvc_group,naip_r50m,1,California Maritime Chaparral,23,14,0.14457831325301204
+lfrdb_nvc_group,naip_r50m,1,California Mesic & Pre-montane Chaparral,38,41,0.12598425196850394
+lfrdb_nvc_group,naip_r50m,1,California Montane Conifer Forest & Woodland,16,11,0.043478260869565216
+lfrdb_nvc_group,naip_r50m,1,California Native Perennial Grassland,27,16,0.03389830508474576
+lfrdb_nvc_group,naip_r50m,1,California North Coastal & Mesic Scrub,110,48,0.14754098360655737
+lfrdb_nvc_group,naip_r50m,1,California Ruderal Scrub,99,43,0.06666666666666667
+lfrdb_nvc_group,naip_r50m,1,"California Ruderal Scrub, Grassland & Forb Meadow",90,52,0.1694915254237288
+lfrdb_nvc_group,naip_r50m,1,California Vernal Pool,6,9,0.21428571428571427
+lfrdb_nvc_group,naip_r50m,1,California Xeric Chaparral,345,117,0.07207207207207207
+lfrdb_nvc_group,naip_r50m,1,Californian Moist Coastal Mixed Evergreen Forest,166,134,0.35344827586206895
+lfrdb_nvc_group,naip_r50m,1,Californian Ruderal Forest,88,31,0.16901408450704225
+lfrdb_nvc_group,naip_r50m,1,Cascadian Oregon White Oak - Conifer Forest & Woodland,29,27,0.2828282828282828
+lfrdb_nvc_group,naip_r50m,1,Central & Southern California Coastal Sage Scrub,196,159,0.3877551020408163
+lfrdb_nvc_group,naip_r50m,1,Central Acidic Open Glade & Barrens,34,4,0.2222222222222222
+lfrdb_nvc_group,naip_r50m,1,Central Alkaline Open Glade & Barrens,19,4,0.0
+lfrdb_nvc_group,naip_r50m,1,Chinkapin Oak-Shumard Oak-Blue Ash Alkaline Forest,54,49,0.07407407407407407
+lfrdb_nvc_group,naip_r50m,1,Coastal Plain Hardwood Basin Swamp,15,4,0.5
+lfrdb_nvc_group,naip_r50m,1,Coastal Plain Mixed Evergreen Swamp,5,7,0.08
+lfrdb_nvc_group,naip_r50m,1,Eastern Black Spruce-Tamarack Poor Swamp,3,4,0.0
+lfrdb_nvc_group,naip_r50m,1,Eastern North American Boreal Acidic Bog & Fen,2,1,0.0
+lfrdb_nvc_group,naip_r50m,1,Eastern North American Freshwater Aquatic Vegetation,2,10,0.0
+lfrdb_nvc_group,naip_r50m,1,Eastern North American Freshwater Marsh,13,19,0.1724137931034483
+lfrdb_nvc_group,naip_r50m,1,Great Basin & Intermountain Introduced Annual Grassland,2,4,0.0
+lfrdb_nvc_group,naip_r50m,1,Great Basin & Intermountain Introduced Annual and Biennial Forbland,1,1,0.0
+lfrdb_nvc_group,naip_r50m,1,Great Basin & Intermountain Ruderal Shrubland,3,2,0.0
+lfrdb_nvc_group,naip_r50m,1,Great Basin Pinyon - Juniper Woodland,3,26,0.05263157894736842
+lfrdb_nvc_group,naip_r50m,1,Great Lakes Pine Barrens,1,30,0.0
+lfrdb_nvc_group,naip_r50m,1,Interior West Riparian Forest & Woodland,56,10,0.13333333333333333
+lfrdb_nvc_group,naip_r50m,1,Interior West Ruderal Riparian Forest & Scrub,5,2,0.0
+lfrdb_nvc_group,naip_r50m,1,Interior Western North American Temperate Ruderal Grassland & Shrubland,2,1,0.0
+lfrdb_nvc_group,naip_r50m,1,Intermountain Basins Cliff Scree & Badland Sparse Vegetation,7,52,0.029850746268656716
+lfrdb_nvc_group,naip_r50m,1,Intermountain Mountain Big Sagebrush Shrubland & Steppe,1,54,0.0
+lfrdb_nvc_group,naip_r50m,1,Intermountain Semi-Desert Grassland,1,52,0.0
+lfrdb_nvc_group,naip_r50m,1,Intermountain Shadscale - Saltbush Scrub,2,69,0.0
+lfrdb_nvc_group,naip_r50m,1,Introduced Upland Vegetation-Perennial Grassland and Forbland,5,14,0.0
+lfrdb_nvc_group,naip_r50m,1,Introduced Upland Vegetation-Treed,1,7,0.0
+lfrdb_nvc_group,naip_r50m,1,Laurentian & Acadian Hardwood Forest,31,62,0.21052631578947367
+lfrdb_nvc_group,naip_r50m,1,Laurentian & Acadian Hemlock - White Pine - Hardwood Forest,5,2,0.5
+lfrdb_nvc_group,naip_r50m,1,Laurentian & Acadian Pine - Oak Forest & Woodland,3,42,0.0
+lfrdb_nvc_group,naip_r50m,1,Laurentian & Northeast Wet Meadow,44,28,0.0
+lfrdb_nvc_group,naip_r50m,1,Laurentian-Acadian-Allegheny Alkaline Swamp,7,14,0.2222222222222222
+lfrdb_nvc_group,naip_r50m,1,Live Oak - Hickory - Palmetto Forest,11,16,0.4897959183673469
+lfrdb_nvc_group,naip_r50m,1,Mesic Longleaf Pine Flatwoods-Spodosol Woodland,1,11,0.0
+lfrdb_nvc_group,naip_r50m,1,None,35,34,0.038461538461538464
+lfrdb_nvc_group,naip_r50m,1,North Pacific Lowland Riparian Forest & Woodland,8,3,0.0
+lfrdb_nvc_group,naip_r50m,1,North Pacific Maritime Coastal Sand Dune Ruderal Scrub & Herb Vegetation,7,1,0.0
+lfrdb_nvc_group,naip_r50m,1,North-Central Beech - Maple - Basswood Forest,2,7,0.125
+lfrdb_nvc_group,naip_r50m,1,North-Central Oak - Hickory Forest & Woodland,16,31,0.20134228187919462
+lfrdb_nvc_group,naip_r50m,1,Northeastern Oak - Hickory Forest & Woodland,12,1,0.0
+lfrdb_nvc_group,naip_r50m,1,Northern & Central Native Ruderal Flooded & Swamp Forest,42,21,0.36363636363636365
+lfrdb_nvc_group,naip_r50m,1,Northern & Central Native Ruderal Forest,116,9,0.0
+lfrdb_nvc_group,naip_r50m,1,Northern & Central Ruderal Meadow & Shrubland,25,1,0.0
+lfrdb_nvc_group,naip_r50m,1,Northern & Central Ruderal Wet Meadow & Marsh,4,9,0.0
+lfrdb_nvc_group,naip_r50m,1,Northern & Central Shrub Swamp,28,26,0.0
+lfrdb_nvc_group,naip_r50m,1,Northern Appalachian & Acadian Red Spruce - Fir - Hardwood Forest,3,1,0.0
+lfrdb_nvc_group,naip_r50m,1,Oak - Sweetgum Floodplain Forest,36,48,0.0
+lfrdb_nvc_group,naip_r50m,1,Ozark-Ouachitas Mesic Forest,21,9,0.0
+lfrdb_nvc_group,naip_r50m,1,Piedmont & Central Atlantic Coastal Plain Oak Forest,7,21,0.0
+lfrdb_nvc_group,naip_r50m,1,Rocky Mountain Subalpine-Montane Mesic Herbaceous Meadow,18,13,0.0
+lfrdb_nvc_group,naip_r50m,1,Ruderal Forest-Northern and Central Hardwood and Conifer,9,6,0.1111111111111111
+lfrdb_nvc_group,naip_r50m,1,Ruderal Forest-Southeast Hardwood and Conifer,4,5,0.0
+lfrdb_nvc_group,naip_r50m,1,Ruderal Wetland,4,2,0.0
+lfrdb_nvc_group,naip_r50m,1,Shortleaf Pine - Oak Forest,108,46,0.0
+lfrdb_nvc_group,naip_r50m,1,Silver Maple - Green Ash - Black Ash Floodplain Forest,4,21,0.0
+lfrdb_nvc_group,naip_r50m,1,Silver Maple - Green Ash - Sycamore Floodplain Forest,113,6,0.0
+lfrdb_nvc_group,naip_r50m,1,Silver Maple - Sugarberry - Sweetgum Floodplain Forest,50,6,0.0
+lfrdb_nvc_group,naip_r50m,1,South Atlantic & Gulf Shrub & Grass Coast & Dune,1,4,0.0
+lfrdb_nvc_group,naip_r50m,1,South-Central Interior Oak Forest & Woodland,169,120,0.18181818181818182
+lfrdb_nvc_group,naip_r50m,1,Southeastern Native Ruderal Forest,112,198,0.3786008230452675
+lfrdb_nvc_group,naip_r50m,1,Southeastern North American Temperate Forest Plantation,7,3,0.0
+lfrdb_nvc_group,naip_r50m,1,Southeastern Ruderal Grassland & Shrubland,60,83,0.5086705202312138
+lfrdb_nvc_group,naip_r50m,1,Southeastern Ruderal Wet Meadow & Marsh,1,1,0.0
+lfrdb_nvc_group,naip_r50m,1,Southern Ash-Elm-Willow Floodplain Forest,13,11,0.0
+lfrdb_nvc_group,naip_r50m,1,Southern Great Plains Tallgrass Prairie,15,16,0.0
+lfrdb_nvc_group,naip_r50m,1,Southern Mesic Beech - Magnolia - Oak Forest,1,4,0.0
+lfrdb_nvc_group,naip_r50m,1,Southern Vancouverian Cliff Scree & Rock Vegetation,19,4,0.0
+lfrdb_nvc_group,naip_r50m,1,Southern Vancouverian Shrub & Herbaceous Bald Bluff & Prairie,19,10,0.0
+lfrdb_nvc_group,naip_r50m,1,Temperate Pacific Tidal Salt & Brackish Marsh,86,65,0.7591240875912408
+lfrdb_nvc_group,naip_r50m,1,Unclassified Forest and Woodland,30,46,0.029411764705882353
+lfrdb_nvc_group,naip_r50m,1,Unclassified Savanna,1,1,0.0
+lfrdb_nvc_group,naip_r50m,1,Unclassified Shrub-Steppe,1,13,0.0
+lfrdb_nvc_group,naip_r50m,1,Unclassified Shrubland,4,34,0.0
+lfrdb_nvc_group,naip_r50m,1,Unclassified Sparsely Vegetated Systems,2,1,0.0
+lfrdb_nvc_group,naip_r50m,1,Vancouverian & Rocky Mountain Montane Wet Meadow & Marsh,62,49,0.14285714285714285
+lfrdb_nvc_group,naip_r50m,1,Vancouverian Freshwater Wet Meadow & Marsh,13,13,0.0
+lfrdb_nvc_group,naip_r50m,1,Vancouverian Wet Shrubland,2,2,0.0
+lfrdb_nvc_group,naip_r50m,1,Virginia Pine & Table Mountain Pine Woodland & Barrens,1,4,0.0
+lfrdb_nvc_group,naip_r50m,1,"Western North American Ruderal Wet Shrubland, Meadow & Marsh",6,6,0.0
+nps_vmi_macrogroup,naip_r30m,20,Atlantic-Gulf Coastal Plain Wet Prairie & Freshwater Marsh,215,138,0.4048582995951417
+nps_vmi_macrogroup,naip_r30m,20,Central Hardwood Floodplain Forest,127,46,0.18487394957983194
+nps_vmi_macrogroup,naip_r30m,20,Central Interior Oak - Pine Forest & Woodland,304,64,0.5882352941176471
+nps_vmi_macrogroup,naip_r30m,20,Central Midwest Mesic Forest,33,49,0.0
+nps_vmi_macrogroup,naip_r30m,20,"Central Midwest Oak Forest, Woodland & Savanna",23,30,0.23376623376623376
+nps_vmi_macrogroup,naip_r30m,20,Chihuahuan Semi-desert Grassland,47,51,0.851063829787234
+nps_vmi_macrogroup,naip_r30m,20,Coastal Plain Evergreen Hardwood - Conifer Swamp,90,48,0.1875
+nps_vmi_macrogroup,naip_r30m,20,Eastern North American Ruderal Forest,97,143,0.26244343891402716
+nps_vmi_macrogroup,naip_r30m,20,Eastern Ruderal Grassland & Shrubland,41,54,0.16666666666666666
+nps_vmi_macrogroup,naip_r30m,20,Great Plains Floodplain Forest,66,120,0.5464788732394367
+nps_vmi_macrogroup,naip_r30m,20,"Great Plains Marsh, Wet Meadow, Shrubland & Playa",49,48,0.19469026548672566
+nps_vmi_macrogroup,naip_r30m,20,Longleaf Pine Woodland,84,155,0.5703971119133574
+nps_vmi_macrogroup,naip_r30m,20,Madrean Foothills Evergreen Woodland,120,58,0.9009009009009009
+nps_vmi_macrogroup,naip_r30m,20,North American Atlantic & Gulf Coastal Salt Marsh,177,174,0.5665859564164649
+nps_vmi_macrogroup,naip_r30m,20,"North American Atlantic Coastal Dune, Grassland & Rocky Headland",192,101,0.4375
+nps_vmi_macrogroup,naip_r30m,20,South-Central Oak - Pine Forest & Woodland,79,31,0.10909090909090909
+nps_vmi_macrogroup,naip_r30m,20,Southeastern Coastal Plain Evergreen Oak Forest,205,257,0.5732758620689655
+nps_vmi_macrogroup,naip_r30m,20,Southeastern North American Ruderal Flooded Forest & Swamp,67,29,0.06153846153846154
+nps_vmi_macrogroup,naip_r30m,20,Southeastern North American Ruderal Forest,56,114,0.028169014084507043
+nps_vmi_macrogroup,naip_r30m,20,Southern Coastal Plain Floodplain Forest,306,115,0.4738675958188153
+nps_vmi_macrogroup,naip_r30m,20,Southern-Central Appalachian Dry Forest & Woodland,70,29,0.4782608695652174
+nps_vmi_macrogroup,naip_r30m,20,Southern-Central Appalachian Mesic Forest,68,73,0.18181818181818182
+nps_vmi_macrogroup,naip_r30m,20,Western Arid Ruderal Riparian Forest & Scrub,30,20,0.2857142857142857
+nps_vmi_macrogroup,naip_r30m,20,"Western North American Ruderal Marsh, Wet Meadow & Shrubland",61,84,0.3592814371257485
+nps_vmi_macrogroup,naip_r30m,1,Acadian-Northern Appalachian Forest,13,9,0.0
+nps_vmi_macrogroup,naip_r30m,1,Appalachian Rocky Felsic & Mafic Scrub & Grassland,11,5,0.0
+nps_vmi_macrogroup,naip_r30m,1,Atlantic & Gulf Coastal Tidal Freshwater Marsh,65,10,0.0
+nps_vmi_macrogroup,naip_r30m,1,Atlantic-Gulf Coastal Plain Wet Prairie & Freshwater Marsh,215,138,0.23696682464454977
+nps_vmi_macrogroup,naip_r30m,1,Central Hardwood Floodplain Forest,127,46,0.0851063829787234
+nps_vmi_macrogroup,naip_r30m,1,Central Hardwood Swamp,2,6,0.0
+nps_vmi_macrogroup,naip_r30m,1,Central Interior Oak - Pine Forest & Woodland,304,64,0.5523809523809524
+nps_vmi_macrogroup,naip_r30m,1,Central Lowlands Tallgrass Prairie,2,31,0.047619047619047616
+nps_vmi_macrogroup,naip_r30m,1,Central Midwest Mesic Forest,33,49,0.0
+nps_vmi_macrogroup,naip_r30m,1,"Central Midwest Oak Forest, Woodland & Savanna",23,30,0.08450704225352113
+nps_vmi_macrogroup,naip_r30m,1,Chihuahuan Semi-desert Grassland,47,51,0.7692307692307693
+nps_vmi_macrogroup,naip_r30m,1,Coastal Plain Basin Swamp & Flatwoods,51,6,0.11764705882352941
+nps_vmi_macrogroup,naip_r30m,1,Coastal Plain Evergreen Hardwood - Conifer Swamp,90,48,0.19753086419753085
+nps_vmi_macrogroup,naip_r30m,1,"Eastern North American Cliff, Talus & Rock Outcrop",13,9,0.08695652173913043
+nps_vmi_macrogroup,naip_r30m,1,"Eastern North American Marsh, Wet Meadow & Shrubland",15,33,0.08849557522123894
+nps_vmi_macrogroup,naip_r30m,1,Eastern North American Riverscour,32,3,0.375
+nps_vmi_macrogroup,naip_r30m,1,Eastern North American Rivershore & Riverbed,12,41,0.2828282828282828
+nps_vmi_macrogroup,naip_r30m,1,Eastern North American Ruderal Flooded Forest & Swamp,44,15,0.3333333333333333
+nps_vmi_macrogroup,naip_r30m,1,Eastern North American Ruderal Forest,97,143,0.16759776536312848
+nps_vmi_macrogroup,naip_r30m,1,Eastern North American-Great Plains Shallow Water Wetland,7,11,0.0
+nps_vmi_macrogroup,naip_r30m,1,Eastern Ruderal Grassland & Shrubland,41,54,0.16842105263157894
+nps_vmi_macrogroup,naip_r30m,1,"Eastern-Southeastern North American Ruderal Marsh, Wet Meadow & Shrubland",11,35,0.13333333333333333
+nps_vmi_macrogroup,naip_r30m,1,Florida Peninsula Xeric Scrub & Prairie,31,14,0.17647058823529413
+nps_vmi_macrogroup,naip_r30m,1,Great Basin-Intermountain Shrub Steppe & Desert Shrubland,1,4,0.6666666666666666
+nps_vmi_macrogroup,naip_r30m,1,Great Plains Cliff & Rock Outcrop,5,21,0.05555555555555555
+nps_vmi_macrogroup,naip_r30m,1,Great Plains Floodplain Forest,66,120,0.50625
+nps_vmi_macrogroup,naip_r30m,1,"Great Plains Marsh, Wet Meadow, Shrubland & Playa",49,48,0.1951219512195122
+nps_vmi_macrogroup,naip_r30m,1,Great Plains Mixedgrass Prairie,5,85,0.2054794520547945
+nps_vmi_macrogroup,naip_r30m,1,Intermountain Saltbush Scrub,6,3,0.6666666666666666
+nps_vmi_macrogroup,naip_r30m,1,Laurentian-Acadian Flooded Forest & Swamp,6,3,0.0
+nps_vmi_macrogroup,naip_r30m,1,Longleaf Pine Woodland,84,155,0.5427509293680297
+nps_vmi_macrogroup,naip_r30m,1,Madrean Foothills Evergreen Woodland,120,58,0.8440366972477065
+nps_vmi_macrogroup,naip_r30m,1,North American Atlantic & Gulf Coastal Salt Marsh,177,174,0.5523809523809524
+nps_vmi_macrogroup,naip_r30m,1,"North American Atlantic Coastal Dune, Grassland & Rocky Headland",192,101,0.45918367346938777
+nps_vmi_macrogroup,naip_r30m,1,North American Boreal & Subboreal Bog & Acidic Fen,3,3,0.0
+nps_vmi_macrogroup,naip_r30m,1,North Atlantic Coastal Forest & Woodland,17,32,0.23684210526315788
+nps_vmi_macrogroup,naip_r30m,1,Northern Great Plains Forest & Woodland,33,18,0.1568627450980392
+nps_vmi_macrogroup,naip_r30m,1,Rocky Mountain Subalpine-Upper Montane Forest & Woodland,1,1,0.0
+nps_vmi_macrogroup,naip_r30m,1,Sierran-North Pacific Subalpine-High Montane Forest,1,7,0.0
+nps_vmi_macrogroup,naip_r30m,1,South-Central Interior Glade & Barrens,47,8,0.45454545454545453
+nps_vmi_macrogroup,naip_r30m,1,South-Central Oak - Pine Forest & Woodland,79,31,0.06666666666666667
+nps_vmi_macrogroup,naip_r30m,1,Southeastern Coastal Plain Evergreen Oak Forest,205,257,0.5150812064965197
+nps_vmi_macrogroup,naip_r30m,1,Southeastern North American Ruderal Flooded Forest & Swamp,67,29,0.06153846153846154
+nps_vmi_macrogroup,naip_r30m,1,Southeastern North American Ruderal Forest,56,114,0.041666666666666664
+nps_vmi_macrogroup,naip_r30m,1,Southeastern Prairie,3,4,0.3076923076923077
+nps_vmi_macrogroup,naip_r30m,1,Southern Coastal Plain Floodplain Forest,306,115,0.4012345679012346
+nps_vmi_macrogroup,naip_r30m,1,Southern Mesic Mixed Broadleaf Forest,140,14,0.16216216216216217
+nps_vmi_macrogroup,naip_r30m,1,Southern-Central Appalachian Dry Forest & Woodland,70,29,0.425531914893617
+nps_vmi_macrogroup,naip_r30m,1,Southern-Central Appalachian Mesic Forest,68,73,0.2711864406779661
+nps_vmi_macrogroup,naip_r30m,1,Tamaulipan Scrub & Grassland,1,1,0.0
+nps_vmi_macrogroup,naip_r30m,1,Temperate-Boreal Forest Plantation,36,2,0.0
+nps_vmi_macrogroup,naip_r30m,1,"Warm Desert Lowland Freshwater Marsh, Wet Meadow & Shrubland",59,17,0.5142857142857142
+nps_vmi_macrogroup,naip_r30m,1,Western Arid Lowland Flooded Forest,17,2,0.16666666666666666
+nps_vmi_macrogroup,naip_r30m,1,Western Arid Ruderal Riparian Forest & Scrub,30,20,0.21052631578947367
+nps_vmi_macrogroup,naip_r30m,1,Western Atlantic & Caribbean Mangrove,49,1,0.0
+nps_vmi_macrogroup,naip_r30m,1,Western North American Ruderal Grassland & Shrubland,9,22,0.07547169811320754
+nps_vmi_macrogroup,naip_r30m,1,"Western North American Ruderal Marsh, Wet Meadow & Shrubland",61,84,0.30864197530864196
+nps_vmi_group,naip_r30m,20,Atlantic & Gulf Coastal Interdunal Swale,175,135,0.3879310344827586
+nps_vmi_group,naip_r30m,20,Bald-cypress - Tupelo Floodplain Forest,93,32,0.2184873949579832
+nps_vmi_group,naip_r30m,20,Central Appalachian-Northeast Oak Forest & Woodland,22,21,0.6666666666666666
+nps_vmi_group,naip_r30m,20,Central Interior-Northeast Floodplain Forest,108,27,0.27956989247311825
+nps_vmi_group,naip_r30m,20,Eastern Native Ruderal Forest,97,137,0.35348837209302325
+nps_vmi_group,naip_r30m,20,Great Plains Cottonwood - Willow Floodplain Forest,66,120,0.5962732919254659
+nps_vmi_group,naip_r30m,20,Madrean Pinyon - Juniper Woodland,106,47,0.9555555555555556
+nps_vmi_group,naip_r30m,20,Mesic Longleaf Pine Flatwoods - Spodosol Woodland,52,146,0.34210526315789475
+nps_vmi_group,naip_r30m,20,North Atlantic Coastal Dune & Grassland,24,33,0.38095238095238093
+nps_vmi_group,naip_r30m,20,North-Central Beech - Maple - Basswood Forest,33,49,0.0
+nps_vmi_group,naip_r30m,20,Oak - Sweetgum Floodplain Forest,179,69,0.24427480916030533
+nps_vmi_group,naip_r30m,20,Ozark-Ouachita Mesic Forest,24,34,0.044444444444444446
+nps_vmi_group,naip_r30m,20,Ozark-Ouachita Oak - Shortleaf Pine Woodland & Savanna,206,37,0.5714285714285714
+nps_vmi_group,naip_r30m,20,South Atlantic & Gulf Coast Salt Marsh,175,162,0.5932203389830508
+nps_vmi_group,naip_r30m,20,South Atlantic & Gulf Coastal Dune Grassland & Strand,168,52,0.5666666666666667
+nps_vmi_group,naip_r30m,20,Southeast Maritime Live Oak - Palmetto Forest,165,208,0.4690721649484536
+nps_vmi_group,naip_r30m,20,Southeastern Native Ruderal Flooded Forest & Swamp,33,28,0.0
+nps_vmi_group,naip_r30m,20,Southeastern Native Ruderal Forest,55,108,0.2619047619047619
+nps_vmi_group,naip_r30m,20,Southeastern Ruderal Meadow & Shrubland,36,37,0.3225806451612903
+nps_vmi_group,naip_r30m,20,Southern Coastal Plain Mixed Evergreen Swamp,87,47,0.17687074829931973
+nps_vmi_group,naip_r30m,20,Southern Evergreen Oak Forest,39,43,0.18666666666666668
+nps_vmi_group,naip_r30m,20,Western Arid Ruderal Lowland Riparian Forest & Scrub,30,20,0.3018867924528302
+nps_vmi_group,naip_r30m,20,"Western Ruderal Marsh, Wet Meadow & Shrubland",61,84,0.651685393258427
+nps_vmi_group,naip_r30m,1,Acadian-Appalachian Hardwood Forest,3,6,0.0
+nps_vmi_group,naip_r30m,1,Acadian-Appalachian Red Spruce - Fir - Hardwood Forest,9,3,0.2
+nps_vmi_group,naip_r30m,1,Acadian-Appalachian Red Spruce Acidic Swamp,2,2,0.6666666666666666
+nps_vmi_group,naip_r30m,1,Appalachian Mafic Barrens,6,1,0.0
+nps_vmi_group,naip_r30m,1,Appalachian-Northeast Wet Meadow & Shrub Swamp,4,2,0.0
+nps_vmi_group,naip_r30m,1,Atlantic & Gulf Coastal Interdunal Swale,175,135,0.21164021164021163
+nps_vmi_group,naip_r30m,1,Bald-cypress - Tupelo Floodplain Forest,93,32,0.20512820512820512
+nps_vmi_group,naip_r30m,1,Central Appalachian Acidic Scrub & Grassland,2,4,0.0
+nps_vmi_group,naip_r30m,1,Central Appalachian-Northeast Alkaline Swamp,1,3,0.0
+nps_vmi_group,naip_r30m,1,Central Appalachian-Northeast Mesic Forest,33,9,0.3902439024390244
+nps_vmi_group,naip_r30m,1,Central Appalachian-Northeast Oak Forest & Woodland,22,21,0.43243243243243246
+nps_vmi_group,naip_r30m,1,Central Appalachian-Northeast Pine - Oak Rocky Woodland,1,2,0.0
+nps_vmi_group,naip_r30m,1,Central Interior Acidic Glade & Barrens,31,4,0.46153846153846156
+nps_vmi_group,naip_r30m,1,Central Interior Alkaline Glade & Barrens,16,4,0.3333333333333333
+nps_vmi_group,naip_r30m,1,Central Interior-Appalachian Riverscour Barrens & Prairie,32,3,0.3157894736842105
+nps_vmi_group,naip_r30m,1,Central Interior-Northeast Floodplain Forest,108,27,0.11538461538461539
+nps_vmi_group,naip_r30m,1,"Central Midwest-Interior Cliff, Talus & Rock Outcrop",11,9,0.1
+nps_vmi_group,naip_r30m,1,Central Tallgrass Prairie,2,31,0.046511627906976744
+nps_vmi_group,naip_r30m,1,Chihuahuan Desert Foothill-Piedmont Grassland,25,19,0.7894736842105263
+nps_vmi_group,naip_r30m,1,Chihuahuan Gypsophilous Grassland & Desert Scrub,20,17,0.9090909090909091
+nps_vmi_group,naip_r30m,1,Chihuahuan Semi-desert Lowland Grassland,2,15,0.23529411764705882
+nps_vmi_group,naip_r30m,1,Eastern Boreal-Subboreal Bog & Acidic Fen,3,3,0.0
+nps_vmi_group,naip_r30m,1,Eastern Freshwater Aquatic Vegetation,4,11,0.0
+nps_vmi_group,naip_r30m,1,Eastern Freshwater Marsh,4,13,0.2608695652173913
+nps_vmi_group,naip_r30m,1,Eastern Native Ruderal Forest,97,137,0.10191082802547771
+nps_vmi_group,naip_r30m,1,Eastern North American Temperate Forest Plantation,36,2,0.0
+nps_vmi_group,naip_r30m,1,Eastern Riverbed,1,1,0.0
+nps_vmi_group,naip_r30m,1,Eastern Riverine Sand-Gravel Bar,11,36,0.27450980392156865
+nps_vmi_group,naip_r30m,1,Eastern Ruderal Flooded Forest & Swamp,44,15,0.35714285714285715
+nps_vmi_group,naip_r30m,1,Eastern Ruderal Wet Meadow & Marsh,10,33,0.17647058823529413
+nps_vmi_group,naip_r30m,1,Florida & Gulf of Mexico Subtropical Mangrove,49,1,0.0
+nps_vmi_group,naip_r30m,1,Florida Xeric Scrub,31,14,0.2222222222222222
+nps_vmi_group,naip_r30m,1,Great Plains Bur Oak Forest & Woodland,23,11,0.20689655172413793
+nps_vmi_group,naip_r30m,1,Great Plains Cliff & Rock Outcrop,5,21,0.16666666666666666
+nps_vmi_group,naip_r30m,1,Great Plains Cottonwood - Willow Floodplain Forest,66,120,0.5070422535211268
+nps_vmi_group,naip_r30m,1,Great Plains Riverscour,3,1,0.0
+nps_vmi_group,naip_r30m,1,Gulf Coastal Plain Blackland Prairie,3,4,0.5454545454545454
+nps_vmi_group,naip_r30m,1,Hardwood - Loblolly Pine Nonriverine Wet Flatwoods,51,6,0.16666666666666666
+nps_vmi_group,naip_r30m,1,Interior Low Plateau Oak Forest,28,14,0.0
+nps_vmi_group,naip_r30m,1,"Interior Low Plateau Woodland, Savanna & Barrens",22,7,0.26666666666666666
+nps_vmi_group,naip_r30m,1,Intermountain Basins Big Sagebrush Steppe,1,4,0.8888888888888888
+nps_vmi_group,naip_r30m,1,Intermountain Shadscale - Saltbush Scrub,6,3,0.8571428571428571
+nps_vmi_group,naip_r30m,1,Laurentian-Acadian Alkaline Swamp,4,1,0.0
+nps_vmi_group,naip_r30m,1,Madrean Encinal,14,11,0.4
+nps_vmi_group,naip_r30m,1,Madrean Pinyon - Juniper Woodland,106,47,0.9090909090909091
+nps_vmi_group,naip_r30m,1,Mesic Longleaf Pine Flatwoods - Spodosol Woodland,52,146,0.35348837209302325
+nps_vmi_group,naip_r30m,1,Mid-Atlantic & Northern Coastal Plain Swamp,3,1,0.0
+nps_vmi_group,naip_r30m,1,Midwest Floodplain Forest,19,19,0.02857142857142857
+nps_vmi_group,naip_r30m,1,Midwest Oak - Hickory Forest,11,2,0.0
+nps_vmi_group,naip_r30m,1,"Midwest Wet Prairie, Wet Meadow & Shrub Swamp",3,16,0.0
+nps_vmi_group,naip_r30m,1,Midwest Woodland & Savanna,12,28,0.04081632653061224
+nps_vmi_group,naip_r30m,1,North Atlantic Coastal Dune & Grassland,24,33,0.3695652173913043
+nps_vmi_group,naip_r30m,1,North Atlantic Maritime Forest & Scrub,17,32,0.2608695652173913
+nps_vmi_group,naip_r30m,1,North Atlantic Salt Marsh,2,12,0.0
+nps_vmi_group,naip_r30m,1,North-Central Beech - Maple - Basswood Forest,33,49,0.0
+nps_vmi_group,naip_r30m,1,Northeastern Ruderal Meadow & Shrubland,5,17,0.25
+nps_vmi_group,naip_r30m,1,Northern Great Plains Mesic Forest & Woodland,10,7,0.08
+nps_vmi_group,naip_r30m,1,Northern Great Plains Mesic Mixedgrass Prairie,3,35,0.2077922077922078
+nps_vmi_group,naip_r30m,1,"Northern Great Plains Wet Meadow, Marsh & Shrub Swamp",11,38,0.2912621359223301
+nps_vmi_group,naip_r30m,1,Oak - Sweetgum Floodplain Forest,179,69,0.08888888888888889
+nps_vmi_group,naip_r30m,1,Ozark-Ouachita Mesic Forest,24,34,0.041666666666666664
+nps_vmi_group,naip_r30m,1,Ozark-Ouachita Oak - Shortleaf Pine Woodland & Savanna,206,37,0.05263157894736842
+nps_vmi_group,naip_r30m,1,Ozark-Ouachita Oak Forest,48,6,0.041666666666666664
+nps_vmi_group,naip_r30m,1,Piedmont Oak Forest & Woodland,3,22,0.0
+nps_vmi_group,naip_r30m,1,Rocky Mountain Lodgepole Pine Forest & Woodland,1,1,0.0
+nps_vmi_group,naip_r30m,1,South Atlantic & Gulf Coast Salt Marsh,175,162,0.4860335195530726
+nps_vmi_group,naip_r30m,1,South Atlantic & Gulf Coastal Dune Grassland & Strand,168,52,0.5396825396825397
+nps_vmi_group,naip_r30m,1,South Atlantic & Gulf Coastal Tidal Freshwater Marsh,65,10,0.0
+nps_vmi_group,naip_r30m,1,South Atlantic-Gulf Coastal Plain Freshwater Marsh & Wet Meadow,34,3,0.0
+nps_vmi_group,naip_r30m,1,Southeast Maritime Live Oak - Palmetto Forest,165,208,0.4121212121212121
+nps_vmi_group,naip_r30m,1,Southeastern Exotic Ruderal Flooded Forest & Swamp,34,1,0.08695652173913043
+nps_vmi_group,naip_r30m,1,Southeastern Exotic Ruderal Forest,1,6,0.0
+nps_vmi_group,naip_r30m,1,Southeastern Native Ruderal Flooded Forest & Swamp,33,28,0.0
+nps_vmi_group,naip_r30m,1,Southeastern Native Ruderal Forest,55,108,0.01652892561983471
+nps_vmi_group,naip_r30m,1,"Southeastern Ruderal Marsh, Wet Meadow & Shrubland",1,2,0.0
+nps_vmi_group,naip_r30m,1,Southeastern Ruderal Meadow & Shrubland,36,37,0.125
+nps_vmi_group,naip_r30m,1,Southern Appalachian Oak Forest & Woodland,46,4,0.5
+nps_vmi_group,naip_r30m,1,Southern Appalachian-Interior Mesic Forest,11,30,0.1951219512195122
+nps_vmi_group,naip_r30m,1,Southern Ash - Elm - Willow Floodplain Forest,33,14,0.07142857142857142
+nps_vmi_group,naip_r30m,1,Southern Coastal Plain Dry Oak Forest,1,6,0.03278688524590164
+nps_vmi_group,naip_r30m,1,Southern Coastal Plain Mixed Evergreen Swamp,87,47,0.09523809523809523
+nps_vmi_group,naip_r30m,1,Southern Evergreen Oak Forest,39,43,0.06557377049180328
+nps_vmi_group,naip_r30m,1,Southern Great Plains Mixedgrass Prairie,2,50,0.08571428571428572
+nps_vmi_group,naip_r30m,1,Southern Great Plains Wet Meadow & Marsh,35,9,0.0
+nps_vmi_group,naip_r30m,1,Southern Mesic Beech - Magnolia - Oak Forest,46,7,0.057971014492753624
+nps_vmi_group,naip_r30m,1,Southern Mesic Beech - Oak - Mixed Deciduous Forest,94,7,0.0
+nps_vmi_group,naip_r30m,1,Southwest Warm Desert Riparian Forest,13,2,0.0
+nps_vmi_group,naip_r30m,1,Tamaulipan Dry Mesquite & Thornscrub,1,1,0.0
+nps_vmi_group,naip_r30m,1,Upper Gulf Coastal Plain Oak Forest & Woodland,2,3,0.15384615384615385
+nps_vmi_group,naip_r30m,1,Warm Desert Riparian Low Bosque & Shrubland,59,17,0.5142857142857142
+nps_vmi_group,naip_r30m,1,West Gulf Coastal Plain Pine - Oak Forest & Woodland,74,6,0.08333333333333333
+nps_vmi_group,naip_r30m,1,Western Arid Ruderal Lowland Riparian Forest & Scrub,30,20,0.21428571428571427
+nps_vmi_group,naip_r30m,1,Western Interior Ruderal Grassland & Shrubland,9,22,0.07017543859649122
+nps_vmi_group,naip_r30m,1,"Western Ruderal Marsh, Wet Meadow & Shrubland",61,84,0.23776223776223776
+nps_vmi_group,naip_r30m,1,Wet-mesic Longleaf Pine Open Woodland,1,4,0.0
+nps_vmi_group,naip_r30m,1,Xeric Longleaf Pine Woodland,11,5,0.0
+vegbench_formation,naip_r50m,20,Cool Semi-Desert Scrub and Grassland,195,275,0.521865889212828
+vegbench_formation,naip_r50m,20,Cool Temperate Forest,917,450,0.5222772277227723
+vegbench_formation,naip_r50m,20,Mediterranean Grassland and Forb Meadow,626,132,0.211864406779661
+vegbench_formation,naip_r50m,20,Mediterranean Scrub,845,536,0.49843260188087773
+vegbench_formation,naip_r50m,20,Temperate Flooded and Swamp Forest,428,393,0.41379310344827586
+vegbench_formation,naip_r50m,20,"Temperate Grassland, Meadow, and Shrubland",638,310,0.39092495636998253
+vegbench_formation,naip_r50m,20,Temperate and Boreal Freshwater Marsh,577,132,0.2066115702479339
+vegbench_formation,naip_r50m,20,Temperate and Boreal Salt Marsh,326,53,0.2992125984251969
+vegbench_formation,naip_r50m,20,Temperate and Boreal Scrub and Herb Coastal Vegetation,516,82,0.3742690058479532
+vegbench_formation,naip_r50m,20,Warm Semi-Desert Scrub and Grassland,84,74,0.3712574850299401
+vegbench_formation,naip_r50m,20,Warm Temperate Forest,923,820,0.5101763907734057
+vegbench_formation,naip_r50m,1,"Alpine Scrub, Forb Meadow, and Grassland",7,1,0.0
+vegbench_formation,naip_r50m,1,Benthic Macroalgae Saltwater Vegetation,5,1,0.0
+vegbench_formation,naip_r50m,1,Cool Semi-Desert Scrub and Grassland,195,275,0.5214899713467048
+vegbench_formation,naip_r50m,1,Cool Temperate Forest,917,450,0.5239294710327456
+vegbench_formation,naip_r50m,1,Freshwater Aquatic Vegetation,21,4,0.14285714285714285
+vegbench_formation,naip_r50m,1,"Mediterranean Cliff, Scree, and Rock Vegetation",38,8,0.0
+vegbench_formation,naip_r50m,1,Mediterranean Grassland and Forb Meadow,626,132,0.2175732217573222
+vegbench_formation,naip_r50m,1,Mediterranean Scrub,845,536,0.4922360248447205
+vegbench_formation,naip_r50m,1,Temperate Flooded and Swamp Forest,428,393,0.40947075208913647
+vegbench_formation,naip_r50m,1,"Temperate Grassland, Meadow, and Shrubland",638,310,0.3473282442748092
+vegbench_formation,naip_r50m,1,Temperate and Boreal Bog and Fen,17,6,0.0
+vegbench_formation,naip_r50m,1,Temperate and Boreal Freshwater Marsh,577,132,0.1722488038277512
+vegbench_formation,naip_r50m,1,Temperate and Boreal Salt Marsh,326,53,0.3125
+vegbench_formation,naip_r50m,1,Temperate and Boreal Scrub and Herb Coastal Vegetation,516,82,0.375
+vegbench_formation,naip_r50m,1,Warm Semi-Desert Scrub and Grassland,84,74,0.3668639053254438
+vegbench_formation,naip_r50m,1,Warm Temperate Forest,923,820,0.4862965565706254
+vegbench_division,naip_r50m,20,California Grassland and Meadow,626,132,0.1834862385321101
+vegbench_division,naip_r50m,20,California Scrub,845,536,0.46228710462287104
+vegbench_division,naip_r50m,20,Madrean Forest and Woodland,923,820,0.4678362573099415
+vegbench_division,naip_r50m,20,North American Intermountain Basins Scrub Woodland,66,108,0.5092250922509225
+vegbench_division,naip_r50m,20,North American Introduced Evergreen Broadleaf and Conifer Forest,45,22,0.09615384615384616
+vegbench_division,naip_r50m,20,Pacific Coast Scrub and Herb Littoral Vegetation,516,82,0.35668789808917195
+vegbench_division,naip_r50m,20,Sonoran and Chihuahuan Semi-Desert Scrub and Grassland,84,74,0.36904761904761907
+vegbench_division,naip_r50m,20,Temperate and Boreal Pacific Coastal Salt Marsh,255,20,0.3880597014925373
+vegbench_division,naip_r50m,20,Vancouverian and Rocky Mountain Grassland and Shrubland,553,200,0.25517241379310346
+vegbench_division,naip_r50m,20,Western North America Cool Temperate Forest,806,320,0.5257548845470693
+vegbench_division,naip_r50m,20,Western North America Flooded and Swamp Forest,176,131,0.25287356321839083
+vegbench_division,naip_r50m,20,Western North America Interior Sclerophyllous Shrubland,85,110,0.4
+vegbench_division,naip_r50m,20,Western North America Warm Temperate Flooded and Swamp Forest,252,262,0.3521739130434783
+vegbench_division,naip_r50m,20,Western North American Cool Semi-Desert Scrub and Grassland,195,275,0.5389830508474577
+vegbench_division,naip_r50m,20,Western North American Freshwater Marsh,577,132,0.1926605504587156
+vegbench_division,naip_r50m,20,Western North American Interior Alkali-Saline Wetland,71,33,0.06741573033707865
+vegbench_division,naip_r50m,1,California Grassland and Meadow,626,132,0.1743119266055046
+vegbench_division,naip_r50m,1,California Scrub,845,536,0.4578313253012048
+vegbench_division,naip_r50m,1,Madrean Forest and Woodland,923,820,0.4254992319508449
+vegbench_division,naip_r50m,1,"Mediterranean California Cliff, Scree & Rock Vegetation",38,8,0.0
+vegbench_division,naip_r50m,1,North American Freshwater Aquatic Vegetation,21,4,0.08
+vegbench_division,naip_r50m,1,North American Intermountain Basins Scrub Woodland,66,108,0.49635036496350365
+vegbench_division,naip_r50m,1,North American Introduced Evergreen Broadleaf and Conifer Forest,45,22,0.09615384615384616
+vegbench_division,naip_r50m,1,North American Scrub and Herb Peatland,17,6,0.0
+vegbench_division,naip_r50m,1,Pacific Coast Scrub and Herb Littoral Vegetation,516,82,0.3194444444444444
+vegbench_division,naip_r50m,1,Sonoran and Chihuahuan Semi-Desert Scrub and Grassland,84,74,0.38596491228070173
+vegbench_division,naip_r50m,1,Temperate Intertidal Shore,5,1,0.0
+vegbench_division,naip_r50m,1,Temperate and Boreal Pacific Coastal Salt Marsh,255,20,0.410958904109589
+vegbench_division,naip_r50m,1,Vancouverian and Rocky Mountain Grassland and Shrubland,553,200,0.2196969696969697
+vegbench_division,naip_r50m,1,"Western North America Alpine Scrub, Forb Meadow, and Grassland",7,1,0.0
+vegbench_division,naip_r50m,1,Western North America Cool Temperate Forest,806,320,0.48987108655616945
+vegbench_division,naip_r50m,1,Western North America Flooded and Swamp Forest,176,131,0.24922118380062305
+vegbench_division,naip_r50m,1,Western North America Interior Sclerophyllous Shrubland,85,110,0.3783783783783784
+vegbench_division,naip_r50m,1,Western North America Warm Temperate Flooded and Swamp Forest,252,262,0.3600867678958785
+vegbench_division,naip_r50m,1,Western North American Cool Semi-Desert Scrub and Grassland,195,275,0.5379310344827586
+vegbench_division,naip_r50m,1,Western North American Freshwater Marsh,577,132,0.15789473684210525
+vegbench_division,naip_r50m,1,Western North American Interior Alkali-Saline Wetland,71,33,0.0625
+vegbench_macrogroup,naip_r50m,20,California Annual and Perennial Grassland,626,132,0.1188118811881188
+vegbench_macrogroup,naip_r50m,20,California Chaparral,549,290,0.34968553459119495
+vegbench_macrogroup,naip_r50m,20,California Coastal Scrub,296,246,0.35095137420718814
+vegbench_macrogroup,naip_r50m,20,California Forest and Woodland,923,820,0.39869812855980474
+vegbench_macrogroup,naip_r50m,20,Californian-Vancouverian Montane and Foothill Forest,539,177,0.3035019455252918
+vegbench_macrogroup,naip_r50m,20,Cool Semi-desert wash and disturbance scrub,20,33,0.17142857142857143
+vegbench_macrogroup,naip_r50m,20,Inter-Mountain Dry Shrubland and Grassland,76,93,0.26229508196721313
+vegbench_macrogroup,naip_r50m,20,Intermountain Basins Pinyon-Juniper Woodland,66,108,0.4838709677419355
+vegbench_macrogroup,naip_r50m,20,Introduced North American Mediterranean woodland and forest,45,22,0.12389380530973451
+vegbench_macrogroup,naip_r50m,20,Madrean Warm Semi-Desert Wash Woodland/Scrub,49,26,0.19298245614035087
+vegbench_macrogroup,naip_r50m,20,Mojavean-Sonoran Desert Scrub,27,39,0.16393442622950818
+vegbench_macrogroup,naip_r50m,20,North American Pacific Coastal Salt Marsh,255,20,0.4225352112676056
+vegbench_macrogroup,naip_r50m,20,"Southwestern North American Riparian, Flooded and Swamp Forest",252,262,0.28832951945080093
+vegbench_macrogroup,naip_r50m,20,Vancouverian Coastal Dune and Bluff,516,82,0.3333333333333333
+vegbench_macrogroup,naip_r50m,20,Vancouverian Lowland Grassland and Shrubland,302,51,0.14814814814814814
+vegbench_macrogroup,naip_r50m,20,Vancouverian Rainforest,226,53,0.4378698224852071
+vegbench_macrogroup,naip_r50m,20,Vancouverian Subalpine Forest,30,76,0.44549763033175355
+vegbench_macrogroup,naip_r50m,20,Warm Interior Chaparral,30,25,0.234375
+vegbench_macrogroup,naip_r50m,20,Warm Semi-Desert/Mediterranean Alkali-Saline Wetland,54,22,0.09230769230769231
+vegbench_macrogroup,naip_r50m,20,Western Cordilleran Montane Shrubland and Grassland,48,78,0.18584070796460178
+vegbench_macrogroup,naip_r50m,20,Western Cordilleran montane-boreal riparian scrub,166,131,0.21132075471698114
+vegbench_macrogroup,naip_r50m,20,Western North America Dwarf Sage Shrubland and Steppe,40,58,0.45614035087719296
+vegbench_macrogroup,naip_r50m,20,Western North America Tall Sage Shrubland and Steppe,51,78,0.16759776536312848
+vegbench_macrogroup,naip_r50m,20,Western North America Wet Meadow and Low Shrub Carr,122,29,0.11965811965811966
+vegbench_macrogroup,naip_r50m,20,Western North American Cool/Montane Sclerophyllous Evergreen Scrub,55,85,0.36097560975609755
+vegbench_macrogroup,naip_r50m,20,Western North American Freshwater Marsh,421,92,0.10084033613445378
+vegbench_macrogroup,naip_r50m,20,Western North American Temperate Grassland and Meadow,190,58,0.125
+vegbench_macrogroup,naip_r50m,1,California Annual and Perennial Grassland,626,132,0.08290155440414508
+vegbench_macrogroup,naip_r50m,1,California Chaparral,549,290,0.35309278350515466
+vegbench_macrogroup,naip_r50m,1,"California Cliff, Scree, and Other Rock Vegetation",38,8,0.0
+vegbench_macrogroup,naip_r50m,1,California Coastal Scrub,296,246,0.33472803347280333
+vegbench_macrogroup,naip_r50m,1,California Forest and Woodland,923,820,0.3564695801199657
+vegbench_macrogroup,naip_r50m,1,Californian-Vancouverian Montane and Foothill Forest,539,177,0.2823529411764706
+vegbench_macrogroup,naip_r50m,1,Cool Semi-Desert Alkali-Saline Flats,8,13,0.5116279069767442
+vegbench_macrogroup,naip_r50m,1,Cool Semi-Desert Alkali-Saline Wetlands,17,11,0.0
+vegbench_macrogroup,naip_r50m,1,Cool Semi-desert wash and disturbance scrub,20,33,0.16216216216216217
+vegbench_macrogroup,naip_r50m,1,Inter-Mountain Dry Shrubland and Grassland,76,93,0.24390243902439024
+vegbench_macrogroup,naip_r50m,1,Intermountain Basins Pinyon-Juniper Woodland,66,108,0.47346938775510206
+vegbench_macrogroup,naip_r50m,1,Introduced North American Mediterranean woodland and forest,45,22,0.1322314049586777
+vegbench_macrogroup,naip_r50m,1,Madrean Warm Semi-Desert Wash Woodland/Scrub,49,26,0.1652892561983471
+vegbench_macrogroup,naip_r50m,1,Mojavean-Sonoran Desert Scrub,27,39,0.21875
+vegbench_macrogroup,naip_r50m,1,North American Pacific Coastal Salt Marsh,255,20,0.4225352112676056
+vegbench_macrogroup,naip_r50m,1,Rocky Mountain Subalpine and High Montane Conifer Forest,11,14,0.17391304347826086
+vegbench_macrogroup,naip_r50m,1,"Southwestern North American Riparian, Flooded and Swamp Forest",252,262,0.2534562211981567
+vegbench_macrogroup,naip_r50m,1,Temperate Pacific Intertidal Shore,5,1,0.0
+vegbench_macrogroup,naip_r50m,1,"Vancouverian Alpine Scrub, Forb Meadow, and Grassland",7,1,0.0
+vegbench_macrogroup,naip_r50m,1,Vancouverian Coastal Dune and Bluff,516,82,0.3181818181818182
+vegbench_macrogroup,naip_r50m,1,Vancouverian Lowland Grassland and Shrubland,302,51,0.1388888888888889
+vegbench_macrogroup,naip_r50m,1,Vancouverian Rainforest,226,53,0.4457831325301205
+vegbench_macrogroup,naip_r50m,1,Vancouverian Subalpine Forest,30,76,0.38578680203045684
+vegbench_macrogroup,naip_r50m,1,Viscaino-Baja California Desert Scrub,8,9,0.0
+vegbench_macrogroup,naip_r50m,1,Warm Interior Chaparral,30,25,0.2677165354330709
+vegbench_macrogroup,naip_r50m,1,Warm Semi-Desert/Mediterranean Alkali-Saline Wetland,54,22,0.08571428571428572
+vegbench_macrogroup,naip_r50m,1,Western Cordilleran Montane Shrubland and Grassland,48,78,0.13145539906103287
+vegbench_macrogroup,naip_r50m,1,Western Cordilleran montane-boreal riparian scrub,166,131,0.1826086956521739
+vegbench_macrogroup,naip_r50m,1,Western Cordilleran montane-boreal wet meadow,13,13,0.07547169811320754
+vegbench_macrogroup,naip_r50m,1,Western North America Dwarf Sage Shrubland and Steppe,40,58,0.40336134453781514
+vegbench_macrogroup,naip_r50m,1,Western North America Tall Sage Shrubland and Steppe,51,78,0.14457831325301204
+vegbench_macrogroup,naip_r50m,1,Western North America Vernal Pool,34,11,0.04081632653061224
+vegbench_macrogroup,naip_r50m,1,Western North America Wet Meadow and Low Shrub Carr,122,29,0.04040404040404041
+vegbench_macrogroup,naip_r50m,1,Western North American Cool/Montane Sclerophyllous Evergreen Scrub,55,85,0.33663366336633666
+vegbench_macrogroup,naip_r50m,1,Western North American Freshwater Aquatic Vegetation,21,4,0.08695652173913043
+vegbench_macrogroup,naip_r50m,1,Western North American Freshwater Marsh,421,92,0.07339449541284404
+vegbench_macrogroup,naip_r50m,1,Western North American Montane/Boreal Peatland,17,6,0.0
+vegbench_macrogroup,naip_r50m,1,Western North American Temperate Grassland and Meadow,190,58,0.11363636363636363
+vegbench_group,naip_r50m,20,Arid West freshwater emergent marsh,45,39,0.41975308641975306
+vegbench_group,naip_r50m,20,California Coastal evergreen bluff and dune scrub,418,73,0.3018867924528302
+vegbench_group,naip_r50m,20,California annual herb/grass,219,32,0.05970149253731343
+vegbench_group,naip_r50m,20,California perennial grassland,235,33,0.1643835616438356
+vegbench_group,naip_r50m,20,Californian broadleaf forest and woodland,691,534,0.19284603421461896
+vegbench_group,naip_r50m,20,Californian evergreen coniferous forest and woodland,232,286,0.49140893470790376
+vegbench_group,naip_r50m,20,Californian maritime chaparral,144,48,0.19289340101522842
+vegbench_group,naip_r50m,20,Californian mesic chaparral,87,90,0.10612244897959183
+vegbench_group,naip_r50m,20,Californian montane chaparral,33,35,0.20618556701030927
+vegbench_group,naip_r50m,20,Californian montane conifer forest,246,109,0.42162162162162165
+vegbench_group,naip_r50m,20,Californian pre-montane chaparral,102,36,0.04938271604938271
+vegbench_group,naip_r50m,20,Californian warm temperate marsh/seep,99,23,0.09259259259259259
+vegbench_group,naip_r50m,20,Californian xeric chaparral,167,101,0.1437125748502994
+vegbench_group,naip_r50m,20,Central and South Coastal Californian coastal sage scrub,204,192,0.25161290322580643
+vegbench_group,naip_r50m,20,Central and south coastal California seral scrub,75,49,0.047337278106508875
+vegbench_group,naip_r50m,20,Inter-Mountain West mesic tall sagebrush shrubland and steppe,51,78,0.13333333333333333
+vegbench_group,naip_r50m,20,Intermontane seral shrubland,20,33,0.19718309859154928
+vegbench_group,naip_r50m,20,Intermountain low sage shrubland and steppe,40,58,0.49572649572649574
+vegbench_group,naip_r50m,20,Intermountain shallow/calcareous soil scrub,40,49,0.21705426356589147
+vegbench_group,naip_r50m,20,Introduced North American Mediterranean woodland and forest,45,22,0.1797752808988764
+vegbench_group,naip_r50m,20,Mediterranean California naturalized annual and perennial grassland,172,67,0.02127659574468085
+vegbench_group,naip_r50m,20,Mojavean semi-desert wash scrub,46,26,0.23853211009174313
+vegbench_group,naip_r50m,20,Mojavean upper desert scrub,20,30,0.05
+vegbench_group,naip_r50m,20,Southwestern North American riparian evergreen and deciduous woodland,135,170,0.3333333333333333
+vegbench_group,naip_r50m,20,Southwestern North American riparian/wash scrub,115,91,0.052980132450331126
+vegbench_group,naip_r50m,20,Temperate Pacific tidal salt and brackish meadow,248,20,0.6153846153846154
+vegbench_group,naip_r50m,20,Upland Vancouverian mixed woodland and forest,85,25,0.09090909090909091
+vegbench_group,naip_r50m,20,Vancouverian and Rocky Mountain naturalized annual grassland,31,26,0.044444444444444446
+vegbench_group,naip_r50m,20,Vancouverian and Rocky Mountain naturalized perennial grassland,61,23,0.058823529411764705
+vegbench_group,naip_r50m,20,Vancouverian coastal deciduous scrub,98,26,0.0
+vegbench_group,naip_r50m,20,Vancouverian coastal grassland,201,22,0.15
+vegbench_group,naip_r50m,20,Vancouverian coastal riparian scrub,64,30,0.17204301075268819
+vegbench_group,naip_r50m,20,Vancouverian coastal/tidal marsh and meadow,376,53,0.09375
+vegbench_group,naip_r50m,20,Vancouverian evergreen broadleaf and mixed forest,208,43,0.25316455696202533
+vegbench_group,naip_r50m,20,Vancouverian hypermaritime lowland rainforest,226,53,0.4
+vegbench_group,naip_r50m,20,Vancouverian mesic montane coniferous forest and woodland,30,76,0.4411764705882353
+vegbench_group,naip_r50m,20,Vancouverian riparian deciduous forest,69,58,0.15748031496062992
+vegbench_group,naip_r50m,20,Western Cordilleran montane moist graminoid meadow,27,32,0.1782178217821782
+vegbench_group,naip_r50m,20,Western Cordilleran montane sclerophyll scrub,22,50,0.30927835051546393
+vegbench_group,naip_r50m,20,Western Great Basin montane conifer woodland,66,108,0.4978902953586498
+vegbench_group,naip_r50m,20,Western North American montane-subalpine riparian scrub,21,34,0.19047619047619047
+vegbench_group,naip_r50m,1,Arid West freshwater emergent marsh,45,39,0.4473684210526316
+vegbench_group,naip_r50m,1,California Coastal evergreen bluff and dune scrub,418,73,0.15730337078651685
+vegbench_group,naip_r50m,1,California annual herb/grass,219,32,0.06779661016949153
+vegbench_group,naip_r50m,1,California perennial grassland,235,33,0.09090909090909091
+vegbench_group,naip_r50m,1,California-Vancouverian semi-natural littoral scrub and herb vegetation,23,6,0.125
+vegbench_group,naip_r50m,1,Californian broadleaf forest and woodland,691,534,0.14376996805111822
+vegbench_group,naip_r50m,1,Californian evergreen coniferous forest and woodland,232,286,0.4685714285714286
+vegbench_group,naip_r50m,1,Californian maritime chaparral,144,48,0.1951219512195122
+vegbench_group,naip_r50m,1,Californian mesic chaparral,87,90,0.07048458149779736
+vegbench_group,naip_r50m,1,Californian mixed annual/perennial freshwater vernal pool / swale bottomland,34,11,0.047058823529411764
+vegbench_group,naip_r50m,1,Californian montane chaparral,33,35,0.21505376344086022
+vegbench_group,naip_r50m,1,Californian montane conifer forest,246,109,0.36257309941520466
+vegbench_group,naip_r50m,1,Californian pre-montane chaparral,102,36,0.06060606060606061
+vegbench_group,naip_r50m,1,Californian serpentine chaparral,49,15,0.12307692307692308
+vegbench_group,naip_r50m,1,Californian warm temperate marsh/seep,99,23,0.0547945205479452
+vegbench_group,naip_r50m,1,Californian xeric chaparral,167,101,0.1458966565349544
+vegbench_group,naip_r50m,1,Central California Coast Ranges cliff and canyon,38,8,0.0
+vegbench_group,naip_r50m,1,Central and South Coastal Californian coastal sage scrub,204,192,0.21568627450980393
+vegbench_group,naip_r50m,1,Central and south coastal California seral scrub,75,49,0.05
+vegbench_group,naip_r50m,1,Coastal Baja California Norte maritime succulent scrub,8,9,0.0
+vegbench_group,naip_r50m,1,Great Basin cool semi-desert alkali basin group,3,11,0.0
+vegbench_group,naip_r50m,1,Great Basin montane riparian scrub,12,9,0.24
+vegbench_group,naip_r50m,1,Inter-Mountain West mesic tall sagebrush shrubland and steppe,51,78,0.09523809523809523
+vegbench_group,naip_r50m,1,Intermontane deep or well-drained soil scrub,14,29,0.33962264150943394
+vegbench_group,naip_r50m,1,Intermontane seral shrubland,20,33,0.1917808219178082
+vegbench_group,naip_r50m,1,Intermountain low sage shrubland and steppe,40,58,0.4036697247706422
+vegbench_group,naip_r50m,1,Intermountain shallow/calcareous soil scrub,40,49,0.1981981981981982
+vegbench_group,naip_r50m,1,Introduced North American Mediterranean woodland and forest,45,22,0.14285714285714285
+vegbench_group,naip_r50m,1,Lower Bajada and Fan Mojavean-Sonoran desert scrub,7,9,0.38461538461538464
+vegbench_group,naip_r50m,1,Mediterranean California naturalized annual and perennial grassland,172,67,0.02127659574468085
+vegbench_group,naip_r50m,1,Mogollion Rim chaparral,14,16,0.40625
+vegbench_group,naip_r50m,1,Mojavean semi-desert wash scrub,46,26,0.1834862385321101
+vegbench_group,naip_r50m,1,Mojavean upper desert scrub,20,30,0.05263157894736842
+vegbench_group,naip_r50m,1,Naturalized non-native Mediterranean scrub,17,5,0.0
+vegbench_group,naip_r50m,1,Naturalized non-native deciduous scrub,3,3,0.0
+vegbench_group,naip_r50m,1,Naturalized temperate Pacific freshwater vegetation,7,2,0.0
+vegbench_group,naip_r50m,1,Naturalized warm-temperate riparian and wetland group,17,5,0.0
+vegbench_group,naip_r50m,1,Northern Great Basin semi-desert grassland group,17,13,0.06060606060606061
+vegbench_group,naip_r50m,1,Rocky Mountain mesic subalpine forest and woodland,11,14,0.16666666666666666
+vegbench_group,naip_r50m,1,Shadscale-saltbush cool semi-desert scrub,8,13,0.5
+vegbench_group,naip_r50m,1,Sierran montane rock crevice and outcrop scrub and herbaceous,4,3,0.11428571428571428
+vegbench_group,naip_r50m,1,Southern Great Basin semi-desert grassland group,5,2,0.0
+vegbench_group,naip_r50m,1,Southern Vancouverian montane deciduous scrub,6,19,0.0
+vegbench_group,naip_r50m,1,Southwestern North American alkali marsh/seep vegetation,35,15,0.0
+vegbench_group,naip_r50m,1,Southwestern North American introduced riparian scrub,2,1,0.0
+vegbench_group,naip_r50m,1,Southwestern North American riparian evergreen and deciduous woodland,135,170,0.30714285714285716
+vegbench_group,naip_r50m,1,Southwestern North American riparian/wash scrub,115,91,0.03007518796992481
+vegbench_group,naip_r50m,1,Southwestern North American salt basin and high marsh,19,7,0.0
+vegbench_group,naip_r50m,1,Temperate Pacific freshwater aquatic bed,9,2,0.0
+vegbench_group,naip_r50m,1,Temperate Pacific intertidal flat,5,1,0.0
+vegbench_group,naip_r50m,1,Temperate Pacific tidal salt and brackish meadow,248,20,0.5333333333333333
+vegbench_group,naip_r50m,1,Upland Vancouverian mixed woodland and forest,85,25,0.046511627906976744
+vegbench_group,naip_r50m,1,Vancouverian and Rocky Mountain naturalized annual grassland,31,26,0.03636363636363636
+vegbench_group,naip_r50m,1,Vancouverian and Rocky Mountain naturalized perennial grassland,61,23,0.05555555555555555
+vegbench_group,naip_r50m,1,Vancouverian coastal deciduous scrub,98,26,0.0
+vegbench_group,naip_r50m,1,Vancouverian coastal grassland,201,22,0.05128205128205128
+vegbench_group,naip_r50m,1,Vancouverian coastal riparian scrub,64,30,0.24096385542168675
+vegbench_group,naip_r50m,1,Vancouverian coastal/tidal marsh and meadow,376,53,0.06779661016949153
+vegbench_group,naip_r50m,1,Vancouverian evergreen broadleaf and mixed forest,208,43,0.3116883116883117
+vegbench_group,naip_r50m,1,Vancouverian hypermaritime lowland rainforest,226,53,0.39655172413793105
+vegbench_group,naip_r50m,1,Vancouverian mesic montane coniferous forest and woodland,30,76,0.32142857142857145
+vegbench_group,naip_r50m,1,Vancouverian riparian deciduous forest,69,58,0.1415929203539823
+vegbench_group,naip_r50m,1,Vancouverian/Pacific dune mat,75,3,0.14285714285714285
+vegbench_group,naip_r50m,1,Western Cordilleran montane deciduous scrub,11,24,0.0
+vegbench_group,naip_r50m,1,Western Cordilleran montane moist graminoid meadow,27,32,0.16822429906542055
+vegbench_group,naip_r50m,1,Western Cordilleran montane sclerophyll scrub,22,50,0.30612244897959184
+vegbench_group,naip_r50m,1,Western Cordilleran montane-boreal summer-saturated meadow,6,1,0.0
+vegbench_group,naip_r50m,1,Western Great Basin montane conifer woodland,66,108,0.4769874476987448
+vegbench_group,naip_r50m,1,Western Mojave and Western Sonoran Desert borderland chaparral,16,9,0.29411764705882354
+vegbench_group,naip_r50m,1,Western North American Montane/Boreal Peatland,17,6,0.0
+vegbench_group,naip_r50m,1,Western North American montane-subalpine riparian scrub,21,34,0.12121212121212122
+vegbench_group,naip_r50m,1,Western cordilleran montane-boreal mesic wet meadow,13,13,0.037037037037037035
+vegbench_group,naip_r50m,1,Western dry upland perennial grassland,98,9,0.12121212121212122

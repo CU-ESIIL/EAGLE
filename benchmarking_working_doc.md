@@ -101,6 +101,14 @@ Probe input = the embedding averaged over a disc around the point, disc radius p
 ## Status and results (Claude, kept current)
 
 ### 2026-11-12 (NCSA Delta)
+- **One linear probe for everything (user decision):** `eagle_als.linear_probe` = a single torch `nn.Linear` on standardized
+  features, full-batch L-BFGS from zero weights, class-balanced softmax (multiclass) / per-target sigmoid BCE (multilabel) /
+  squared error on standardized targets (regression), NaN labels masked, `l2/2 ||W||^2` on the per-row mean loss with l2 from
+  1e2 to 1e-5 chosen by 3-fold CV on train (bal. acc. / mean AUROC / mean R2). Used by the benchmark (`eagle_bench.probes`)
+  and the pre-training evaluation (`eagle_als.probe`, `probe_table`). One fit covers all species of a task, so bird tasks no
+  longer need hundreds of separate fits. Synthetic check vs sklearn: bal. acc. 0.510 vs 0.506, AUROC 0.925 vs 0.925,
+  R2 0.962 vs 0.962. NAIP Clay: NLCD 0.606 (sklearn probe 0.631), OFO mean R2 0.249 (needed the strong end of the grid;
+  0.1 gave -1.2), BLM AIM 0.458. **All earlier probe results (AEF, location, SatCLIP) must be rerun to be comparable.**
 - **Lidar eval cache restarted on Delta** in `/work/hdd/bjud/sammlapp/benchmarking/als_cache` (same 86,150-site table, rebuilt
   from the registry). 64 workers on a 32-CPU job: **~11 cookies/s** (vs 1.1 on CyVerse), so ~2.2 h for all sites and ~650 GB.
   94-95% of the first 3,000 sites returned a cookie. pixi could not be installed by the agent here; a conda-forge env from the

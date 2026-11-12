@@ -22,8 +22,9 @@ User notes and feedback for this work: `benchmarking_working_doc.md` (check it f
 
 - Interactive Slurm jobs (e.g. 8 h, 32 CPUs, CPU partition, ~250 GB RAM). Everything dies at the job's end time
   (`scontrol show job $SLURM_JOB_ID | grep EndTime`), so long runs use `--max-hours` and are resumed in the next job.
-- Probes and other batch CPU work: `sbatch scripts/baseline_eval/probe_delta.sbatch <02_linear_probe.py args>` (account
-  `bjud-delta-cpu`, partition `cpu`, 64 cores x 4 h max = 256 CPU-h), not in the interactive job. AGENTS.md compute policy:
+- Probes and other batch CPU work: in the interactive job when it is free (user, 2026-11-12), else
+  `sbatch scripts/baseline_eval/probe_delta.sbatch <02_linear_probe.py args>` (account `bjud-delta-cpu`, partition `cpu`,
+  16 cores x 4 h = 64 CPU-h max by default). AGENTS.md compute policy:
   ask the user before a job over 300 CPU-h or 30 GPU-h, or when a partition's credits are 80% used (`accounts`).
 - `$WORK = /work/hdd/bjud/sammlapp` (1.5 TB project quota) holds the cache: `$WORK/benchmarking` plays the role of `$BENCH`.
 - No pixi on Delta yet (installing it via `curl | bash` was blocked for the agent; the user can install it). Meanwhile the
@@ -62,7 +63,8 @@ User notes and feedback for this work: `benchmarking_working_doc.md` (check it f
 | ForPT embedder | **written, smoke-tested on synthetic clouds** | weights `$BENCH/forpt_weights/epoch_30.pth`; run `scripts/baseline_eval/04_embed_forpt.py --limit 200` once cookies exist, then full |
 | ForPT probes | not started | `02_linear_probe.py --embeddings $BENCH/embeddings/forpt/r50_z --model forpt_r50_z --n-jobs 4` |
 | lidR stdmetrics (+terrain) | **pipeline written and trialled** (20 cookies); user approved lidR::stdmetrics with and without terrain, no GEDI | `pixi run --manifest-path envs/eagle-bench/pixi.toml env PYTHONPATH=src python scripts/baseline_eval/05_lidr_metrics.py` (resumable; ~0.18 cookies/s while the cache saturates the CPUs, so best run after it); probe `02_linear_probe.py --embeddings $BENCH/features/lidr_stdmetrics/r50 [--exclude '^terrain_|^n_ground$']` |
-| Clay v1.5 NAIP embeddings | **fetch done** 2026-11-12 on Delta (32,593 files / 253 GB streamed in 14 min at ~40 files/s, 0 failed; 87,298/87,749 points with an embedding); pooled tables `$WORK/benchmarking/naip_clay/pooled/`. **Probe submitted** as Slurm job 23826792 (`scripts/baseline_eval/probe_delta.sbatch`, 16 cores, 4 h, est. 25-45 CPU-h; log `$WORK/benchmarking/logs/eagle-probe-<job>.out`); an earlier in-session run (16 lines, NLCD-vegbench) was stopped and is superseded | `squeue -u $USER`; results in `results/naip_clay/` (written per task). If it times out, rerun the missing tasks with `--tasks ...` under another `--model` and merge (a run rewrites summary.csv with only its tasks) |
+| Clay v1.5 NAIP embeddings | **fetch done** 2026-11-12 on Delta (32,593 files / 253 GB streamed in 14 min, 0 failed; 87,298/87,749 points with an embedding); pooled tables `$WORK/benchmarking/naip_clay/pooled/`. **Probe running** with the new torch probe on the interactive node (tmux `naip_probe`, `--n-jobs 32`, log `$WORK/benchmarking/naip_clay/probe.log`, started 05:09 CST) | results in `results/naip_clay/` (written per task); if cut off, rerun the missing tasks with `--tasks ...` under another `--model` and merge |
+| Linear probe = torch (2026-11-12) | **all probes now use `eagle_als.linear_probe`** (one `nn.Linear`, full-batch L-BFGS, class-balanced, l2 from 1e2..1e-5 by 3-fold CV). Results made with the old sklearn probes (alphaearth_center, location_rff, satclip_*) are **not comparable** until rerun | rerun 02/06/08 for every model (AEF points are on CyVerse: copy `aef/points_ee` to Delta first) |
 | Random forest / gradient boosting probe | not started (user wants linear + RF for the lidR metrics) | add to `eagle_bench/probes.py` |
 | AlphaEarth geography / leakage diagnostics | **plan in working doc**, not run | tests 1, 3, 5 first (location-only baselines, displacement test, lat/lon from AEF) |
 

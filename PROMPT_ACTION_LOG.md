@@ -840,3 +840,16 @@ Fix the noise filter and retry the rejected (sites rejected for implausible elev
 - `eagle_als.fetch.NOISE_FILTER`: `filters.expression` dropping classes 7 and 18 (the old ORed `filters.range` kept every point); used by `fetch._fetch_region` and `eagle_als.coreg.data` (same bug). Verified on a rejected site: 29,858 class-7 points kept before, 0 after.
 - `run_lidar_cache.sh --retry-errors`: all 46 rejected sites fetched; eval cache now 82,160 ok / 3,892 empty / 98 too few / 0 errors.
 - Earlier cookies still hold noise points; downstream drops stay. Follow-up: `scripts/3dep/dataset.py` (dropped class 7 only) now uses `NOISE_FILTER` too.
+
+## 2026-11-12 - Single torch linear probe for all probing
+
+### Prompt
+
+Use a single torch linear layer as the universal, efficient probe for all probing experiments (consistency matters more than matching sklearn). Then cancel the Slurm probe job and run the probes on the interactive node; commit.
+
+### Actions
+
+- New `src/eagle_als/linear_probe.py` (`fit`, `fit_select`, `LinearProbe`): nn.Linear, full-batch L-BFGS, class-balanced, masked NaN labels, l2 grid 1e2..1e-5 by 3-fold CV. `eagle_bench.probes`, `eagle_als.probe.probe_scores` and `eagle_als.probe_table` (regression, presence) now use it; sklearn LogisticRegression / RidgeCV and `fit_presence_logistic` removed. `pytorch-cpu` added to `envs/eagle-bench`.
+- Checks: synthetic data vs sklearn (same scores within 0.004); the first grid (max l2 0.1) gave OFO R2 -1.2, so the grid was extended to 1e2.
+- Slurm probe job cancelled; NAIP Clay probe running in tmux `naip_probe` on the interactive node (32 threads).
+- Earlier results from the sklearn probes (AEF, location, SatCLIP) need rerunning to be comparable.

@@ -158,11 +158,10 @@ def probe_scores(x, y, is_test=None, probes=("linear", "knn"), knn_k=20, n_folds
     Macro F1 averages over the classes present in the test rows; a class with no test rows gets no
     per-class score. Per-class keys are "<probe>_f1/<class tag>".
     """
-    from sklearn.linear_model import LogisticRegression
     from sklearn.metrics import balanced_accuracy_score, f1_score
     from sklearn.model_selection import StratifiedKFold
-    from sklearn.pipeline import make_pipeline
-    from sklearn.preprocessing import StandardScaler
+
+    from .linear_probe import fit_select
 
     n_classes = int(y.max()) + 1
     class_tags = class_tags or [str(i) for i in range(n_classes)]
@@ -173,9 +172,8 @@ def probe_scores(x, y, is_test=None, probes=("linear", "knn"), knn_k=20, n_folds
     preds, truth = {p: [] for p in probes}, []
     for tr, te in folds:
         if "linear" in probes:
-            clf = make_pipeline(StandardScaler(), LogisticRegression(max_iter=2000, class_weight="balanced"))
-            clf.fit(x[tr], y[tr])
-            preds["linear"].append(clf.predict(x[te]))
+            probe = fit_select(x[tr], y[tr], "multiclass", n_classes=n_classes, seed=seed)
+            preds["linear"].append(probe.predict(x[te]))
         if "knn" in probes:
             preds["knn"].append(knn_predict(x[tr], y[tr], x[te], knn_k, n_classes))
         truth.append(y[te])
