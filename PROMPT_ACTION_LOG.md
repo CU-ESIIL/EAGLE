@@ -839,4 +839,4 @@ Fix the noise filter and retry the rejected (sites rejected for implausible elev
 
 - `eagle_als.fetch.NOISE_FILTER`: `filters.expression` dropping classes 7 and 18 (the old ORed `filters.range` kept every point); used by `fetch._fetch_region` and `eagle_als.coreg.data` (same bug). Verified on a rejected site: 29,858 class-7 points kept before, 0 after.
 - `run_lidar_cache.sh --retry-errors`: all 46 rejected sites fetched; eval cache now 82,160 ok / 3,892 empty / 98 too few / 0 errors.
-- Earlier cookies still hold noise points; downstream drops stay. `scripts/3dep/dataset.py` (drops class 7 only) left unchanged.
+- Earlier cookies still hold noise points; downstream drops stay. Follow-up: `scripts/3dep/dataset.py` (dropped class 7 only) now uses `NOISE_FILTER` too.

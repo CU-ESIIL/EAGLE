@@ -100,7 +100,7 @@ Changing a radius or adding points later only reads the files whose (point, radi
   `Classification![7:7],Classification![18:18]` dropped nothing (PDAL ORs ranges on the same dimension). Fixed 2026-11-12:
   `eagle_als.fetch.NOISE_FILTER` (`filters.expression`, also used by `eagle_als.coreg.data`). The Delta eval cache was
   fetched with the old filter except the 46 sites retried after the fix, so `05_lidr_metrics.py` and `eagle_bench/forpt.py`
-  must keep dropping 7/18 downstream. `scripts/3dep/dataset.py` (own filter, drops class 7 only) is unchanged.
+  must keep dropping 7/18 downstream. `scripts/3dep/dataset.py` uses the same filter.
 - Open-water and some urban cookies have no ground points: terrain metrics are NaN there, and lidR `zentropy` is NA on
   flat cookies; the probe fills NaNs with the train median.
 - Stat-ing many files on the iRODS mount is very slow: list cached cookies from the cache manifest, not `Path.exists()`.

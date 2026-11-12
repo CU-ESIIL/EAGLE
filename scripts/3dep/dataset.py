@@ -9,6 +9,11 @@ from pyproj.aoi import AreaOfInterest
 from pyproj.database import query_utm_crs_info
 from shapely.geometry import Point
 import geopandas as gpd
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
+from eagle_als.fetch import NOISE_FILTER  # noqa: E402  (shared with the cookie cache)
 
 EPT_STORAGE_CRS = "EPSG:3857"  # USGS public EPT tiles are indexed/stored in Web Mercator
 
@@ -70,10 +75,7 @@ def load_als_cookie(
                 "polygon": prefilter_polygon,   # coarse prefilter, in EPT storage CRS
                 # "threads": 2,
             },
-            {
-                "type": "filters.range",
-                "limits": "Classification![7:7]",  # drop noise
-            },
+            NOISE_FILTER,  # drop low (7) and high (18) noise
             {
                 "type": "filters.reprojection",
                 "in_srs": EPT_STORAGE_CRS,
