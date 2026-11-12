@@ -7,11 +7,8 @@ open questions, results and the dated log. Newest first in each log.
 
 ## Open questions for the user
 
-- **Radii missing in `datasets/registry.yaml`** for lfrdb, vegbench, butterflies and blm_aim (the 50 m default is used,
-  with a printed notice). Makes no difference for Clay NAIP (chips are 154-256 m), but it will for the lidar features.
-- **Lidar disc radius.** You suggested 100 m as a starting point for the derived metrics (2026-11-10); the cache, ForPT
-  and the lidR speed test all use the 50 m disc (the cookies are 100 m in radius, so both are possible). Which for the
-  full lidR run: 50, 100, or both?
+- **Lidar radius per task (proposal below, not decided):** cap at 100 m (the cached cookie) or tile and aggregate
+  for BBS (150 m) and SatBird (300 m).
 - Full ForPT run (~4-5 GPU-h on one A100) and full lidR metrics run (~1.6 h on a 32-CPU node): ready to launch.
 
 ## Next steps
@@ -25,6 +22,9 @@ open questions, results and the dated log. Newest first in each log.
 
 ## Decisions (user)
 
+- **Radius (2026-11-12):** one radius per task for every area-based feature set (point-only ones, AEF centre pixel
+  and location/SatCLIP, excepted), following the task's `radius` in `datasets/registry.yaml`; tables without one use
+  the documented 50 m default.
 - **One linear probe for everything (2026-11-12):** `eagle_als.linear_probe`, a single torch `nn.Linear` on standardized
   features, full-batch L-BFGS from zero weights; class-balanced softmax (multiclass), per-target sigmoid BCE
   (multilabel), squared error on standardized targets (regression); NaN labels masked; `l2/2 ||W||^2` with l2 from
@@ -41,6 +41,26 @@ open questions, results and the dated log. Newest first in each log.
 - **Official implementations (2026-11-11):** use the authors' code (ForPT, SatCLIP), cloned or installed outside the
   repo, rather than re-implementations.
 - **Sites at collection edges (2026-11-12):** accepted and documented, not rematched (see Known data issues).
+
+## Proposal: lidar embeddings for radii above 100 m (Claude, 2026-11-12, for review)
+
+The cache holds 100 m-radius cookies; ForPT / lidR / QC currently cut a fixed 50 m disc from them. lidR metrics on a
+larger disc only need more points (download). The point encoders (ForPT, EAGLE) are trained on 100 m cookies, so a
+300 m area in one pass is out of distribution and ~9x the memory. Proposal:
+
+1. The unit of embedding is always a training-sized cookie (100 m radius); centres on a square grid of spacing s over
+   the task disc (s = 100 m: every point within 71 m of its nearest centre, so >= ~30 m of context).
+2. Each point takes the up-cast encoder features (concatenated stage features of the voxels it belongs to; no decoder
+   needed, this is what the cookie mean already pools) from its nearest-centre cookie (square cells).
+3. Mean over points per 5 m cell, then over the cells inside the exact disc (area weighting instead of point-density
+   weighting; no partial-square weights).
+
+For radius <= ~30 m this is one centred cookie, as now. Cost for SatBird at 300 m: ~35-40 cookies/site, ~1.5 M passes,
+~75 GPU-h at the measured 5.5 cookies/s (over the 30 GPU-h threshold; s = 141 m halves it), and the 400 m read around
+each site is several TB, so it would stream (fetch, embed, keep only the pooled vector) like the NAIP fetch.
+Suggested order: ForPT / lidR now at min(task radius, 100 m) from the existing cache (13 of 15 tasks exact, BBS and
+SatBird labelled as capped); then the tiled path for BBS and SatBird, first checked on SnapShot (100 m: one cookie vs
+tiles).
 
 ## Feature sets
 
