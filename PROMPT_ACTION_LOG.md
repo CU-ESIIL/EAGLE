@@ -828,3 +828,15 @@ pixi is installed; kick off the NAIP embedding fetch and probing. Follow-ups: is
 - Lidar cache slowdown (11 → 7 cookies/s, load 517): PDAL `readers.ept` sized its thread pool from the node's 128 hardware threads. New `EAGLE_PDAL_THREADS` option in `eagle_als.fetch`; `run_lidar_cache.sh` sets 4. Rate back to ~10-11 cookies/s while sharing the node.
 - NAIP Clay: dry run, then full fetch of all tasks (32,593 files, 253 GB streamed, 14 min, 0 failed). Four tables without a registry radius used the 50 m default (no effect for Clay below ~130 m).
 - Probe: the slowness is the 1024-d logistic-regression fits, not ingestion. `eagle_bench.probes._cv_grid` runs all (C, [species,] fold) CV fits in one parallel batch; verified identical scores to `cross_val_score`. New `scripts/baseline_eval/probe_delta.sbatch` (64 cores, 4 h); submitted the NAIP probe as job 23826684 and stopped the in-session run.
+
+## 2026-11-12 - Fix the PDAL noise filter, retry rejected cookies
+
+### Prompt
+
+Fix the noise filter and retry the rejected (sites rejected for implausible elevation range).
+
+### Actions
+
+- `eagle_als.fetch.NOISE_FILTER`: `filters.expression` dropping classes 7 and 18 (the old ORed `filters.range` kept every point); used by `fetch._fetch_region` and `eagle_als.coreg.data` (same bug). Verified on a rejected site: 29,858 class-7 points kept before, 0 after.
+- `run_lidar_cache.sh --retry-errors`: all 46 rejected sites fetched; eval cache now 82,160 ok / 3,892 empty / 98 too few / 0 errors.
+- Earlier cookies still hold noise points; downstream drops stay. `scripts/3dep/dataset.py` (drops class 7 only) left unchanged.

@@ -17,6 +17,8 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
+from eagle_als.fetch import NOISE_FILTER
+
 EPT_PROJ = "+proj=merc +a=6378137 +b=6378137 +lat_ts=0 +lon_0=0 +x_0=0 +y_0=0 +k=1 +units=m +nadgrids=@null +no_defs"
 STAC_URL = "https://planetarycomputer.microsoft.com/api/stac/v1"
 LIDAR_DIMS = ["X", "Y", "Z", "Intensity", "ReturnNumber", "NumberOfReturns", "Classification", "PointSourceId", "ScanAngleRank"]
@@ -151,7 +153,7 @@ def read_lidar_points(tile_url, grid, pad=20.0, resolution=None, timeout=None):
         reader["timeout"] = int(timeout)
     stages = [
         reader,
-        {"type": "filters.range", "limits": "Classification![7:7],Classification![18:18]"},
+        NOISE_FILTER,
         {"type": "filters.reprojection", "in_srs": EPT_PROJ, "out_srs": grid.crs},
         {"type": "filters.crop", "bounds": f"([{x0}, {x1}], [{y0}, {y1}])"},
     ]

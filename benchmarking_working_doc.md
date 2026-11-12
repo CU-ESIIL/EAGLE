@@ -108,6 +108,10 @@ Probe input = the embedding averaged over a disc around the point, disc radius p
 - **Lidar eval cache done (04:37 CST):** 86,150 sites: 82,114 cookies (95.3%), 3,892 empty, 98 with too few points,
   46 rejected by the cookie check for a 3-4 km elevation range (the high-noise points the fetch filter fails to drop; they
   would come back after the filter fix with `--retry-errors`). The 27 network errors succeeded on retry.
+- **Noise filter fixed (user request, 2026-11-12):** `eagle_als.fetch.NOISE_FILTER` = `filters.expression`
+  `Classification != 7 && Classification != 18` (also in `eagle_als.coreg.data`). Checked on a rejected Sonoma site: old
+  filter kept 29,858 class-7 points (z range 3,504 m), new one keeps none (19 m). All 46 rejected sites then fetched OK:
+  cache = **82,160 cookies**, 0 errors. Cookies fetched earlier still contain noise; the downstream drop stays.
 - **Cache slowdown fixed:** PDAL's `readers.ept` sized its thread pool from the node's 128 hardware threads, so 64 fetches ran
   ~5,000 threads on 32 CPUs (load 517) and the rate fell from 11 to 7 cookies/s. New option `EAGLE_PDAL_THREADS` in
   `eagle_als.fetch` (unset = old behaviour; `run_lidar_cache.sh` sets 4, PDAL's minimum): load ~100, ~10.7 cookies/s while

@@ -25,6 +25,11 @@ EPT_STORAGE_CRS = "EPSG:3857"  # USGS public EPT tiles are indexed/stored in Web
 DIMS = ["X", "Y", "Z", "Intensity", "ReturnNumber", "NumberOfReturns", "Classification"]
 GROUND_CLASS = 2
 DROP_CLASSES = (7, 18)  # low noise, high noise
+# PDAL stage that drops DROP_CLASSES. Not filters.range with "Classification![7:7],Classification![18:18]": PDAL ORs
+# ranges on the same dimension, so that kept every point (fixed 2026-11-12; cookies cached before then still contain
+# noise points, which the benchmark drops downstream).
+NOISE_FILTER = {"type": "filters.expression",
+                "expression": " && ".join(f"Classification != {c}" for c in DROP_CLASSES)}
 
 _TILES = None
 
@@ -85,7 +90,7 @@ def _fetch_region(tile_name, lat, lon, size, shape, timeout=None):
 
     stages = [
         {"type": "readers.ept", "filename": tile.url, "bounds": bounds},
-        {"type": "filters.range", "limits": ",".join(f"Classification![{c}:{c}]" for c in DROP_CLASSES)},
+        NOISE_FILTER,
         {"type": "filters.reprojection", "in_srs": EPT_STORAGE_CRS, "out_srs": f"EPSG:{epsg}"},
         crop,
     ]

@@ -57,7 +57,7 @@ User notes and feedback for this work: `benchmarking_working_doc.md` (check it f
 | AlphaEarth, centre pixel, all tasks | **done** 2026-11-10 | `results/alphaearth_center/`; embeddings `$BENCH/aef/points_ee` (via symlink `datasets/raw/aef`) |
 | AlphaEarth after SatBird → `satbird_winter_occupancy` | re-extracted (18,379 new points); probes rerun | check `results/alphaearth_center/summary.md` has `satbird_winter_occupancy` |
 | Lidar site table | **done**: 86,150 unique sites in `$BENCH/als_cache/sites.parquet` | rerun `scripts/baseline_eval/03_lidar_sites.py` when a dataset changes |
-| Lidar cookie cache (Delta) | **done** 2026-11-12 04:37 CST in `$WORK/benchmarking/als_cache` (~4 h incl. a restart): 82,114 ok, 3,892 empty, 98 too few points, 46 errors (all `implausible elevation range` 3-4 km, i.e. the unfiltered noise points, see Known data issues; would need the fetch filter fix + `--retry-errors`) | rerun `run_lidar_cache.sh` (BENCH=$WORK/benchmarking) only when the site table changes; next: ForPT embeddings and lidR metrics on Delta |
+| Lidar cookie cache (Delta) | **done** 2026-11-12 04:43 CST in `$WORK/benchmarking/als_cache`: 82,160 ok, 3,892 empty, 98 too few points, 0 errors (the 46 noise-rejected sites were refetched with the fixed noise filter) | rerun `run_lidar_cache.sh` (BENCH=$WORK/benchmarking) only when the site table changes; next: ForPT embeddings and lidR metrics on Delta |
 | Lidar cookie cache (CyVerse) | started 2026-11-10 in tmux `als_cache` on CyVerse (~1.1 cookies/s); state unknown from Delta | separate copy under the CyVerse `$BENCH`; large-data work now on Delta/Bridges-2 (AGENTS.md) |
 | ForPT embedder | **written, smoke-tested on synthetic clouds** | weights `$BENCH/forpt_weights/epoch_30.pth`; run `scripts/baseline_eval/04_embed_forpt.py --limit 200` once cookies exist, then full |
 | ForPT probes | not started | `02_linear_probe.py --embeddings $BENCH/embeddings/forpt/r50_z --model forpt_r50_z --n-jobs 4` |
@@ -96,10 +96,11 @@ Changing a radius or adding points later only reads the files whose (point, radi
 
 ## Known data issues
 
-- **Noise points are in the cached cookies.** `eagle_als.fetch` drops classes 7/18 with the PDAL filter
-  `Classification![7:7],Classification![18:18]`, but PDAL ORs ranges on the same dimension, so nothing is dropped
-  (seen: 155k high-noise points in one cookie, zmax 256 m). Handled downstream in `05_lidr_metrics.py` and
-  `eagle_bench/forpt.py`. Reported to the user; the fetch code (also used by pre-training) is unchanged pending their call.
+- **Noise points (classes 7/18) in cookies fetched before 2026-11-12.** The old PDAL filter
+  `Classification![7:7],Classification![18:18]` dropped nothing (PDAL ORs ranges on the same dimension). Fixed 2026-11-12:
+  `eagle_als.fetch.NOISE_FILTER` (`filters.expression`, also used by `eagle_als.coreg.data`). The Delta eval cache was
+  fetched with the old filter except the 46 sites retried after the fix, so `05_lidr_metrics.py` and `eagle_bench/forpt.py`
+  must keep dropping 7/18 downstream. `scripts/3dep/dataset.py` (own filter, drops class 7 only) is unchanged.
 - Open-water and some urban cookies have no ground points: terrain metrics are NaN there, and lidR `zentropy` is NA on
   flat cookies; the probe fills NaNs with the train median.
 - Stat-ing many files on the iRODS mount is very slow: list cached cookies from the cache manifest, not `Path.exists()`.
