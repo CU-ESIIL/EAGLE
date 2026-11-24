@@ -1,0 +1,25 @@
+# SatCLIP location embeddings for the benchmark (scripts/baseline_eval/08_satclip_probe.py), CPU only.
+# The official package (github.com/microsoft/satclip) pinned to a commit, plus what the probes need.
+#   pixi install --manifest-path envs/satclip/pixi.toml
+#   pixi run --manifest-path envs/satclip/pixi.toml env PYTHONPATH=src python scripts/baseline_eval/08_satclip_probe.py ...
+[workspace]
+channels = ["conda-forge"]
+name = "eagle-satclip"
+platforms = ["linux-64", "osx-arm64"]
+
+[dependencies]
+python = "3.12.*"
+pytorch-cpu = ">=2.4,<3"
+torchvision = "*"
+torchgeo = "*"
+lightning = ">=2.2,<3"
+pandas = "*"
+pyarrow = "*"
+geopandas = "*"
+scipy = "*"
+scikit-learn = "*"
+pyyaml = "*"
+tabulate = "*"
+
+[pypi-dependencies]
+satclip = { git = "https://github.com/microsoft/satclip.git", rev = "68c7323" }

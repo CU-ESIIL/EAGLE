@@ -904,3 +904,17 @@ Agents do not keep the claude.ai working-notes artifact up to date, and CLAUDE.m
 
 - New `training_working_doc.md`: status table, plan, Bridges-2 env, streaming data design and measurements, eval datasets/registry notes, in-training validation, results (checkpoint scores, `ssl_s_2gpu_2` at step 9,200), model and ForPT differences, alternative architectures, next steps, the user's future ideas, dated log. Corrected for later changes (VegBench, SatBird rework, sPlotOpen dropped, leaf-on season rule, registry-based EVAL_SITES, frozen splits incl. the NLCD re-split, `probe_table`, torch linear probe, ForPT code release, noise filter fix). Run state after 2026-10-09 is marked unverified: /ocean is not mounted on Delta.
 - `CLAUDE.md`: now a handoff for both workstreams (table of workstreams and docs, shared components, a Bridges-2 pre-training section). `README.md`: notes list, `probe_table` paragraph, pointer to the training doc in "Planned experiments". `AGENTS.md`: points to the two local docs instead of the artifact.
+
+## 2026-11-24 - Status check of the jobs launched 2026-11-12; docs updated
+
+### Prompt
+
+An agent launched tasks that may have completed without the tracking being updated: check what is done and update the documentation.
+
+### Actions
+
+- Torch-probe reruns of alphaearth_center, location_rff, satclip_l10/l40 had finished on 2026-11-12 but were not committed: results committed; comparison table (all five non-lidar feature sets, min_count=20) added to `benchmarking_working_doc.md`. AlphaEarth is best on 14 of 15 tasks (location wins butterflies).
+- ForPT embeddings complete at all radii (jobs 23829140, 23829141): r15 875, r30 6,061, r50 25,227, r100 51,533 rows; 131 empty-disc failures (edge sites). Probe not yet run.
+- lidR job 23829139 failed after 2 min on 2026-11-13 (`[terrain] too few values for writing` in `lidr_metrics.R`); r15 done, r30 6,041 of 6,099. Needs a fix to the terrain step before resubmitting.
+- `envs/satclip` (pixi manifest + lock, used for the SatCLIP probes) added with the same `.gitignore` as the other envs.
+- CLAUDE.md status table and the working doc (status, next steps, log) updated.

@@ -11,9 +11,11 @@ open questions, results and the dated log. Newest first in each log.
 
 ## Next steps
 
-1. Rerun AlphaEarth, location and SatCLIP with the torch probe (running 2026-11-12) and fill the comparison table below.
-2. ForPT embeddings at the task radii (running, Slurm 23829140 r15/30/50 and 23829141 r100), then the probe.
-3. lidR stdmetrics (+ terrain) at the task radii (Slurm 23829139), then linear probe and gradient boosting.
+1. ForPT probe (embeddings done at all four radii): `02_linear_probe.py --embeddings '$WORK/benchmarking/embeddings/forpt/r{radius}_z' --model forpt`.
+2. lidR stdmetrics: **job 23829139 failed** in r30 on a terra error in the terrain metrics
+   (`[terrain] too few values for writing: 16 < 64`, a cookie with very few ground points). Fix `lidr_metrics.R` (guard
+   the terrain step, NaN when too few ground points), then resubmit; r15 is done, r30 6,041 of 6,099, r50/r100 not
+   started. Then linear probe and gradient boosting.
 4. AlphaEarth diagnostics (plan at the end), tests 1, 3, 5 first.
 5. Later: lidar-nuisance-only baseline (point density, year, quality level: are labels confounded with acquisition?),
    AEF + lidar metrics concatenated (does lidar add anything beyond the satellite embedding?).
@@ -70,12 +72,12 @@ tiles).
 
 | model | input | dim | state |
 |---|---|---|---|
-| AlphaEarth (AEF) | annual embedding, centre pixel (Earth Engine) | 64 | extracted for all tasks; torch-probe rerun running |
-| Location (RFF) | lat/lon, random Fourier features at several km scales | | torch-probe rerun running |
-| SatCLIP L10 / L40 | lat/lon, official package + Hugging Face checkpoints | 256 | torch-probe rerun running |
+| AlphaEarth (AEF) | annual embedding, centre pixel (Earth Engine) | 64 | **done** (torch probe) |
+| Location (RFF) | lat/lon, random Fourier features at several km scales | | **done** (torch probe) |
+| SatCLIP L10 / L40 | lat/lon, official package + Hugging Face checkpoints | 256 | **done** (torch probe) |
 | Clay v1.5 NAIP | NAIP chip embeddings averaged over the task disc | 1024 | **done** (results below) |
-| ForPT | 3DEP cookie, 50 m disc, frozen LitePT-S teacher | 1008 | 1,491 of 82,160 cookies embedded (speed test) |
-| lidR stdmetrics | 3DEP cookie, HAG in the disc (+ 7 terrain columns) | 56 (+7) | speed test only |
+| ForPT | 3DEP cookie, task disc (<= 100 m), frozen LitePT-S teacher | 1008 | embedded at all radii (r15 875, r30 6,061, r50 25,227, r100 51,533); probe not run |
+| lidR stdmetrics | 3DEP cookie, HAG in the task disc (+ 7 terrain columns) | 56 (+7) | r15 done (875), r30 6,041 of 6,099; job failed (see Next steps) |
 
 Notes per model:
 
@@ -95,8 +97,32 @@ Notes per model:
 
 ### Comparison, torch probe (test split, min_count=20)
 
-To fill when the reruns finish (AlphaEarth, location, SatCLIP), then ForPT and lidR. Combined table:
-`scripts/baseline_eval/results/summary.md` (`07_unified_summary.py`).
+Combined table: `scripts/baseline_eval/results/summary.md` (`07_unified_summary.py`); per model
+`results/<model>/summary.md`. AEF, location and SatCLIP use the centre point; Clay NAIP the task disc. ForPT and lidR to
+add.
+
+| task | metric | AlphaEarth | location RFF | SatCLIP L10 | SatCLIP L40 | Clay NAIP |
+|---|---|---|---|---|---|---|
+| nlcd | bal. acc. | **0.738** | 0.306 | 0.402 | 0.396 | 0.606 |
+| lfrdb_ecosys | bal. acc. | **0.571** | 0.283 | 0.244 | 0.220 | 0.370 |
+| lfrdb_nvc_group | bal. acc. | **0.437** | 0.146 | 0.179 | 0.198 | 0.264 |
+| nps_vmi_macrogroup | bal. acc. | **0.466** | 0.271 | 0.245 | 0.285 | 0.365 |
+| nps_vmi_group | bal. acc. | **0.577** | 0.197 | 0.272 | 0.305 | 0.395 |
+| vegbench_formation | bal. acc. | **0.519** | 0.227 | 0.236 | 0.237 | 0.412 |
+| vegbench_division | bal. acc. | **0.462** | 0.188 | 0.180 | 0.211 | 0.382 |
+| vegbench_macrogroup | bal. acc. | **0.404** | 0.144 | 0.170 | 0.166 | 0.330 |
+| vegbench_group | bal. acc. | **0.344** | 0.116 | 0.148 | 0.140 | 0.237 |
+| bbs_occurrence | mean AUROC | **0.895** | 0.858 | 0.870 | 0.860 | 0.863 |
+| butterflies_occurrence | mean AUROC | 0.664 | **0.715** | 0.704 | **0.715** | 0.683 |
+| snapshot_usa_occurrence | mean AUROC | **0.806** | 0.761 | 0.727 | 0.760 | 0.752 |
+| satbird_winter_occupancy | mean AUROC | **0.927** | 0.897 | 0.901 | 0.905 | 0.915 |
+| blm_aim | mean R2 | **0.511** | 0.192 | 0.169 | 0.231 | 0.458 |
+| ofo_trees | mean R2 | **0.295** | 0.291 | -0.026 | 0.243 | 0.249 |
+
+AlphaEarth is best on 14 of 15 tasks; on butterflies, location alone beats every image embedding. Location-only is
+close to AEF on the bird/mammal occurrence tasks (AUROC within 0.03-0.05) and on OFO, far below it on the vegetation
+classifications. Compared with the old sklearn probes most scores moved by a few hundredths either way (AEF NLCD 0.751
+-> 0.738; SatCLIP L40 lfrdb_ecosys 0.290 -> 0.220), the exception being location RFF on OFO (-0.004 -> 0.291).
 
 ### Clay NAIP, all tasks (torch probe, 2026-11-12)
 
@@ -142,6 +168,16 @@ Details and paths in `CLAUDE.md` (Known data issues).
   the probe fills NaNs with the train median.
 
 ## Log
+
+### 2026-11-24 (NCSA Delta, status check)
+
+- **Torch-probe reruns done** (2026-11-12, 07:45-08:37): AlphaEarth centre, location RFF, SatCLIP L10/L40; results
+  table above (results files committed 2026-11-24). Logs `$WORK/benchmarking/logs/probe_*.log`.
+- **ForPT embeddings done** at all task radii: job 23829140 (r15/30/50, 58 min, ~7.7 cookies/s) and 23829141 (r100,
+  6.4 h, ~2.25 cookies/s). 131 cookies failed with an empty disc (`zero-size array`; 7 r15, 38 r30, 84 r50, 2 r100),
+  as expected from the edge-site QC; they count as `n_no_embedding`.
+- **lidR job 23829139 failed** after 2 min (it waited ~a day in the queue, ran 2026-11-13 13:35): r15 done, r30 stopped
+  on `[terrain] too few values for writing` in `lidr_metrics.R`; one failed batch kills the whole run.
 
 ### 2026-11-12 (NCSA Delta)
 
