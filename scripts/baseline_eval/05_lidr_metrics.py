@@ -77,7 +77,9 @@ def main():
         out.mkdir(parents=True, exist_ok=True)
         done = set()
         for f in out.glob("part_*.parquet"):
-            done |= set(pd.read_parquet(f, columns=["als_site_id"])["als_site_id"])
+            t = pd.read_parquet(f)  # 0-column files: batches of empty discs written before 2026-11-25
+            if "als_site_id" in t:
+                done |= set(t["als_site_id"])
         todo = [s for s in grp["als_site_id"] if s not in done and s in cached]
         if a.limit:
             todo = todo[: a.limit]
@@ -87,7 +89,10 @@ def main():
 
 
 def process(a, radius, todo, out):
-    t0, first_shard = time.time(), len(list(out.glob("part_*.parquet")))
+    # next shard = highest existing index + 1 (not the file count: an interrupted run leaves gaps, and counting
+    # then overwrote existing shards, 2026-11-25)
+    first_shard = 1 + max((int(f.stem.split("_")[1]) for f in out.glob("part_*.parquet")), default=-1)
+    t0 = time.time()
     batches = [todo[s : s + a.batch] for s in range(0, len(todo), a.batch)]
     env = dict(os.environ, OMP_NUM_THREADS="1")  # one core per Rscript; parallelism comes from --workers
 
@@ -98,8 +103,9 @@ def process(a, radius, todo, out):
                 frames.append(cookie_points(sid, a.cache, radius))
             except Exception as e:  # unreadable cookie: skipped, reported
                 print(f"[lidr] {sid}: {type(e).__name__}: {e}", flush=True)
+        frames = [f for f in frames if len(f)]  # empty disc (edge sites): no row, no file
         if not frames:
-            return 0
+            return len(ids)
         src, dst = Path(tmp) / f"points_{k}.parquet", Path(tmp) / f"metrics_{k}.parquet"
         pd.concat(frames, ignore_index=True).to_parquet(src, index=False)
         r = subprocess.run([str(PIXI), "run", "--manifest-path", str(ROOT / "envs/lidr/pixi.toml"), "Rscript",
@@ -118,7 +124,7 @@ def process(a, radius, todo, out):
         for f in as_completed([ex.submit(run, k, ids, tmp) for k, ids in enumerate(batches)]):
             n += f.result()
             rate = n / (time.time() - t0)
-            print(f"[lidr] {n}/{len(todo)}, {rate:.2f} cookies/s, ETA {(len(todo) - n) / rate / 3600:.1f} h", flush=True)
+            print(f"[lidr] {n}/{len(todo)}, {rate:.2f} cookies/s, ETA {(len(todo) - n) / max(rate, 1e-9) / 3600:.1f} h", flush=True)
 
 
 if __name__ == "__main__":
