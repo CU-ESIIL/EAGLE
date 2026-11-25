@@ -11,8 +11,8 @@ open questions, results and the dated log. Newest first in each log.
 
 ## Next steps
 
-1. ForPT probe running (2026-11-25); add to the comparison table.
-2. lidR stdmetrics r50 + r100 running (Slurm 24522657); then linear probe and gradient boosting.
+1. lidR stdmetrics: r15/r30/r50 done; r100 running (Slurm 24526193, after the OOM of 24522657); then linear probe and gradient boosting.
+2. Add `tabulate` to `envs/litept-gpu` (the GPU probe crashed at `summary.md`; written afterwards with `envs/eagle-bench`).
 4. AlphaEarth diagnostics (plan at the end), tests 1, 3, 5 first.
 5. Later: lidar-nuisance-only baseline (point density, year, quality level: are labels confounded with acquisition?),
    AEF + lidar metrics concatenated (does lidar add anything beyond the satellite embedding?).
@@ -95,31 +95,36 @@ Notes per model:
 ### Comparison, torch probe (test split, min_count=20)
 
 Combined table: `scripts/baseline_eval/results/summary.md` (`07_unified_summary.py`); per model
-`results/<model>/summary.md`. AEF, location and SatCLIP use the centre point; Clay NAIP the task disc. ForPT and lidR to
-add.
+`results/<model>/summary.md`. AEF, location and SatCLIP use the centre point; Clay NAIP and ForPT the task disc (ForPT
+capped at 100 m). lidR to add.
 
-| task | metric | AlphaEarth | location RFF | SatCLIP L10 | SatCLIP L40 | Clay NAIP |
-|---|---|---|---|---|---|---|
-| nlcd | bal. acc. | **0.738** | 0.306 | 0.402 | 0.396 | 0.606 |
-| lfrdb_ecosys | bal. acc. | **0.571** | 0.283 | 0.244 | 0.220 | 0.370 |
-| lfrdb_nvc_group | bal. acc. | **0.437** | 0.146 | 0.179 | 0.198 | 0.264 |
-| nps_vmi_macrogroup | bal. acc. | **0.466** | 0.271 | 0.245 | 0.285 | 0.365 |
-| nps_vmi_group | bal. acc. | **0.577** | 0.197 | 0.272 | 0.305 | 0.395 |
-| vegbench_formation | bal. acc. | **0.519** | 0.227 | 0.236 | 0.237 | 0.412 |
-| vegbench_division | bal. acc. | **0.462** | 0.188 | 0.180 | 0.211 | 0.382 |
-| vegbench_macrogroup | bal. acc. | **0.404** | 0.144 | 0.170 | 0.166 | 0.330 |
-| vegbench_group | bal. acc. | **0.344** | 0.116 | 0.148 | 0.140 | 0.237 |
-| bbs_occurrence | mean AUROC | **0.895** | 0.858 | 0.870 | 0.860 | 0.863 |
-| butterflies_occurrence | mean AUROC | 0.664 | **0.715** | 0.704 | **0.715** | 0.683 |
-| snapshot_usa_occurrence | mean AUROC | **0.806** | 0.761 | 0.727 | 0.760 | 0.752 |
-| satbird_winter_occupancy | mean AUROC | **0.927** | 0.897 | 0.901 | 0.905 | 0.915 |
-| blm_aim | mean R2 | **0.511** | 0.192 | 0.169 | 0.231 | 0.458 |
-| ofo_trees | mean R2 | **0.295** | 0.291 | -0.026 | 0.243 | 0.249 |
+| task | metric | AlphaEarth | location RFF | SatCLIP L10 | SatCLIP L40 | Clay NAIP | ForPT |
+|---|---|---|---|---|---|---|---|
+| nlcd | bal. acc. | **0.738** | 0.306 | 0.402 | 0.396 | 0.606 | 0.415 |
+| lfrdb_ecosys | bal. acc. | **0.571** | 0.283 | 0.244 | 0.220 | 0.370 | 0.381 |
+| lfrdb_nvc_group | bal. acc. | **0.437** | 0.146 | 0.179 | 0.198 | 0.264 | 0.289 |
+| nps_vmi_macrogroup | bal. acc. | **0.466** | 0.271 | 0.245 | 0.285 | 0.365 | 0.297 |
+| nps_vmi_group | bal. acc. | **0.577** | 0.197 | 0.272 | 0.305 | 0.395 | 0.366 |
+| vegbench_formation | bal. acc. | **0.519** | 0.227 | 0.236 | 0.237 | 0.412 | 0.373 |
+| vegbench_division | bal. acc. | **0.462** | 0.188 | 0.180 | 0.211 | 0.382 | 0.353 |
+| vegbench_macrogroup | bal. acc. | **0.404** | 0.144 | 0.170 | 0.166 | 0.330 | 0.258 |
+| vegbench_group | bal. acc. | **0.344** | 0.116 | 0.148 | 0.140 | 0.237 | 0.229 |
+| bbs_occurrence | mean AUROC | **0.895** | 0.858 | 0.870 | 0.860 | 0.863 | 0.718 |
+| butterflies_occurrence | mean AUROC | 0.664 | **0.715** | 0.704 | **0.715** | 0.683 | 0.570 |
+| snapshot_usa_occurrence | mean AUROC | **0.806** | 0.761 | 0.727 | 0.760 | 0.752 | 0.680 |
+| satbird_winter_occupancy | mean AUROC | **0.927** | 0.897 | 0.901 | 0.905 | 0.915 | 0.802 |
+| blm_aim | mean R2 | **0.511** | 0.192 | 0.169 | 0.231 | 0.458 | 0.246 |
+| ofo_trees | mean R2 | **0.295** | 0.291 | -0.026 | 0.243 | 0.249 | 0.267 |
 
 AlphaEarth is best on 14 of 15 tasks; on butterflies, location alone beats every image embedding. Location-only is
 close to AEF on the bird/mammal occurrence tasks (AUROC within 0.03-0.05) and on OFO, far below it on the vegetation
 classifications. Compared with the old sklearn probes most scores moved by a few hundredths either way (AEF NLCD 0.751
 -> 0.738; SatCLIP L40 lfrdb_ecosys 0.290 -> 0.220), the exception being location RFF on OFO (-0.004 -> 0.291).
+
+ForPT (frozen 3DEP cookies, 2026-11-25) is the weakest feature set on the occurrence tasks (AUROC 0.68-0.80, below
+location alone, which it does not see) and on NLCD, but beats location and SatCLIP on every vegetation classification
+and beats Clay NAIP on the two LFRDB tasks; on OFO trees (0.267) it is behind AEF and location (0.295, 0.291). Structure alone carries vegetation-type
+signal but no geography.
 
 ### Clay NAIP, all tasks (torch probe, 2026-11-12)
 
@@ -176,7 +181,12 @@ Details and paths in `CLAUDE.md` (Known data issues).
   24522566 died in 31 s; now no file is written), and the next shard index was the file count, which after an
   interrupted run (gaps) overwrote two existing r30 shards; their cookies were recomputed, now max index + 1. r30 has
   6,061 rows, the same cookies as ForPT r30. r50 + r100 running in Slurm 24522657.
-- **ForPT probe** running on the interactive A100 node (`envs/litept-gpu`, the probe uses the GPU).
+- **ForPT probe done** (all 15 tasks, both class scenarios); results in the comparison table. It crashed at the end
+  writing `summary.md` (`tabulate` is missing in `envs/litept-gpu`); the CSVs were complete, `summary.md` and the
+  unified summary were written afterwards with `envs/eagle-bench`.
+- **lidR r50 done** (24,255 cookies in ~6 min); **r100 OOM-killed** after 1,320 cookies (job 24522657, 92 workers x
+  batches of 10 cookies of up to ~1M points in 180 GB). Resubmitted as 24526193 with `--workers 64 --batch 2`
+  (~1.5-2 h expected).
 
 ### 2026-11-24 (NCSA Delta, status check)
 

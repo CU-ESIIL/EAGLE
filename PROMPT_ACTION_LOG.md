@@ -918,3 +918,9 @@ An agent launched tasks that may have completed without the tracking being updat
 - lidR job 23829139 failed after 2 min on 2026-11-13 (`[terrain] too few values for writing` in `lidr_metrics.R`); r15 done, r30 6,041 of 6,099. Needs a fix to the terrain step before resubmitting.
 - `envs/satclip` (pixi manifest + lock, used for the SatCLIP probes) added with the same `.gitignore` as the other envs.
 - CLAUDE.md status table and the working doc (status, next steps, log) updated.
+
+## 2026-11-25: status check (ForPT probe, lidR)
+
+- ForPT probe finished all 15 tasks but crashed writing `summary.md` (no `tabulate` in `envs/litept-gpu`); wrote `summary.md` and the unified summary with `envs/eagle-bench`; ForPT column added to the comparison table in `benchmarking_working_doc.md`.
+- lidR job 24522657: r50 done, r100 OOM-killed after 1,320 cookies; resubmitted as 24526193 with `--workers 64 --batch 2`.
+- CLAUDE.md status table and the working doc updated.
