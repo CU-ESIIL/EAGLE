@@ -12,10 +12,7 @@ open questions, results and the dated log. Newest first in each log.
 ## Next steps
 
 1. ForPT probe (embeddings done at all four radii): `02_linear_probe.py --embeddings '$WORK/benchmarking/embeddings/forpt/r{radius}_z' --model forpt`.
-2. lidR stdmetrics: **job 23829139 failed** in r30 on a terra error in the terrain metrics
-   (`[terrain] too few values for writing: 16 < 64`, a cookie with very few ground points). Fix `lidr_metrics.R` (guard
-   the terrain step, NaN when too few ground points), then resubmit; r15 is done, r30 6,041 of 6,099, r50/r100 not
-   started. Then linear probe and gradient boosting.
+2. lidR stdmetrics r50 + r100 running (Slurm 24522566); then linear probe and gradient boosting.
 4. AlphaEarth diagnostics (plan at the end), tests 1, 3, 5 first.
 5. Later: lidar-nuisance-only baseline (point density, year, quality level: are labels confounded with acquisition?),
    AEF + lidar metrics concatenated (does lidar add anything beyond the satellite embedding?).
@@ -77,7 +74,7 @@ tiles).
 | SatCLIP L10 / L40 | lat/lon, official package + Hugging Face checkpoints | 256 | **done** (torch probe) |
 | Clay v1.5 NAIP | NAIP chip embeddings averaged over the task disc | 1024 | **done** (results below) |
 | ForPT | 3DEP cookie, task disc (<= 100 m), frozen LitePT-S teacher | 1008 | embedded at all radii (r15 875, r30 6,061, r50 25,227, r100 51,533); probe not run |
-| lidR stdmetrics | 3DEP cookie, HAG in the task disc (+ 7 terrain columns) | 56 (+7) | r15 done (875), r30 6,041 of 6,099; job failed (see Next steps) |
+| lidR stdmetrics | 3DEP cookie, HAG in the task disc (+ 7 terrain columns) | 56 (+7) | r15, r30 done; r50/r100 running (Slurm 24522566) |
 
 Notes per model:
 
@@ -168,6 +165,13 @@ Details and paths in `CLAUDE.md` (Known data issues).
   the probe fills NaNs with the train median.
 
 ## Log
+
+### 2026-11-25 (NCSA Delta)
+
+- **lidR terrain fix:** `terra::terrain` errors on very small DTMs (`too few values for writing: 16 < 64`) and the error
+  was outside the `tryCatch`, killing the batch and with it the whole run. Now any terrain error gives NA terrain
+  columns, and `05_lidr_metrics.py` logs and skips a failed batch instead of aborting (retried on the next run). The
+  remaining 58 r30 cookies, including the failing batch, ran on the interactive node; r50 + r100 resubmitted (24522566).
 
 ### 2026-11-24 (NCSA Delta, status check)
 

@@ -19,11 +19,17 @@ args <- commandArgs(trailingOnly = TRUE)
 pts <- as.data.table(read_parquet(args[1]))
 sites <- unique(pts$site)
 
+# terra can fail on very small DTMs (e.g. "[terrain] too few values for writing: 16 < 64" with few ground points,
+# job 23829139): any error in the terrain step gives NA terrain columns instead of killing the batch.
 terrain_metrics <- function(d) {
-  g <- d[Classification == 2L]
-  out <- list(n_ground = nrow(g), terrain_elev_mean = NA_real_, terrain_elev_range = NA_real_,
+  out <- list(n_ground = sum(d$Classification == 2L), terrain_elev_mean = NA_real_, terrain_elev_range = NA_real_,
               terrain_slope = NA_real_, terrain_northness = NA_real_, terrain_eastness = NA_real_,
               terrain_tri = NA_real_, terrain_tpi = NA_real_)
+  tryCatch(terrain_metrics_(d, out), error = function(e) out)
+}
+
+terrain_metrics_ <- function(d, out) {
+  g <- d[Classification == 2L]
   if (nrow(g) < 50) return(out)
   las <- suppressMessages(LAS(data.table(X = d$X, Y = d$Y, Z = d$Zabs, Classification = d$Classification)))
   dtm <- tryCatch(suppressMessages(suppressWarnings(rasterize_terrain(las, res = 2, algorithm = tin()))),

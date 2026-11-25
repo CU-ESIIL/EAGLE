@@ -102,8 +102,12 @@ def process(a, radius, todo, out):
             return 0
         src, dst = Path(tmp) / f"points_{k}.parquet", Path(tmp) / f"metrics_{k}.parquet"
         pd.concat(frames, ignore_index=True).to_parquet(src, index=False)
-        subprocess.run([str(PIXI), "run", "--manifest-path", str(ROOT / "envs/lidr/pixi.toml"), "Rscript",
-                        str(ROOT / "scripts/baseline_eval/lidr_metrics.R"), str(src), str(dst)], check=True, env=env)
+        r = subprocess.run([str(PIXI), "run", "--manifest-path", str(ROOT / "envs/lidr/pixi.toml"), "Rscript",
+                            str(ROOT / "scripts/baseline_eval/lidr_metrics.R"), str(src), str(dst)], env=env)
+        if r.returncode != 0:  # failed batch: reported and skipped (retried by the next run), the others go on
+            print(f"[lidr] batch {k} failed (Rscript exit {r.returncode}): {', '.join(ids)}", flush=True)
+            src.unlink(missing_ok=True)
+            return 0
         pd.read_parquet(dst).to_parquet(out / f"part_{first_shard + k:05d}.parquet", index=False)
         src.unlink()
         dst.unlink()
